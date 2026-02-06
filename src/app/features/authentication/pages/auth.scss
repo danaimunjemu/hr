@@ -1,0 +1,63 @@
+.auth-page-header {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-primary);
+  font-family: "Montserrat", sans-serif;
+}
+
+.auth-page-subheader {
+  font-family: "Montserrat", sans-serif;
+  color: rgb(44,62,80);
+  text-align: center;
+  font-size: 12px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.auth-link, .auth-footer-text {
+  font-family: "Montserrat", sans-serif;
+  text-align: center;
+  font-size: 12px;
+  margin-bottom: 20px;
+  margin-left: 5px;
+}
+
+.auth-link {
+  font-weight: 600;
+  transition: all .5s ease;
+}
+
+.auth-link:hover {
+  transform: translateY(-2px);
+  transition-duration: 0.25s;
+}
+
+.ant-form-item-control-input-content {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.authentication-page {
+  input[nz-input] {
+    background-color: rgb(244,247,248) !important;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 12px;
+    margin-left: 10px;
+  }
+
+  .ant-input-affix-wrapper {
+    background-color: rgb(244,247,248) !important;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 7px 13px 7px 10px;
+    max-width: 300px;
+  }
+
+  .ant-input-password {
+    background-color: rgb(244,247,248) !important;
+    border-radius: 12px;
+  }
+}
+

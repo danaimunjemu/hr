@@ -1,0 +1,38 @@
+// mixin that enables css variables in light mode
+@use "../../styles";
+
+@mixin lighten() {
+  --color-bg: #{$clr-primary-a0};
+  --color-surface: #{$clr-primary-a0};
+  --color-border: #{$clr-primary-a0};
+  --color-text: #{$clr-primary-a0};
+  --color-heading: #{$clr-primary-a0};
+  --color-muted: #{$clr-primary-a0};
+
+  --color-primary: #{$clr-primary-a0};
+  --color-success: #{$clr-primary-a0};
+  --color-warning: #{$clr-primary-a0};
+  --color-danger: #{$clr-primary-a0};
+
+  --shadow-card: #{$clr-primary-a0};
+
+  --appBg: #{$appBackground_light};
+  --appAssistiveText: #{$appAssistiveText_light};
+  --appCardBackground: #{$appCardBackground_light};
+  --appCardBoxShadow: #{$appCardBackground_light};
+  --appCardHeadingBackground: #{$appCardHeadingBackground_light};
+  --appCardBorder: #{$appCardBorder_light};
+  --appCardHeadingBackgroundColor: #{$appCardHeadingBackgroundColor_light};
+  --appCardInfoBackgroundColor: #{$appCardInfoBackgroundColor_light};
+
+
+
+  --sideNavBg: #{$vs-background};
+  --bgColor: #{$white_alt};
+  --textColor: #{$textColor_light};
+  --borderColor: #{$borderColor_light};
+  --heading: #{$fontHeadingLight};
+  --paragraph: #{$paragraphLight};
+  --cardBackground: #{$dae-white};
+  --avatarBackground: #cccccc;
+}

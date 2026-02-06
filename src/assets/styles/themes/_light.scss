@@ -1,0 +1,23 @@
+@use '../design-tokens/colors' as *;
+
+:root,
+body.light {
+  --color-bg: #f4f7f8;
+  --color-surface: #ffffff;
+  --color-surface-selected: #{$clr-secondary-a10};
+  --color-surface-hover: #{$clr-secondary-a0};
+  --color-text: #2c3e50;
+  --color-border: #e0e0e0;
+  --side-nav: #ffffff;
+  --side-nav-text: #2c3e50;
+  --side-nav-selected: #{$clr-secondary-a0};
+  --side-nav-selected-text: #2c3e50;
+
+  --color-primary: #{$clr-primary-a20};
+  --color-secondary: #{$clr-secondary-a20};
+  --color-success: #{$clr-success-a0};
+  --color-warning: #{$clr-warn-a0};
+  --color-danger: #{$clr-danger-a0};
+
+  --shadow-card: 0 2px 6px rgba(0, 0, 0, 0.05);
+}

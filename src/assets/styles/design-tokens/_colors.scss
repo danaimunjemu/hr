@@ -1,0 +1,54 @@
+// =======================
+// 🎨 COLOR PALETTE
+// =======================
+
+// Primary (base = a20)
+$clr-primary-a0:  #e9f7ef; // very light tint
+$clr-primary-a10: #8ee3af; // light
+$clr-primary-a20: #238a2e; // base (you requested)
+$clr-primary-a30: #3e8c62; // darker
+$clr-primary-a40: #256644; // darkest
+
+// Secondary (base = a20)
+$clr-secondary-a0:  #fbffe8; // very light tint
+$clr-secondary-a10: #f3fbc3; // light
+$clr-secondary-a20: #e2f397; // base (you requested)
+$clr-secondary-a30: #bcd45b; // darker
+$clr-secondary-a40: #88a431; // darkest
+
+// Tertiary (base = a20)
+$clr-tertiary-a0:  #dff4f4; // very light tint
+$clr-tertiary-a10: #3b8f92; // light
+$clr-tertiary-a20: #02575c; // base (you requested)
+$clr-tertiary-a30: #013f42; // darker
+$clr-tertiary-a40: #002627; // darkest
+
+
+
+
+
+// Semantic Variables
+
+// Warning
+$clr-warn-a0: rgb(255, 186, 0);
+$clr-warn-a10: rgb(255, 186, 0);
+$clr-warn-a20: rgb(255, 186, 0);
+
+// Danger
+$clr-danger-a0: rgb(255, 71, 87);
+$clr-danger-a10: rgb(255, 71, 87);
+$clr-danger-a20: rgb(255, 71, 87);
+
+// Success
+$clr-success-a0: rgb(70, 201, 58);
+$clr-success-a10: rgb(70, 201, 58);
+$clr-success-a20: rgb(70, 201, 58);
+
+
+$nerd-dark: rgb(30, 30, 30);
+$nerd-light: rgb(244, 247, 248);
+
+$key-green: #003a40;
+$key-text: #7ea9aa;
+$key-li-selected: #1b5556;
+$key-li-selected-text:#aec2c2;

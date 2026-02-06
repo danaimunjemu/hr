@@ -1,0 +1,33 @@
+@import "../../styles";
+
+// mixin that enables css variables in dark mode
+@mixin darken() {
+
+  // When you bring back the theming, this is the original dark themes
+  //--sideNavBg: #{$bgColor_light};
+  //--bgColor: #{$bgColor_dark};
+  //--textColor: #{$textColor_dark};
+  //--borderColor: #{$borderColor_dark};
+  //--heading: #{$fontHeadingDark};
+  //--paragraph: #{$paragraphDark};
+  //--cardBackground: #{$bgColor_light};
+  //--avatarBackground: #{$secondary9};
+
+  --appBg: #{$appBackground_dark};
+  --appAssistiveText: #{$appAssistiveText_dark};
+  --appCardBackground: #{$appCardBackground_dark};
+  --appCardBoxShadow: #{$appCardBackground_dark};
+  --appCardHeadingBackground: #{$appCardHeadingBackground_dark};
+  --appCardBorder: #{$appCardBorder_dark};
+  --appCardHeadingBackgroundColor: #{$appCardHeadingBackgroundColor_dark};
+  --appCardInfoBackgroundColor: #{$appCardInfoBackgroundColor_dark};
+
+  --sideNavBg: #{$vs-background};
+  --bgColor: #{$vs-dark};
+  --textColor: #{$textColor_light};
+  --borderColor: #{$borderColor_light};
+  --heading: #{$fontHeadingLight};
+  --paragraph: #{$paragraphLight};
+  --cardBackground: #{$dae-white};
+  --avatarBackground: #cccccc;
+}

@@ -1,0 +1,11 @@
+<div style="margin-bottom: 10px">
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <nz-icon nzType="home" routerLink="/app/dashboard/main" />
+    </nz-breadcrumb-item>
+    @for (breadcrumb of breadcrumbs; track breadcrumb) {
+      <nz-breadcrumb-item>{{ breadcrumb }}</nz-breadcrumb-item>
+    }
+  </nz-breadcrumb>
+</div>
+

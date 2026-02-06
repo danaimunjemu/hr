@@ -1,0 +1,20 @@
+@use '../design-tokens/colors' as *;
+
+body.dark {
+  --color-bg: #{$clr-primary-a0};
+  --color-surface: #1e1e1e;
+  --color-text: #f4f7f8;
+  --color-border: #333333;
+  --side-nav: #{$key-green};
+  --side-nav-text: #{$key-text};
+  --side-nav-selected: #{$key-li-selected};
+  --side-nav-selected-text: #{$key-li-selected-text};
+
+  --color-primary: #{$clr-primary-a10};
+  --color-secondary: #{$clr-secondary-a20};
+  --color-success: #{$clr-success-a0};
+  --color-warning: #{$clr-warn-a0};
+  --color-danger: #{$clr-danger-a0};
+
+  --shadow-card: 0 2px 6px rgba(255, 255, 255, 0.05);
+}

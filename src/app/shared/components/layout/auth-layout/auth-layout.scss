@@ -1,0 +1,113 @@
+.auth-page {
+  height: 100vh;
+  width: 100vw;
+  background: #f4f7f8;
+}
+
+.auth-container-img {
+  border-radius: 12px;
+}
+
+.auth-card-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-bg-illustration {
+  position: absolute;
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 0; /* stays behind content */
+}
+
+.auth-bg-illustration.top {
+  top: 0;
+  left: 0;
+  width: 300px; /* adjust as needed */
+}
+
+.auth-bg-illustration.bottom {
+  bottom: 0;
+  right: 0;
+  width: 500px;
+}
+
+.auth-container {
+  position: relative;
+  z-index: 1;
+  padding: 16px;
+  max-width: 750px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 5px 20px 0 rgba(0,0,0,.05);
+}
+
+
+.nerd-app-version {
+  font-weight: 500;
+  color: #2c3e50;
+  text-decoration: none;
+  padding: 10px;
+  opacity: .5;
+  transition: all .25s ease;
+}
+
+.social-media-icon {
+  padding: 4px;
+  color: #2c3e50;
+  font-size: 14px;
+  transition: transform .25s, width 1s;
+  transition-duration: .25s;
+}
+
+.social-media-icon:hover {
+  transform: translateY(-2px);
+  transition-duration: .25s;
+  cursor: pointer;
+}
+
+.social-media-icon:active {
+  transform: translateY(2px);
+}
+
+.auth-form-content {
+  padding-left: 80px;
+  padding-right: 80px;
+  width: 100%;
+  margin-top: 50px;
+}
+
+.nerd-auth-img-header {
+  color: #35C0A3;
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+}
+
+.nerd-auth-img-p {
+  text-align: center;
+}
+
+.nerd-auth-img-overlay {
+  border-radius: 12px;
+}
+
+.auth-layout-copyright {
+  text-align: center;
+  margin-top: 10px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.auth-layout-sub-text {
+  color: white;
+  font-size: 12px;
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 300;
+}

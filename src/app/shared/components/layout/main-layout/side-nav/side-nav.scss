@@ -1,0 +1,119 @@
+
+nz-content {
+  margin: 0 16px;
+}
+
+nz-breadcrumb {
+  margin: 16px 0;
+}
+
+.inner-content {
+  padding: 24px;
+  background: #fff;
+  min-height: 360px;
+  border-radius: 8px;
+}
+
+:host > nz-layout {
+  min-height: 100vh;
+}
+
+.logo {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.trigger-div {
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+.logo-img {
+  height: 32px;
+}
+
+.header-menu {
+  line-height: 64px;
+}
+
+nz-sider {
+  margin: 15px;
+  height: calc(100vh - 30px);
+  max-height: calc(100vh - 30px);
+  border-radius: 30px;
+  background: var(--side-nav);
+  box-shadow: 0 0 25px 0 rgba(0, 0, 0, .05);
+}
+
+.trigger {
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--color-text);
+  margin-top: 10px;
+}
+
+
+.trigger:hover {
+  background: linear-gradient(90deg, #b2faba, #dbfeb3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text; /* for modern browsers */
+  text-fill-color: transparent;
+}
+
+
+
+.nerd-sider-menu-icon {}
+
+.nerd-sider-menu-text {
+
+}
+
+.nav-mode-toggler-area {
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.nav-user-area {
+  padding: 10px 0;
+}
+
+.nav-user-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.nav-user-email {
+  font-size: 9px;
+  font-weight: 400;
+  color: var(--color-text);
+}
+
+.user-menu {
+  padding: 5px;
+  margin: 0 5px;
+  border-radius: 12px;
+  transition: all .5s ease;
+}
+
+.user-menu:hover {
+  background: var(--color-bg);
+  cursor: pointer;
+}
+
+.user-menu-icon {
+  color: var(--color-text);
+}
+
+.side-nav-toggler {
+  color: var(--color-text);
+  display: flex;
+  justify-content: center;
+}
+
