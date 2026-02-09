@@ -1,0 +1,24 @@
+<nz-page-header
+  [nzGhost]="false"
+  [nzBackIcon]="'arrow-left'"
+  (nzBack)="onBack()"
+  [nzTitle]="'Overtime Rule Details'"
+  [nzSubtitle]="rule?.name"
+>
+</nz-page-header>
+
+<nz-card [nzLoading]="loading">
+  <div *ngIf="rule">
+    <nz-descriptions [nzColumn]="1" nzTitle="Rule Information" nzBordered>
+      <nz-descriptions-item nzTitle="Name">{{ rule.name }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Condition Type">
+        <nz-tag [nzColor]="'blue'">{{ rule.conditionType }}</nz-tag>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Rate Multiplier">x{{ rule.rateMultiplier }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Priority">{{ rule.priority }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Threshold (Minutes)" *ngIf="rule.thresholdMinutes">
+        {{ rule.thresholdMinutes }} mins
+      </nz-descriptions-item>
+    </nz-descriptions>
+  </div>
+</nz-card>

@@ -1,0 +1,71 @@
+<nz-page-header
+  [nzGhost]="false"
+  [nzBackIcon]="'arrow-left'"
+  (nzBack)="onCancel()"
+  [nzTitle]="isEditMode ? 'Edit Leave Type' : 'New Leave Type'"
+>
+</nz-page-header>
+
+<nz-card [nzLoading]="loading">
+  <form nz-form [formGroup]="form" (ngSubmit)="onSubmit()" nzLayout="vertical">
+    
+    <nz-form-item>
+      <nz-form-label [nzSpan]="24" nzRequired nzFor="name">Name</nz-form-label>
+      <nz-form-control [nzSpan]="24" nzErrorTip="Please enter a name">
+        <input nz-input formControlName="name" placeholder="e.g., Annual Leave" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="24" nzFor="description">Description</nz-form-label>
+      <nz-form-control [nzSpan]="24">
+        <textarea nz-input formControlName="description" rows="3" placeholder="Description of this leave type"></textarea>
+      </nz-form-control>
+    </nz-form-item>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24" nzRequired nzFor="daysPerYear">Days Per Year</nz-form-label>
+          <nz-form-control [nzSpan]="24" nzErrorTip="Required (min 0)">
+            <nz-input-number formControlName="daysPerYear" [nzMin]="0" [nzStep]="0.5" style="width: 100%"></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24" nzFor="paid">Status</nz-form-label>
+          <nz-form-control [nzSpan]="24">
+            <label nz-checkbox formControlName="paid">Paid Leave</label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24" nzFor="carryOverAllowed">Carry Over</nz-form-label>
+          <nz-form-control [nzSpan]="24">
+            <label nz-checkbox formControlName="carryOverAllowed">Allow Carry Over</label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12" *ngIf="form.get('carryOverAllowed')?.value">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24" nzFor="maxCarryOverDays">Max Carry Over Days</nz-form-label>
+          <nz-form-control [nzSpan]="24">
+            <nz-input-number formControlName="maxCarryOverDays" [nzMin]="0" [nzStep]="0.5" style="width: 100%"></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-4 mt-6">
+      <button nz-button type="button" (click)="onCancel()">Cancel</button>
+      <button nz-button nzType="primary" [nzLoading]="submitting">
+        {{ isEditMode ? 'Update' : 'Create' }}
+      </button>
+    </div>
+  </form>
+</nz-card>

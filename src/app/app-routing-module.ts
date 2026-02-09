@@ -42,6 +42,12 @@ const routes: Routes = [
         canActivate: [],
       },
       {
+        path: 'time-and-leave-user',
+        loadChildren: () =>
+          import('./features/user/time-and-leave-user/time-and-leave-user-module').then((m) => m.TimeAndLeaveUserModule),
+        canActivate: [],
+      },
+      {
         path: 'health-and-safety',
         loadChildren: () =>
           import('./features/health-and-safety/health-and-safety-module').then((m) => m.HealthAndSafetyModule),

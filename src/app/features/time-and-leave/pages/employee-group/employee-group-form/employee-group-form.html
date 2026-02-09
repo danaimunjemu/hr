@@ -1,0 +1,26 @@
+<nz-page-header
+  [nzGhost]="false"
+  [nzBackIcon]="'arrow-left'"
+  (nzBack)="onCancel()"
+  [nzTitle]="isEditMode ? 'Edit Employee Group' : 'New Employee Group'"
+>
+</nz-page-header>
+
+<nz-card [nzLoading]="loading">
+  <form nz-form [formGroup]="form" (ngSubmit)="onSubmit()" nzLayout="vertical">
+    
+    <nz-form-item>
+      <nz-form-label [nzSpan]="24" nzRequired nzFor="name">Group Name</nz-form-label>
+      <nz-form-control [nzSpan]="24" nzErrorTip="Please enter a group name">
+        <input nz-input formControlName="name" id="name" placeholder="e.g. General Staff" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <div class="flex justify-end gap-4 mt-6">
+      <button nz-button type="button" (click)="onCancel()">Cancel</button>
+      <button nz-button nzType="primary" [nzLoading]="submitting">
+        {{ isEditMode ? 'Update' : 'Create' }}
+      </button>
+    </div>
+  </form>
+</nz-card>

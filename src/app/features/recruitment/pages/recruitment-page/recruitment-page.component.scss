@@ -1,0 +1,67 @@
+:host {
+  display: block;
+}
+
+.page-content {
+  padding: 24px;
+}
+
+.content-card {
+  margin-bottom: 24px;
+}
+
+.job-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.job-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #8c8c8c;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  
+  a {
+    font-size: 14px;
+  }
+}
+
+.candidate-status {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  
+  .date {
+    color: #8c8c8c;
+    font-size: 12px;
+  }
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 50px;
+}
+
+.error-container {
+  margin-bottom: 24px;
+}
+
+nz-card {
+  border-radius: 8px;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.03);
+}
+
+div[nz-col] {
+  margin-bottom: 16px;
+}

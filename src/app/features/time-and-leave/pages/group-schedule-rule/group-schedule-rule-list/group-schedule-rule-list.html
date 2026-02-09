@@ -1,0 +1,41 @@
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-2xl font-bold">Group Schedule Rules</h1>
+    <p class="text-gray-500">Manage recurring schedules and rotations for employee groups.</p>
+  </div>
+  <button nz-button nzType="primary" routerLink="new">
+    <span nz-icon nzType="plus"></span>
+    Add Schedule Rule
+  </button>
+</div>
+
+<nz-card>
+  <nz-table #basicTable [nzData]="rules" [nzLoading]="loading">
+    <thead>
+      <tr>
+        <th>Employee Group</th>
+        <th>Rotation Type</th>
+        <th>Effective From</th>
+        <th>Cycle (On/Off)</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{ data.employeeGroup?.name }}</td>
+        <td>
+          <nz-tag [nzColor]="data.rotationType === 'FIXED' ? 'blue' : 'purple'">
+            {{ data.rotationType }}
+          </nz-tag>
+        </td>
+        <td>{{ data.effectiveFrom | date }}</td>
+        <td>{{ data.cycleOnWeeks }}W On / {{ data.cycleOffWeeks }}W Off</td>
+        <td>
+          <a class="action-btn" [routerLink]="['view', data.id]">View</a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <a [routerLink]="['edit', data.id]">Edit</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>

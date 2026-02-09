@@ -1,0 +1,26 @@
+<nz-page-header nzTitle="Company Details">
+  <nz-breadcrumb nz-page-header-breadcrumb>
+    <nz-breadcrumb-item><a routerLink="/app/settings/companies">Companies</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item>View</nz-breadcrumb-item>
+  </nz-breadcrumb>
+</nz-page-header>
+
+<div class="p-6">
+  <div *ngIf="loading()" class="flex justify-center items-center h-64">
+    <nz-spin nzSize="large"></nz-spin>
+  </div>
+
+  <div *ngIf="error()" class="mb-4">
+    <nz-alert nzType="error" [nzMessage]="error()" nzShowIcon></nz-alert>
+  </div>
+
+  <nz-card *ngIf="company() && !loading()">
+    <nz-descriptions nzTitle="Company Information" nzBordered [nzColumn]="2">
+      <nz-descriptions-item nzTitle="ID">{{ company()?.id }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Name">{{ company()?.name }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Work Location">{{ company()?.workLocation }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Created On">{{ company()?.createdOn | date }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Updated On">{{ company()?.updatedOn | date }}</nz-descriptions-item>
+    </nz-descriptions>
+  </nz-card>
+</div>

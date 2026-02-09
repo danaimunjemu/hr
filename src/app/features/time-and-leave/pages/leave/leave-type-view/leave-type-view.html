@@ -1,0 +1,31 @@
+<nz-page-header
+  [nzGhost]="false"
+  [nzBackIcon]="'arrow-left'"
+  (nzBack)="onBack()"
+  [nzTitle]="'Leave Type Details'"
+  [nzSubtitle]="type?.name"
+>
+</nz-page-header>
+
+<nz-card [nzLoading]="loading">
+  <div *ngIf="type">
+    <nz-descriptions [nzColumn]="1" nzTitle="Type Information" nzBordered>
+      <nz-descriptions-item nzTitle="Name">{{ type.name }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Description">{{ type.description || '-' }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Days Per Year">{{ type.daysPerYear }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Paid Leave">
+        <nz-tag [nzColor]="type.paid ? 'green' : 'red'">
+          {{ type.paid ? 'Yes' : 'No' }}
+        </nz-tag>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Carry Over Allowed">
+        <nz-tag [nzColor]="type.carryOverAllowed ? 'green' : 'default'">
+          {{ type.carryOverAllowed ? 'Yes' : 'No' }}
+        </nz-tag>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Max Carry Over Days" *ngIf="type.carryOverAllowed">
+        {{ type.maxCarryOverDays }}
+      </nz-descriptions-item>
+    </nz-descriptions>
+  </div>
+</nz-card>

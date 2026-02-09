@@ -1,0 +1,43 @@
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-2xl font-bold">Weekend Rules</h1>
+    <p class="text-gray-500">Define which days are treated as weekends.</p>
+  </div>
+  <button nz-button nzType="primary" routerLink="new">
+    <span nz-icon nzType="plus"></span>
+    Add Weekend Rule
+  </button>
+</div>
+
+<nz-card>
+  <nz-table #basicTable [nzData]="rules" [nzLoading]="loading">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Saturday</th>
+        <th>Sunday</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{ data.name }}</td>
+        <td>
+          <span nz-icon [nzType]="data.saturday ? 'check-circle' : 'close-circle'" 
+                [nzTheme]="data.saturday ? 'twotone' : 'outline'"
+                [nzTwotoneColor]="data.saturday ? '#52c41a' : '#ff4d4f'"></span>
+        </td>
+        <td>
+          <span nz-icon [nzType]="data.sunday ? 'check-circle' : 'close-circle'" 
+                [nzTheme]="data.sunday ? 'twotone' : 'outline'"
+                [nzTwotoneColor]="data.sunday ? '#52c41a' : '#ff4d4f'"></span>
+        </td>
+        <td>
+          <a class="action-btn" [routerLink]="['view', data.id]">View</a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <a [routerLink]="['edit', data.id]">Edit</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>

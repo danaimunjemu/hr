@@ -1,0 +1,44 @@
+<nz-page-header nzTitle="Companies" nzBackIcon>
+  <nz-page-header-extra>
+    <button nz-button nzType="primary" routerLink="/app/settings/companies/new">
+      <span nz-icon nzType="plus"></span>
+      New Company
+    </button>
+  </nz-page-header-extra>
+</nz-page-header>
+
+<div class="p-6">
+  <nz-card>
+    <div *ngIf="error()" class="mb-4">
+      <nz-alert nzType="error" [nzMessage]="error()" nzShowIcon></nz-alert>
+    </div>
+
+    <nz-table #basicTable [nzData]="companies()" [nzLoading]="loading()" [nzPageSize]="10">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Location</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of basicTable.data">
+          <td>{{ data.id }}</td>
+          <td>{{ data.name }}</td>
+          <td>{{ data.workLocation }}</td>
+          <td>
+            <nz-space>
+              <a *nzSpaceItem nz-button nzType="default" nzSize="small" [routerLink]="['/app/settings/companies/view', data.id]">
+                <span nz-icon nzType="eye" nzTheme="outline"></span>
+              </a>
+              <a *nzSpaceItem nz-button nzType="primary" nzSize="small" [routerLink]="['/app/settings/companies/edit', data.id]">
+                <span nz-icon nzType="edit" nzTheme="outline"></span>
+              </a>
+            </nz-space>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+</div>

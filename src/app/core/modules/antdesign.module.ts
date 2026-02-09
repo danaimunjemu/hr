@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
-import {NzContentComponent, NzLayoutModule} from 'ng-zorro-antd/layout';
+import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -57,11 +57,12 @@ import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzCarouselModule } from 'ng-zorro-antd/carousel';
 import { NzFloatButtonModule } from 'ng-zorro-antd/float-button';
 import {NzTooltipModule} from 'ng-zorro-antd/tooltip';
-import {NzSplitterModule} from 'ng-zorro-antd/splitter';
-
+import { NzSplitterModule } from 'ng-zorro-antd/splitter';
+import { NzGridModule } from 'ng-zorro-antd/grid';
 
 
 const modules = [
+  NzGridModule,
   NzAutocompleteModule,
   NzSpaceModule,
   NzTreeModule,
@@ -116,7 +117,6 @@ const modules = [
   NzPopconfirmModule,
   NzPopoverModule,
   NzTransferModule,
-  NzContentComponent,
   NzCardModule,
   NzInputNumberModule,
   NzResizableModule,

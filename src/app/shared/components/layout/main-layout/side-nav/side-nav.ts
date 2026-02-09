@@ -5,6 +5,7 @@ import {ModeToggleService} from '../../../../../core/modules/mode/mode-toggle.se
 import {AuthService} from '../../../../../features/authentication/services/auth';
 import {Mode} from '../../../../../core/modules/mode/mode-toggle.model';
 import {CookiesService} from '../../../../../core/storage/cookies.service';
+import { PortalService } from '../../../../services/portal';
 
 @Component({
   selector: 'nerd-side-nav',
@@ -25,11 +26,16 @@ export class SideNav implements OnInit, OnDestroy {
     private modeToggleService: ModeToggleService,
     private authService: AuthService,
     private cookiesService: CookiesService,
+    private portalService: PortalService
   ) {
     this.modeToggleService.modeChanged$.subscribe((mode: Mode) => {
       this.selectedMode = mode;
     });
+    this.portal = this.portalService.getPortal();
+    console.log('This portal:', this.portal);
   }
+
+  portal?: any;
 
   ngOnInit(): void {
     this.user = this.cookiesService.getCookie('user');

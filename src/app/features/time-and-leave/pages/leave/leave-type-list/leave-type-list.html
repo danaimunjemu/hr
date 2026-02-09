@@ -1,0 +1,47 @@
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-2xl font-bold">Leave Types</h1>
+    <p class="text-gray-500">Configure different types of leave available.</p>
+  </div>
+  <button nz-button nzType="primary" routerLink="new">
+    <span nz-icon nzType="plus"></span>
+    Add Leave Type
+  </button>
+</div>
+
+<nz-card>
+  <nz-table #basicTable [nzData]="types" [nzLoading]="loading">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Days/Year</th>
+        <th>Carry Over</th>
+        <th>Max Carry Over</th>
+        <th>Paid</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{ data.name }}</td>
+        <td>{{ data.daysPerYear }}</td>
+        <td>
+          <nz-tag [nzColor]="data.carryOverAllowed ? 'green' : 'default'">
+            {{ data.carryOverAllowed ? 'Yes' : 'No' }}
+          </nz-tag>
+        </td>
+        <td>{{ data.maxCarryOverDays || '-' }}</td>
+        <td>
+          <nz-tag [nzColor]="data.paid ? 'green' : 'red'">
+            {{ data.paid ? 'Paid' : 'Unpaid' }}
+          </nz-tag>
+        </td>
+        <td>
+          <a class="action-btn" [routerLink]="['view', data.id]">View</a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <a [routerLink]="['edit', data.id]">Edit</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>

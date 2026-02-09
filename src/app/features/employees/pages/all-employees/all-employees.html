@@ -1,0 +1,53 @@
+<nz-page-header nzTitle="All Employees" nzBackIcon>
+  <nz-page-header-extra>
+    <button nz-button nzType="primary" routerLink="/app/employees/new">
+      <span nz-icon nzType="plus"></span>
+      New Employee
+    </button>
+  </nz-page-header-extra>
+</nz-page-header>
+<div class="p-6">
+  <nz-card>
+    <div *ngIf="errorSignal()" class="mb-4">
+      <nz-alert [nzType]="'error'" [nzMessage]="errorSignal()" nzShowIcon></nz-alert>
+    </div>
+
+    <nz-table #basicTable [nzData]="employeesSignal()" [nzLoading]="loadingSignal()" [nzPageSize]="10">
+      <thead>
+        <tr>
+          <th>Employee No.</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Job Title</th>
+          <th>Department</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of basicTable.data">
+          <td>{{ data.employeeNumber }}</td>
+          <td>{{ data.firstName }} {{ data.lastName }}</td>
+          <td>{{ data.email }}</td>
+          <td>{{ data.jobDescription?.name || '-' }}</td>
+          <td>{{ data.organizationalUnit?.name || '-' }}</td>
+          <td>
+            <nz-tag [nzColor]="data.employmentStatus === 'ACTIVE' ? 'success' : 'error'">
+              {{ data.employmentStatus }}
+            </nz-tag>
+          </td>
+          <td>
+            <nz-space>
+              <a *nzSpaceItem nz-button nzType="default" nzSize="small" [routerLink]="['/app/employees/view', data.id]">
+                <span nz-icon nzType="eye" nzTheme="outline"></span>
+              </a>
+              <a *nzSpaceItem nz-button nzType="primary" nzSize="small" [routerLink]="['/app/employees/edit', data.id]">
+                <span nz-icon nzType="edit" nzTheme="outline"></span>
+              </a>
+            </nz-space>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+</div>

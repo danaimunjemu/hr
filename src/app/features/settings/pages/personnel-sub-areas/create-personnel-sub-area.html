@@ -1,0 +1,14 @@
+<nz-page-header nzTitle="New Personnel Sub Area" nzBackIcon></nz-page-header>
+<div class="p-6">
+  <nz-card>
+    <form nz-form [formGroup]="form" (ngSubmit)="submit()">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" nzRequired>Name</nz-form-label>
+        <nz-form-control [nzSpan]="24" nzErrorTip="Required">
+          <input nz-input formControlName="name" />
+        </nz-form-control>
+      </nz-form-item>
+      <div class="flex justify-end"><button nz-button nzType="primary" [nzLoading]="loading()">Create</button></div>
+    </form>
+  </nz-card>
+</div>

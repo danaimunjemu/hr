@@ -1,0 +1,23 @@
+<nz-page-header nzTitle="Work Schedule Rules" nzBackIcon>
+  <nz-page-header-extra>
+    <button nz-button nzType="primary" routerLink="new"><span nz-icon nzType="plus"></span>New</button>
+  </nz-page-header-extra>
+</nz-page-header>
+<div class="p-6">
+  <div *ngIf="error()" class="mb-4"><nz-alert nzType="error" [nzMessage]="error()" nzShowIcon></nz-alert></div>
+  <nz-table #table [nzData]="items()" [nzLoading]="loading()">
+    <thead><tr><th>ID</th><th>Name</th><th>Actions</th></tr></thead>
+    <tbody>
+      <tr *ngFor="let item of table.data">
+        <td>{{ item.id }}</td>
+        <td>{{ item.name }}</td>
+        <td>
+          <nz-space>
+            <a *nzSpaceItem nz-button nzSize="small" [routerLink]="['view', item.id]"><span nz-icon nzType="eye"></span></a>
+            <a *nzSpaceItem nz-button nzType="primary" nzSize="small" [routerLink]="['edit', item.id]"><span nz-icon nzType="edit"></span></a>
+          </nz-space>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>

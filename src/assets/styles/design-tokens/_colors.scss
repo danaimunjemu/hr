@@ -2,12 +2,13 @@
 // 🎨 COLOR PALETTE
 // =======================
 
-// Primary (base = a20)
-$clr-primary-a0:  #e9f7ef; // very light tint
-$clr-primary-a10: #8ee3af; // light
-$clr-primary-a20: #238a2e; // base (you requested)
-$clr-primary-a30: #3e8c62; // darker
-$clr-primary-a40: #256644; // darkest
+// Primary (base = #F04040)
+$clr-primary-a0:  #fdeaea; // very light tint
+$clr-primary-a10: #f78c8c; // light
+$clr-primary-a20: #f04040; // base
+$clr-primary-a30: #c83434; // darker
+$clr-primary-a40: #8f2626; // darkest
+
 
 // Secondary (base = a20)
 $clr-secondary-a0:  #fbffe8; // very light tint
@@ -52,3 +53,10 @@ $key-green: #003a40;
 $key-text: #7ea9aa;
 $key-li-selected: #1b5556;
 $key-li-selected-text:#aec2c2;
+
+$nerd-smart-gradient: linear-gradient(
+  135deg,
+  #FF2377 0%,
+  #FF3E5D 50%,
+  #FF4D4D 100%
+);

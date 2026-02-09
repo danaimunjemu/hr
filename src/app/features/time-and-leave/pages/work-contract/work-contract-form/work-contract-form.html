@@ -1,0 +1,109 @@
+<nz-page-header
+  [nzGhost]="false"
+  [nzBackIcon]="'arrow-left'"
+  (nzBack)="onCancel()"
+  [nzTitle]="isEditMode ? 'Edit Work Contract' : 'New Work Contract'"
+>
+</nz-page-header>
+
+<nz-card [nzLoading]="loading">
+  <form nz-form [formGroup]="form" (ngSubmit)="onSubmit()" nzLayout="vertical">
+    
+    <nz-form-item>
+      <nz-form-label [nzSpan]="24" nzRequired nzFor="name">Contract Name</nz-form-label>
+      <nz-form-control [nzSpan]="24" nzErrorTip="Please enter a contract name">
+        <input nz-input formControlName="name" id="name" placeholder="e.g. Standard Full-time" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24" nzRequired nzFor="normalHoursPerDay">Normal Hours / Day</nz-form-label>
+          <nz-form-control [nzSpan]="24" nzErrorTip="Must be >= 0">
+            <nz-input-number 
+              formControlName="normalHoursPerDay" 
+              [nzMin]="0" 
+              [nzStep]="0.5" 
+              style="width: 100%"
+            ></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24" nzRequired nzFor="normalHoursPerWeek">Normal Hours / Week</nz-form-label>
+          <nz-form-control [nzSpan]="24" nzErrorTip="Must be >= 0">
+            <nz-input-number 
+              formControlName="normalHoursPerWeek" 
+              [nzMin]="0" 
+              [nzStep]="0.5" 
+              style="width: 100%"
+            ></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <nz-divider nzText="Overtime Settings" nzOrientation="left"></nz-divider>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="24" nzRequired nzFor="overtimePolicy">Overtime Policy</nz-form-label>
+      <nz-form-control [nzSpan]="24" nzErrorTip="Please select a policy">
+        <nz-select formControlName="overtimePolicy" id="overtimePolicy">
+          <nz-option nzValue="DAILY" nzLabel="Daily Only"></nz-option>
+          <nz-option nzValue="WEEKLY" nzLabel="Weekly Only"></nz-option>
+          <nz-option nzValue="BOTH" nzLabel="Both Daily & Weekly"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24" nzRequired nzFor="overtimeDailyThreshold">Daily Overtime Threshold</nz-form-label>
+          <nz-form-control [nzSpan]="24" nzErrorTip="Must be >= 0">
+            <nz-input-number 
+              formControlName="overtimeDailyThreshold" 
+              [nzMin]="0" 
+              [nzStep]="0.5" 
+              style="width: 100%"
+            ></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24" nzRequired nzFor="overtimeWeeklyThreshold">Weekly Overtime Threshold</nz-form-label>
+          <nz-form-control [nzSpan]="24" nzErrorTip="Must be >= 0">
+            <nz-input-number 
+              formControlName="overtimeWeeklyThreshold" 
+              [nzMin]="0" 
+              [nzStep]="0.5" 
+              style="width: 100%"
+            ></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="24" nzRequired nzFor="roundingMinutes">Rounding (Minutes)</nz-form-label>
+      <nz-form-control [nzSpan]="24" nzErrorTip="Must be >= 0">
+        <nz-input-number 
+          formControlName="roundingMinutes" 
+          [nzMin]="0" 
+          [nzStep]="1" 
+          style="width: 100%"
+        ></nz-input-number>
+      </nz-form-control>
+    </nz-form-item>
+
+    <div class="flex justify-end gap-4 mt-6">
+      <button nz-button type="button" (click)="onCancel()">Cancel</button>
+      <button nz-button nzType="primary" [nzLoading]="submitting">
+        {{ isEditMode ? 'Update' : 'Create' }}
+      </button>
+    </div>
+  </form>
+</nz-card>

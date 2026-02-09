@@ -1,0 +1,49 @@
+<nz-page-header
+  [nzGhost]="false"
+  [nzBackIcon]="'arrow-left'"
+  (nzBack)="onBack()"
+  [nzTitle]="'Override Details'"
+  [nzSubtitle]="override?.employee?.firstName + ' ' + override?.employee?.lastName"
+>
+</nz-page-header>
+
+<nz-card [nzLoading]="loading">
+  <div *ngIf="override">
+    <nz-descriptions [nzColumn]="1" nzTitle="Override Information" nzBordered>
+      <nz-descriptions-item nzTitle="Employee">{{ override.employee?.firstName }} {{ override.employee?.lastName }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Rotation Type">
+        <nz-tag [nzColor]="override.rotationType === 'FIXED' ? 'blue' : 'purple'">
+          {{ override.rotationType }}
+        </nz-tag>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Effective From">{{ override.effectiveFrom | date }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Cycle Start Date">{{ override.cycleStartDate | date }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Cycle On Weeks">{{ override.cycleOnWeeks }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Cycle Off Weeks">{{ override.cycleOffWeeks }}</nz-descriptions-item>
+      
+      <nz-descriptions-item nzTitle="Shift Definition" *ngIf="override.rotationType === 'FIXED'">
+        {{ override.shiftDefinition?.name }} ({{ override.shiftDefinition?.startTime }} - {{ override.shiftDefinition?.endTime }})
+      </nz-descriptions-item>
+    </nz-descriptions>
+
+    <div *ngIf="override.rotationType === 'ROTATING'" class="mt-6">
+      <h4 class="text-base font-medium mb-4">Rotation Shifts</h4>
+      <nz-table #basicTable [nzData]="override.rotationShifts || []" [nzShowPagination]="false" nzSize="small">
+        <thead>
+          <tr>
+            <th>Sequence</th>
+            <th>Shift Name</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let shift of basicTable.data">
+            <td>#{{ shift.sequence }}</td>
+            <td>{{ shift.shiftDefinition.name }}</td>
+            <td>{{ shift.shiftDefinition.startTime }} - {{ shift.shiftDefinition.endTime }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</nz-card>

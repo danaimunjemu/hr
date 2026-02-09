@@ -1,0 +1,181 @@
+<div class="page-header">
+  <div>
+    <h1 class="text-2xl font-bold">Reports</h1>
+    <p class="text-gray-500">View and export reports for timesheets, payroll, and leave.</p>
+  </div>
+  <button nz-button nzType="primary" (click)="exportCsv()">
+    <span nz-icon nzType="download"></span>
+    Export CSV
+  </button>
+</div>
+
+<!-- Filters -->
+<nz-card class="filter-card">
+  <form nz-form [formGroup]="filterForm" (ngSubmit)="loadReport()">
+    <div class="filter-row">
+      <div class="filter-item">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24">Date Range</nz-form-label>
+          <nz-form-control [nzSpan]="24">
+            <nz-range-picker formControlName="dateRange" style="width: 100%"></nz-range-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div class="filter-item">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24">Employee</nz-form-label>
+          <nz-form-control [nzSpan]="24">
+            <nz-select formControlName="employeeId" nzShowSearch nzAllowClear nzPlaceHolder="Select employee">
+              <nz-option *ngFor="let emp of employees" [nzLabel]="emp.firstName + ' ' + emp.lastName" [nzValue]="emp.id"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div class="filter-item" *ngIf="activeTab === 2">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24">Leave Type</nz-form-label>
+          <nz-form-control [nzSpan]="24">
+            <nz-select formControlName="leaveTypeId" nzAllowClear nzPlaceHolder="Select leave type">
+              <nz-option *ngFor="let type of leaveTypes" [nzLabel]="type.name" [nzValue]="type.id"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+      <div class="filter-actions" style="margin-bottom: 24px; align-self: flex-end;">
+        <button nz-button nzType="primary" type="submit" [nzLoading]="loading">Filter</button>
+        <button nz-button nzType="default" type="button" (click)="resetFilters()">Reset</button>
+      </div>
+    </div>
+  </form>
+</nz-card>
+
+<nz-tabs [nzSelectedIndex]="activeTab" (nzSelectedIndexChange)="onTabChange($event)">
+  
+  <!-- Timesheets Tab -->
+  <nz-tab nzTitle="Timesheets">
+    <nz-table #timesheetTable [nzData]="timesheets" [nzLoading]="loading" [nzPageSize]="10">
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th>Date</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Break (m)</th>
+          <th>Total (h)</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of timesheetTable.data">
+          <td>{{ item.employeeName }}</td>
+          <td>{{ item.workDate | date }}</td>
+          <td>{{ item.startTime }}</td>
+          <td>{{ item.endTime }}</td>
+          <td>{{ item.breakMinutes }}</td>
+          <td>{{ item.totalHours | number:'1.2-2' }}</td>
+          <td><nz-tag>{{ item.status }}</nz-tag></td>
+        </tr>
+      </tbody>
+    </nz-table>
+
+    <div class="mt-8">
+      <h3 class="text-lg font-bold mb-4">Summary by Employee</h3>
+      <nz-table #summaryTable [nzData]="timesheetSummary" [nzLoading]="loading" [nzPageSize]="10" nzSize="small">
+        <thead>
+          <tr>
+            <th>Employee</th>
+            <th>Period</th>
+            <th>Total Hours</th>
+            <th>Overtime Hours</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of summaryTable.data">
+            <td>{{ item.employeeName }}</td>
+            <td>{{ item.periodStart | date }} - {{ item.periodEnd | date }}</td>
+            <td>{{ item.totalHours | number:'1.2-2' }}</td>
+            <td>{{ item.totalOvertimeHours | number:'1.2-2' }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </nz-tab>
+
+  <!-- Payroll Tab -->
+  <nz-tab nzTitle="Payroll">
+    <nz-table #payrollTable [nzData]="payroll" [nzLoading]="loading" [nzPageSize]="10">
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th>Period</th>
+          <th>Regular Hours</th>
+          <th>Overtime Hours</th>
+          <th>Estimated Gross Pay</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of payrollTable.data">
+          <td>{{ item.employeeName }}</td>
+          <td>{{ item.periodStart | date }} - {{ item.periodEnd | date }}</td>
+          <td>{{ item.regularHours | number:'1.2-2' }}</td>
+          <td>{{ item.overtimeHours | number:'1.2-2' }}</td>
+          <td>{{ item.grossPay | currency }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+
+  <!-- Leaves Tab -->
+  <nz-tab nzTitle="Leaves">
+    <div nz-row [nzGutter]="16">
+      <div nz-col [nzSpan]="16">
+        <h3 class="text-lg font-bold mb-4">Leave History</h3>
+        <nz-table #leavesTable [nzData]="leaves" [nzLoading]="loading" [nzPageSize]="10">
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Type</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Days</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of leavesTable.data">
+              <td>{{ item.employeeName }}</td>
+              <td>{{ item.leaveType }}</td>
+              <td>{{ item.startDate | date }}</td>
+              <td>{{ item.endDate | date }}</td>
+              <td>{{ item.daysTaken }}</td>
+              <td><nz-tag>{{ item.status }}</nz-tag></td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <h3 class="text-lg font-bold mb-4">Balances</h3>
+        <nz-table #balancesTable [nzData]="leaveBalances" [nzLoading]="loading" [nzPageSize]="10" nzSize="small">
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Type</th>
+              <th>Remaining</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of balancesTable.data">
+              <td>{{ item.employeeName }}</td>
+              <td>{{ item.leaveType }}</td>
+              <td>{{ item.remainingDays }}</td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+    </div>
+  </nz-tab>
+
+</nz-tabs>

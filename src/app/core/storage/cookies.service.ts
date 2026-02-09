@@ -23,6 +23,10 @@ export class CookiesService {
     return;
   }
 
+  deleteCookie(code: string) {
+    this.cookieService.delete(code);
+  }
+
   deleteCookies() {
     let cookies = document.cookie.split(";");
     for (var i = 0; i < cookies.length; i++) {

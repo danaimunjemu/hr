@@ -1,0 +1,86 @@
+<nz-page-header nzTitle="Health & Safety">
+  <nz-page-header-extra>
+    <button nz-button>Reports</button>
+    <button nz-button nzType="primary" nzDanger>Report Incident</button>
+  </nz-page-header-extra>
+</nz-page-header>
+
+<div class="page-content">
+  <!-- Loading & Error States -->
+  <div *ngIf="loading" class="loading-container">
+    <nz-spin nzSimple></nz-spin>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <nz-alert nzType="error" [nzMessage]="error" nzShowIcon></nz-alert>
+  </div>
+
+  <div *ngIf="!loading && !error">
+    <!-- Overview Stats -->
+    <div nz-row [nzGutter]="16" class="stats-row">
+      <div nz-col [nzSpan]="6">
+        <nz-card>
+          <nz-statistic [nzValue]="0" [nzTitle]="'Accidents This Month'" [nzPrefix]="prefixSafe"></nz-statistic>
+          <ng-template #prefixSafe><span nz-icon nzType="check-circle" nzTheme="twotone" [nzTwotoneColor]="'#52c41a'"></span></ng-template>
+        </nz-card>
+      </div>
+      <div nz-col [nzSpan]="6">
+        <nz-card>
+          <nz-statistic [nzValue]="3" [nzTitle]="'Near Misses'" [nzPrefix]="prefixWarn"></nz-statistic>
+          <ng-template #prefixWarn><span nz-icon nzType="warning" nzTheme="twotone" [nzTwotoneColor]="'#faad14'"></span></ng-template>
+        </nz-card>
+      </div>
+      <div nz-col [nzSpan]="6">
+        <nz-card>
+          <nz-statistic [nzValue]="'98%'" [nzTitle]="'Compliance Rate'"></nz-statistic>
+        </nz-card>
+      </div>
+      <div nz-col [nzSpan]="6">
+        <nz-card>
+          <nz-statistic [nzValue]="15" [nzTitle]="'Safety Audits Due'"></nz-statistic>
+        </nz-card>
+      </div>
+    </div>
+
+    <!-- Incident Log -->
+    <nz-card nzTitle="Incident Log" class="content-card">
+      <div class="table-actions">
+        <nz-input-group [nzSuffix]="suffixIconSearch" class="search-input">
+          <input type="text" nz-input placeholder="Search incidents..." />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <span nz-icon nzType="search"></span>
+        </ng-template>
+      </div>
+      
+      <nz-table #basicTable [nzData]="incidents">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Location</th>
+            <th>Reported By</th>
+            <th>Severity</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of basicTable.data">
+            <td>{{ data.date }}</td>
+            <td>{{ data.type }}</td>
+            <td>{{ data.location }}</td>
+            <td>{{ data.reporter }}</td>
+            <td>
+              <nz-tag [nzColor]="getSeverityColor(data.severity)">{{ data.severity }}</nz-tag>
+            </td>
+            <td>{{ data.status }}</td>
+            <td>
+              <button nz-button nzType="link" nzSize="small">Details</button>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </nz-card>
+  </div>
+</div>

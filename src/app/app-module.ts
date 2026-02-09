@@ -5,12 +5,13 @@ import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { provideNzI18n } from 'ng-zorro-antd/i18n';
 import { en_US } from 'ng-zorro-antd/i18n';
-import { registerLocaleData } from '@angular/common';
+import { HashLocationStrategy, LocationStrategy, registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
-import {provideHttpClient} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
 import {ModeToggleService} from './core/modules/mode/mode-toggle.service';
 import {MODE_STORAGE_SERVICE, ModeLocalStorageService} from './core/modules/mode/mode-storage.service';
 import {provideAnimations} from '@angular/platform-browser/animations';
+import { HttpTokenInterceptor } from './core/interceptors/http.interceptor';
 
 registerLocaleData(en);
 
@@ -26,12 +27,20 @@ registerLocaleData(en);
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideNzI18n(en_US),
-    // provideHttpClient(withInterceptors([AuthHttpInterceptor])),
-    provideHttpClient(),
+    provideHttpClient(withInterceptorsFromDi()),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpTokenInterceptor,
+      multi: true
+    },
     ModeToggleService,
     {
       provide: MODE_STORAGE_SERVICE,
       useClass: ModeLocalStorageService,
+    },
+    {
+      provide: LocationStrategy,
+      useClass: HashLocationStrategy
     }
   ],
   bootstrap: [App]

@@ -1,0 +1,62 @@
+<nz-page-header
+  [nzGhost]="false"
+  [nzBackIcon]="'arrow-left'"
+  (nzBack)="onBack()"
+  [nzTitle]="calendar?.name || 'Loading...'"
+  [nzSubtitle]="calendar?.description"
+>
+</nz-page-header>
+
+<div class="p-6">
+  <nz-card nzTitle="Holiday Dates" [nzExtra]="extraTemplate">
+    <nz-table #datesTable [nzData]="calendar?.holidayDates || []" [nzLoading]="loading">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let date of datesTable.data">
+          <td>{{ date.name }}</td>
+          <td>{{ date.date | date }}</td>
+        </tr>
+        <tr *ngIf="!calendar?.holidayDates?.length">
+            <td colspan="2" class="text-center text-gray-400">No dates added yet.</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+  <ng-template #extraTemplate>
+    <button nz-button nzType="primary" (click)="showAddDateModal()">
+      <span nz-icon nzType="plus"></span>
+      Add Date
+    </button>
+  </ng-template>
+</div>
+
+<nz-modal
+  [(nzVisible)]="isDateModalVisible"
+  nzTitle="Add Holiday Date"
+  (nzOnCancel)="handleDateCancel()"
+  (nzOnOk)="handleDateSubmit()"
+  [nzOkLoading]="isSubmittingDate"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="dateForm" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" nzRequired>Holiday Name</nz-form-label>
+        <nz-form-control [nzSpan]="24" nzErrorTip="Please enter a name">
+          <input nz-input formControlName="name" placeholder="e.g., New Year's Day" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" nzRequired>Date</nz-form-label>
+        <nz-form-control [nzSpan]="24" nzErrorTip="Please select a date">
+          <nz-date-picker formControlName="date" style="width: 100%"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

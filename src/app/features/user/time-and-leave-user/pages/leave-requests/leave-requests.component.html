@@ -1,0 +1,83 @@
+<div class="page-header">
+  <div>
+    <h1 class="text-2xl font-bold">My Leave Requests</h1>
+    <p class="text-gray-500">Submit and track your time off requests.</p>
+  </div>
+  <button nz-button nzType="primary" (click)="openAddModal()">
+    <span nz-icon nzType="plus"></span>
+    New Request
+  </button>
+</div>
+
+<nz-card>
+  <nz-table #basicTable [nzData]="requests" [nzLoading]="loading" [nzPageSize]="10">
+    <thead>
+      <tr>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Type</th>
+        <th>Reason</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{ data.startDate | date }}</td>
+        <td>{{ data.endDate | date }}</td>
+        <td>{{ data.leaveType?.name }}</td>
+        <td>{{ data.reason }}</td>
+        <td>
+          <nz-tag [nzColor]="getStatusColor(data.status)">{{ data.status }}</nz-tag>
+        </td>
+        <td>
+          <ng-container *ngIf="data.status === 'PENDING'">
+            <a (click)="openEditModal(data)">Edit</a>
+            <nz-divider nzType="vertical"></nz-divider>
+            <a nz-popconfirm nzPopconfirmTitle="Are you sure cancel this request?" (nzOnConfirm)="deleteRequest(data.id)" class="text-red-500">Cancel</a>
+          </ng-container>
+          <span *ngIf="data.status !== 'PENDING'" class="text-gray-400">
+            Read Only
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+
+<nz-modal
+  [(nzVisible)]="isVisible"
+  [nzTitle]="isEditMode ? 'Edit Leave Request' : 'New Leave Request'"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+  [nzOkLoading]="isSubmitting"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="form" nzLayout="vertical">
+      
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" nzRequired>Date Range</nz-form-label>
+        <nz-form-control [nzSpan]="24" nzErrorTip="Please select dates">
+          <nz-range-picker formControlName="dates" style="width: 100%"></nz-range-picker>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" nzRequired>Leave Type</nz-form-label>
+        <nz-form-control [nzSpan]="24" nzErrorTip="Please select leave type">
+          <nz-select formControlName="leaveType" nzPlaceHolder="Select leave type">
+            <nz-option *ngFor="let type of leaveTypes" [nzValue]="type.id" [nzLabel]="type.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" nzRequired>Reason</nz-form-label>
+        <nz-form-control [nzSpan]="24" nzErrorTip="Reason is required">
+          <textarea nz-input formControlName="reason" rows="3" placeholder="Reason for leave..."></textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+    </form>
+  </ng-container>
+</nz-modal>

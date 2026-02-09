@@ -1,0 +1,38 @@
+<nz-page-header
+  [nzGhost]="false"
+  [nzBackIcon]="'arrow-left'"
+  (nzBack)="onBack()"
+  [nzTitle]="'Exception Details'"
+  [nzSubtitle]="(exception?.exceptionDate | date) || ''"
+>
+</nz-page-header>
+
+<nz-card [nzLoading]="loading">
+  <div *ngIf="exception">
+    <nz-descriptions [nzColumn]="1" nzTitle="Exception Information" nzBordered>
+      <nz-descriptions-item nzTitle="Target Type">
+        {{ exception.employee ? 'Individual Employee' : 'Employee Group' }}
+      </nz-descriptions-item>
+      
+      <nz-descriptions-item nzTitle="Target" *ngIf="exception.employee">
+        {{ exception.employee.firstName }} {{ exception.employee.lastName }}
+      </nz-descriptions-item>
+      
+      <nz-descriptions-item nzTitle="Target" *ngIf="exception.employeeGroup">
+        {{ exception.employeeGroup.name }}
+      </nz-descriptions-item>
+
+      <nz-descriptions-item nzTitle="Exception Date">{{ exception.exceptionDate | date }}</nz-descriptions-item>
+      
+      <nz-descriptions-item nzTitle="Type">
+        <nz-tag [nzColor]="exception.offDay ? 'red' : 'blue'">
+          {{ exception.offDay ? 'Off Day' : 'Shift Override' }}
+        </nz-tag>
+      </nz-descriptions-item>
+
+      <nz-descriptions-item nzTitle="Override Shift" *ngIf="!exception.offDay && exception.shiftDefinition">
+        {{ exception.shiftDefinition.name }} ({{ exception.shiftDefinition.startTime }} - {{ exception.shiftDefinition.endTime }})
+      </nz-descriptions-item>
+    </nz-descriptions>
+  </div>
+</nz-card>

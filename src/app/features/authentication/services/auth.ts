@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import {CookiesService} from '../../../core/storage/cookies.service';
 import {Router} from '@angular/router';
+import { PortalService } from '../../../shared/services/portal';
 
 interface LoginRequest {
   username: string;
@@ -25,6 +26,7 @@ export class AuthService {
     private http: HttpClient,
     private cookiesService: CookiesService,
     private router: Router,
+    private portalService: PortalService
   ) {}
 
   login(username: string, password: string): Observable<LoginResponse> {
@@ -41,6 +43,10 @@ export class AuthService {
           this.cookiesService.addCookie('token', response.accessToken);
           this.cookiesService.addCookie('refresh_token', response.refreshToken);
           this.cookiesService.addCookie('user', response.user);
+          this.cookiesService.addCookie('portal', {
+            value: 'ASSESSMENT',
+            label: 'Assessment Portal'
+          });
         })
       );
   }

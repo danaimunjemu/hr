@@ -1,0 +1,11 @@
+<nz-page-header nzTitle="View Personnel Sub Area" nzBackIcon></nz-page-header>
+<div class="p-6">
+  <nz-card *ngIf="item()">
+    <nz-descriptions nzBordered>
+      <nz-descriptions-item nzTitle="ID">{{ item()?.id }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Name">{{ item()?.name }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Created On">{{ item()?.createdOn | date }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Updated On">{{ item()?.updatedOn | date }}</nz-descriptions-item>
+    </nz-descriptions>
+  </nz-card>
+</div>

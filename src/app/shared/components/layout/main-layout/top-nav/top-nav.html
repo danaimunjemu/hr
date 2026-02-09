@@ -1,16 +1,34 @@
 <header class="flex py-4 px-4 sm:px-10 min-h-[70px] tracking-wide relative z-50 top-nav-header">
   <div class="nerd-top-header flex flex-wrap items-center justify-between gap-5 w-full">
-    <div class="flex">
-      <span class="max-md:hidden"><nz-page-header nzTitle="Shop Name"></nz-page-header></span>
-      <div class="flex items-center">
-        <nz-tag class="gradient-tag" [nzBordered]="false">GROPU</nz-tag>
+    <div class="flex flex-col">
+
+      <div class="top-nav-user-greeting">
+        Hello {{ user?.employee.firstName }} {{ user?.employee.lastName }}
       </div>
+
+      <div class="top-nav-time-greeting">
+        {{ getGreeting() }}
+      </div>
+
     </div>
 
     <div class="esg-score flex grow justify-center">
       <div class="flex esg-score-container">
         <div class="flex items-center" style="font-size: 14px; font-weight: 500; font-family: Orbitron, sans-serif">
-          <span>ESG Score </span>
+          <!-- <span>ESG Score </span> -->
+        </div>
+        <div>
+          <nz-select
+  [(ngModel)]="selectedPortalValue"
+  (ngModelChange)="onPortalChangeByValue($event)"
+>
+  @for (portal of portals; track portal.value) {
+    <nz-option
+      [nzValue]="portal"
+      [nzLabel]="portal.label"
+    />
+  }
+</nz-select>
         </div>
 <!--        @if (!esgReport()) {-->
 <!--          <nz-space nzSize="middle" class="ml-3">-->
@@ -46,7 +64,7 @@
 <!--            </div>-->
 <!--          </div>-->
 <!--        }-->
-        Score Here
+        <!-- Score Here -->
       </div>
 
 
@@ -70,11 +88,11 @@
 
     <div class="flex max-lg:ml-auto space-x-4">
 
-      <div class="flex flex-row">
+      <div class="flex flex-row" style="margin-right: 0;">
 
         <div>
           <nerd-button
-            [label]="'Search'"
+            [label]="'Search anything'"
             [disableButton]="false"
             [loading]="false"
             (click)="showModal()"
@@ -116,6 +134,9 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.5 8.04c-.041-1.16-.178-1.885-.636-2.453c-.653-.812-1.77-1.066-4.004-1.576l-1-.228c-3.395-.774-5.092-1.161-6.226-.27C2.5 4.405 2.5 6.126 2.5 9.568v4.864c0 3.442 0 5.164 1.134 6.055s2.83.504 6.225-.27l1.002-.228c2.233-.51 3.35-.764 4.003-1.576c.458-.567.595-1.293.636-2.453m3-6.948s3 2.21 3 3s-3 3-3 3m2.5-3H8.5"/></svg>
           </span>
         </div>
+        
+
+        
 
       </div>
       <button id="toggleOpen" class="lg:hidden cursor-pointer">

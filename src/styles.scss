@@ -1003,3 +1003,7 @@ $line-height-lg: 1.75;
   font-family: "Montserrat", sans-serif;
   border-radius: 15px;
 }
+
+.ant-btn[disabled], .ant-btn[disabled]:hover, .ant-btn[disabled]:focus, .ant-btn[disabled]:active {
+  color: rgb(255 255 255 / 32%);
+}

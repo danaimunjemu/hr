@@ -1,0 +1,16 @@
+<nz-page-header
+  [nzGhost]="false"
+  [nzBackIcon]="'arrow-left'"
+  (nzBack)="onBack()"
+  [nzTitle]="'Employee Group Details'"
+  [nzSubtitle]="group?.name"
+>
+</nz-page-header>
+
+<nz-card [nzLoading]="loading">
+  <div *ngIf="group">
+    <nz-descriptions [nzColumn]="1" nzTitle="Group Information" nzBordered>
+      <nz-descriptions-item nzTitle="Name">{{ group.name }}</nz-descriptions-item>
+    </nz-descriptions>
+  </div>
+</nz-card>

@@ -4,6 +4,9 @@ import {APP_SEARCH_ITEMS} from '../../../../../core/constants/app-search.constan
 import Fuse from 'fuse.js';
 import {AuthService} from '../../../../../features/authentication/services/auth';
 import {toTitleCase} from '../../../../../core/utils/to-title-case.util';
+import { CookiesService } from '../../../../../core/storage/cookies.service';
+import { getGreeting } from '../../../../../core/utils/greeting.util';
+import { PortalService } from '../../../../services/portal';
 
 @Component({
   selector: 'nerd-top-nav',
@@ -21,11 +24,24 @@ export class TopNav implements OnInit{
 
   constructor(
     private router: Router,
-    private authService: AuthService
-  ) { }
+    private authService: AuthService,
+    private cookiesService: CookiesService,
+    private portalService: PortalService
+  ) {
+    this.selectedPortal = this.portalService.getPortal();
+    this.selectedPortalValue = this.portalService.getPortal()?.value;
+    console.log("This selected portal: ", this.selectedPortal);
+   }
 
   ngOnInit() {
-    // this.user = this.authService.user.value;
+    this.user = this.cookiesService.getCookie('user');
+    console.log("This user: ", this.user);
+  }
+
+  onPortalChangeByValue(value: string) {
+    console.log("This value: ", value);
+    const portal = this.portals.find(p => p.value === value);
+    if (portal) this.portalService.setPortal(portal);
   }
 
   terms() {
@@ -145,5 +161,17 @@ export class TopNav implements OnInit{
   }
 
   protected readonly toTitleCase = toTitleCase;
+
+  protected readonly getGreeting = getGreeting;
+
+  selectedPortal?: { value: string; label: string } | null;
+  selectedPortalValue?: string;
+
+  portals = [
+    { value: 'HR', label: 'HR Portal' },
+    { value: 'ADMINISTRATION', label: 'Administration Portal' },
+    { value: 'ASSESSMENT', label: 'Assessment Portal' },
+  ];
+
 
 }

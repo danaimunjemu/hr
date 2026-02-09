@@ -1,0 +1,33 @@
+<nz-page-header
+  [nzGhost]="false"
+  [nzBackIcon]="'arrow-left'"
+  (nzBack)="onBack()"
+  [nzTitle]="'Schedule Rule Details'"
+  [nzSubtitle]="rule?.name"
+>
+</nz-page-header>
+
+<nz-card [nzLoading]="loading">
+  <div *ngIf="rule">
+    <nz-descriptions [nzColumn]="1" nzTitle="Rule Information" nzBordered>
+      <nz-descriptions-item nzTitle="Name">{{ rule.name }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Start Time">{{ rule.startTime }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="End Time">{{ rule.endTime }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Break Minutes">{{ rule.breakMinutes }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Paid Hours">{{ rule.paidHours }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Is Night Shift">
+        <nz-tag [nzColor]="rule.nightShift ? 'blue' : 'default'">
+          {{ rule.nightShift ? 'Yes' : 'No' }}
+        </nz-tag>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Is Weekend Shift">
+        <nz-tag [nzColor]="rule.weekendShift ? 'blue' : 'default'">
+          {{ rule.weekendShift ? 'Yes' : 'No' }}
+        </nz-tag>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Weekend Rule">
+        {{ rule.weekendRule?.name || '-' }}
+      </nz-descriptions-item>
+    </nz-descriptions>
+  </div>
+</nz-card>

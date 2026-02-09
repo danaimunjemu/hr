@@ -1,0 +1,49 @@
+<nz-page-header
+  [nzGhost]="false"
+  [nzBackIcon]="'arrow-left'"
+  (nzBack)="onBack()"
+  [nzTitle]="'Group Schedule Rule Details'"
+  [nzSubtitle]="rule?.employeeGroup?.name"
+>
+</nz-page-header>
+
+<nz-card [nzLoading]="loading">
+  <div *ngIf="rule">
+    <nz-descriptions [nzColumn]="1" nzTitle="Rule Information" nzBordered>
+      <nz-descriptions-item nzTitle="Employee Group">{{ rule.employeeGroup?.name }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Rotation Type">
+        <nz-tag [nzColor]="rule.rotationType === 'FIXED' ? 'blue' : 'purple'">
+          {{ rule.rotationType }}
+        </nz-tag>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Effective From">{{ rule.effectiveFrom | date }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Cycle Start Date">{{ rule.cycleStartDate | date }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Cycle On Weeks">{{ rule.cycleOnWeeks }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Cycle Off Weeks">{{ rule.cycleOffWeeks }}</nz-descriptions-item>
+      
+      <nz-descriptions-item nzTitle="Shift Definition" *ngIf="rule.rotationType === 'FIXED'">
+        {{ rule.shiftDefinition?.name }} ({{ rule.shiftDefinition?.startTime }} - {{ rule.shiftDefinition?.endTime }})
+      </nz-descriptions-item>
+    </nz-descriptions>
+
+    <div *ngIf="rule.rotationType === 'ROTATING'" class="mt-6">
+      <h4 class="text-base font-medium mb-4">Rotation Shifts</h4>
+      <nz-table #basicTable [nzData]="rule.rotationShifts || []" [nzShowPagination]="false" nzSize="small">
+        <thead>
+          <tr>
+            <th>Sequence</th>
+            <th>Shift Name</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let shift of basicTable.data">
+            <td>#{{ shift.sequence }}</td>
+            <td>{{ shift.shiftDefinition.name }}</td>
+            <td>{{ shift.shiftDefinition.startTime }} - {{ shift.shiftDefinition.endTime }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</nz-card>

@@ -1,0 +1,49 @@
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-2xl font-bold">Schedule Exceptions</h1>
+    <p class="text-gray-500">Manage one-off schedule exceptions and off-days.</p>
+  </div>
+  <button nz-button nzType="primary" routerLink="new">
+    <span nz-icon nzType="plus"></span>
+    Add Exception
+  </button>
+</div>
+
+<nz-card>
+  <nz-table #basicTable [nzData]="exceptions" [nzLoading]="loading">
+    <thead>
+      <tr>
+        <th>Target</th>
+        <th>Date</th>
+        <th>Type</th>
+        <th>Details</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>
+          <span *ngIf="data.employeeGroup">Group: {{ data.employeeGroup.name }}</span>
+          <span *ngIf="data.employee">Employee: {{ data.employee.firstName }} {{ data.employee.lastName }}</span>
+        </td>
+        <td>{{ data.exceptionDate | date }}</td>
+        <td>
+          <nz-tag [nzColor]="data.offDay ? 'red' : 'blue'">
+            {{ data.offDay ? 'Off Day' : 'Shift Override' }}
+          </nz-tag>
+        </td>
+        <td>
+          <span *ngIf="!data.offDay && data.shiftDefinition">
+            {{ data.shiftDefinition.name }} ({{ data.shiftDefinition.startTime }} - {{ data.shiftDefinition.endTime }})
+          </span>
+          <span *ngIf="data.offDay" class="text-gray-400">N/A</span>
+        </td>
+        <td>
+          <a class="action-btn" [routerLink]="['view', data.id]">View</a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <a [routerLink]="['edit', data.id]">Edit</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>

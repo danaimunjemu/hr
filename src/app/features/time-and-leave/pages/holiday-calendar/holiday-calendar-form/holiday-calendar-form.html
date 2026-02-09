@@ -1,0 +1,32 @@
+<nz-page-header
+  [nzGhost]="false"
+  [nzBackIcon]="'arrow-left'"
+  (nzBack)="onCancel()"
+  [nzTitle]="isEditMode ? 'Edit Holiday Calendar' : 'New Holiday Calendar'"
+>
+</nz-page-header>
+
+<nz-card [nzLoading]="loading">
+  <form nz-form [formGroup]="form" (ngSubmit)="onSubmit()" nzLayout="vertical">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="24" nzRequired nzFor="name">Calendar Name</nz-form-label>
+      <nz-form-control [nzSpan]="24" nzErrorTip="Please enter a name">
+        <input nz-input formControlName="name" placeholder="e.g., Public Holidays 2026" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="24" nzFor="description">Description</nz-form-label>
+      <nz-form-control [nzSpan]="24">
+        <textarea nz-input formControlName="description" rows="3" placeholder="Optional description"></textarea>
+      </nz-form-control>
+    </nz-form-item>
+
+    <div class="flex justify-end gap-4 mt-6">
+      <button nz-button type="button" (click)="onCancel()">Cancel</button>
+      <button nz-button nzType="primary" [nzLoading]="submitting">
+        {{ isEditMode ? 'Update' : 'Create' }}
+      </button>
+    </div>
+  </form>
+</nz-card>

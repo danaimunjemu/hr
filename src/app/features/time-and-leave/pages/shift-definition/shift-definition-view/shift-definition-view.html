@@ -1,0 +1,33 @@
+<nz-page-header
+  [nzGhost]="false"
+  [nzBackIcon]="'arrow-left'"
+  (nzBack)="onBack()"
+  [nzTitle]="'Shift Definition Details'"
+  [nzSubtitle]="shift?.name"
+>
+</nz-page-header>
+
+<nz-card [nzLoading]="loading">
+  <div *ngIf="shift">
+    <nz-descriptions [nzColumn]="1" nzTitle="Shift Information" nzBordered>
+      <nz-descriptions-item nzTitle="Name">{{ shift.name }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Code">
+        <nz-tag [nzColor]="'blue'">{{ shift.code }}</nz-tag>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Start Time">{{ shift.startTime }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="End Time">{{ shift.endTime }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Break Minutes">{{ shift.breakMinutes }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Paid Hours">{{ shift.paidHours }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Is Night Shift">
+        <nz-tag [nzColor]="shift.nightShift ? 'blue' : 'default'">
+          {{ shift.nightShift ? 'Yes' : 'No' }}
+        </nz-tag>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Is Weekend Shift">
+        <nz-tag [nzColor]="shift.weekendShift ? 'blue' : 'default'">
+          {{ shift.weekendShift ? 'Yes' : 'No' }}
+        </nz-tag>
+      </nz-descriptions-item>
+    </nz-descriptions>
+  </div>
+</nz-card>

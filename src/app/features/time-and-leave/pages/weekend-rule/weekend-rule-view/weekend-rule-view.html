@@ -1,0 +1,26 @@
+<nz-page-header
+  [nzGhost]="false"
+  [nzBackIcon]="'arrow-left'"
+  (nzBack)="onBack()"
+  [nzTitle]="'Weekend Rule Details'"
+  [nzSubtitle]="rule?.name"
+>
+</nz-page-header>
+
+<nz-card [nzLoading]="loading">
+  <div *ngIf="rule">
+    <nz-descriptions [nzColumn]="1" nzTitle="Rule Information" nzBordered>
+      <nz-descriptions-item nzTitle="Name">{{ rule.name }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Saturday">
+        <nz-tag [nzColor]="rule.saturday ? 'success' : 'error'">
+          {{ rule.saturday ? 'Weekend' : 'Working Day' }}
+        </nz-tag>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Sunday">
+        <nz-tag [nzColor]="rule.sunday ? 'success' : 'error'">
+          {{ rule.sunday ? 'Weekend' : 'Working Day' }}
+        </nz-tag>
+      </nz-descriptions-item>
+    </nz-descriptions>
+  </div>
+</nz-card>

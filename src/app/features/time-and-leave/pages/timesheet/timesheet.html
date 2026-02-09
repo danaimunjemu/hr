@@ -1,0 +1,105 @@
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-2xl font-bold">Timesheets</h1>
+    <p class="text-gray-500">Manage and track employee time entries.</p>
+  </div>
+  <button nz-button nzType="primary" (click)="openAddModal()">
+    <span nz-icon nzType="plus"></span>
+    Add Entry
+  </button>
+</div>
+
+<nz-card>
+  <nz-table #basicTable [nzData]="entries" [nzLoading]="loading">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Break (min)</th>
+        <th>Status</th>
+        <th>Notes</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{ data.workDate | date }}</td>
+        <td>{{ data.startTime }}</td>
+        <td>{{ data.endTime }}</td>
+        <td>{{ data.breakMinutes || 0 }}</td>
+        <td>
+          <nz-tag [nzColor]="getStatusColor(data.status)">{{ data.status }}</nz-tag>
+        </td>
+        <td>{{ data.notes }}</td>
+        <td>
+          <ng-container *ngIf="data.status === 'DRAFT' || data.status === 'REJECTED'">
+            <a (click)="openEditModal(data)">Edit</a>
+            <nz-divider nzType="vertical"></nz-divider>
+            <a (click)="submitEntry(data.id)">Submit</a>
+          </ng-container>
+          
+          <ng-container *ngIf="data.status === 'SUBMITTED'">
+            <a (click)="approveEntry(data.id)">Approve</a>
+            <nz-divider nzType="vertical"></nz-divider>
+            <a (click)="rejectEntry(data.id)">Reject</a>
+          </ng-container>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+
+<nz-modal
+  [(nzVisible)]="isVisible"
+  [nzTitle]="isEditMode ? 'Edit Timesheet Entry' : 'New Timesheet Entry'"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+  [nzOkLoading]="isSubmitting"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="form" nzLayout="vertical">
+      
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" nzRequired>Work Date</nz-form-label>
+        <nz-form-control [nzSpan]="24" nzErrorTip="Please select a date">
+          <nz-date-picker formControlName="workDate" style="width: 100%"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="24" nzRequired>Start Time</nz-form-label>
+            <nz-form-control [nzSpan]="24" nzErrorTip="Required">
+              <nz-time-picker formControlName="startTime" nzFormat="HH:mm" style="width: 100%"></nz-time-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="24" nzRequired>End Time</nz-form-label>
+            <nz-form-control [nzSpan]="24" nzErrorTip="Required">
+              <nz-time-picker formControlName="endTime" nzFormat="HH:mm" style="width: 100%"></nz-time-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24">Break (Minutes)</nz-form-label>
+        <nz-form-control [nzSpan]="24">
+          <nz-input-number formControlName="breakMinutes" [nzMin]="0" [nzStep]="15" style="width: 100%"></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24">Notes</nz-form-label>
+        <nz-form-control [nzSpan]="24">
+          <textarea nz-input formControlName="notes" rows="3" placeholder="Description of work done..."></textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+    </form>
+  </ng-container>
+</nz-modal>

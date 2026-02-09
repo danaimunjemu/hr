@@ -1,0 +1,81 @@
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-2xl font-bold">Employee Assignments</h1>
+    <p class="text-gray-500">Assign work contracts, schedules, and groups to employees.</p>
+  </div>
+</div>
+
+<nz-card>
+  <nz-table #basicTable [nzData]="employees" [nzLoading]="loading">
+    <thead>
+      <tr>
+        <th>Employee</th>
+        <th>Work Contract</th>
+        <th>Schedule Rule</th>
+        <th>Group</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{ data.firstName }} {{ data.lastName }}</td>
+        <td>
+          <span *ngIf="data.workContract">{{ data.workContract.name }}</span>
+          <span *ngIf="!data.workContract" class="text-gray-400">Unassigned</span>
+        </td>
+        <td>
+          <span *ngIf="data.workScheduleRule">{{ data.workScheduleRule.name }}</span>
+          <span *ngIf="!data.workScheduleRule" class="text-gray-400">Unassigned</span>
+        </td>
+        <td>
+          <span *ngIf="data.group">{{ data.group.name }}</span>
+          <span *ngIf="!data.group" class="text-gray-400">Unassigned</span>
+        </td>
+        <td>
+          <a (click)="openAssignmentModal(data)">Assign Settings</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+
+<nz-modal
+  [(nzVisible)]="isVisible"
+  [nzTitle]="'Assign Settings for ' + (selectedEmployee?.firstName || '') + ' ' + (selectedEmployee?.lastName || '')"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+  [nzOkLoading]="isSubmitting"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="assignmentForm" nzLayout="vertical">
+      
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" nzFor="workContract">Work Contract</nz-form-label>
+        <nz-form-control [nzSpan]="24">
+          <nz-select formControlName="workContract" [compareWith]="compareFn" nzPlaceHolder="Select work contract" nzAllowClear>
+            <nz-option *ngFor="let contract of workContracts" [nzValue]="contract" [nzLabel]="contract.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" nzFor="workScheduleRule">Work Schedule Rule</nz-form-label>
+        <nz-form-control [nzSpan]="24">
+          <nz-select formControlName="workScheduleRule" [compareWith]="compareFn" nzPlaceHolder="Select schedule rule" nzAllowClear>
+            <nz-option *ngFor="let rule of workScheduleRules" [nzValue]="rule" [nzLabel]="rule.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" nzFor="group">Employee Group</nz-form-label>
+        <nz-form-control [nzSpan]="24">
+          <nz-select formControlName="group" [compareWith]="compareFn" nzPlaceHolder="Select employee group" nzAllowClear>
+            <nz-option *ngFor="let group of employeeGroups" [nzValue]="group" [nzLabel]="group.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+    </form>
+  </ng-container>
+</nz-modal>

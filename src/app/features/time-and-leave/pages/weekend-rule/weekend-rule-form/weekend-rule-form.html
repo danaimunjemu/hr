@@ -1,0 +1,45 @@
+<nz-page-header
+  [nzGhost]="false"
+  [nzBackIcon]="'arrow-left'"
+  (nzBack)="onCancel()"
+  [nzTitle]="isEditMode ? 'Edit Weekend Rule' : 'New Weekend Rule'"
+>
+</nz-page-header>
+
+<nz-card [nzLoading]="loading">
+  <form nz-form [formGroup]="form" (ngSubmit)="onSubmit()" nzLayout="vertical">
+    
+    <nz-form-item>
+      <nz-form-label [nzSpan]="24" nzRequired nzFor="name">Rule Name</nz-form-label>
+      <nz-form-control [nzSpan]="24" nzErrorTip="Please enter a rule name">
+        <input nz-input formControlName="name" id="name" placeholder="e.g. Standard Weekend" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24" nzFor="saturday">Saturday</nz-form-label>
+          <nz-form-control [nzSpan]="24">
+            <label nz-checkbox formControlName="saturday">Is Weekend</label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24" nzFor="sunday">Sunday</nz-form-label>
+          <nz-form-control [nzSpan]="24">
+            <label nz-checkbox formControlName="sunday">Is Weekend</label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-4 mt-6">
+      <button nz-button type="button" (click)="onCancel()">Cancel</button>
+      <button nz-button nzType="primary" [nzLoading]="submitting">
+        {{ isEditMode ? 'Update' : 'Create' }}
+      </button>
+    </div>
+  </form>
+</nz-card>

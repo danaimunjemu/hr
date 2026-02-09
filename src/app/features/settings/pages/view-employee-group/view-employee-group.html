@@ -1,0 +1,25 @@
+<nz-page-header nzTitle="Employee Group Details">
+  <nz-breadcrumb nz-page-header-breadcrumb>
+    <nz-breadcrumb-item><a routerLink="/app/settings/employee-groups">Employee Groups</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item>View</nz-breadcrumb-item>
+  </nz-breadcrumb>
+</nz-page-header>
+
+<div class="p-6">
+  <div *ngIf="loading()" class="flex justify-center items-center h-64">
+    <nz-spin nzSize="large"></nz-spin>
+  </div>
+
+  <div *ngIf="error()" class="mb-4">
+    <nz-alert nzType="error" [nzMessage]="error()" nzShowIcon></nz-alert>
+  </div>
+
+  <nz-card *ngIf="employeeGroup() && !loading()">
+    <nz-descriptions nzTitle="Employee Group Information" nzBordered [nzColumn]="2">
+      <nz-descriptions-item nzTitle="ID">{{ employeeGroup()?.id }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Name">{{ employeeGroup()?.name }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Created On">{{ employeeGroup()?.createdOn | date }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Updated On">{{ employeeGroup()?.updatedOn | date }}</nz-descriptions-item>
+    </nz-descriptions>
+  </nz-card>
+</div>

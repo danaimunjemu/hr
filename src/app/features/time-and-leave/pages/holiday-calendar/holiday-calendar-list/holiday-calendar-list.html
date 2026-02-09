@@ -1,0 +1,33 @@
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-2xl font-bold">Holiday Calendars</h1>
+    <p class="text-gray-500">Manage holiday calendars and dates.</p>
+  </div>
+  <button nz-button nzType="primary" routerLink="new">
+    <span nz-icon nzType="plus"></span>
+    Add Calendar
+  </button>
+</div>
+
+<nz-card>
+  <nz-table #basicTable [nzData]="calendars" [nzLoading]="loading">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{ data.name }}</td>
+        <td>{{ data.description }}</td>
+        <td>
+          <a class="action-btn" [routerLink]="['view', data.id]">View & Dates</a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <a [routerLink]="['edit', data.id]">Edit</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>

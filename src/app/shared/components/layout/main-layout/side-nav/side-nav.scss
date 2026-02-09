@@ -40,10 +40,7 @@ nz-breadcrumb {
 }
 
 nz-sider {
-  margin: 15px;
-  height: calc(100vh - 30px);
-  max-height: calc(100vh - 30px);
-  border-radius: 30px;
+  height: 100vh;
   background: var(--side-nav);
   box-shadow: 0 0 25px 0 rgba(0, 0, 0, .05);
 }
@@ -117,3 +114,15 @@ nz-sider {
   justify-content: center;
 }
 
+.logo-container {
+  font-size: 20px;
+}
+
+.logo-thin {
+  color: rgb(44, 62, 80);
+}
+
+.logo-bold {
+  color: #f04040;
+  font-weight: 800;
+}
