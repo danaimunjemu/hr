@@ -34,18 +34,7 @@ import { Component } from '@angular/core';
               <span>Medical Surveillance</span>
             </a>
           </li>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="inductions">
-              <span nz-icon nzType="idcard"></span>
-              <span>Inductions</span>
-            </a>
-          </li>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="corrective-actions">
-              <span nz-icon nzType="check-square"></span>
-              <span>Corrective Actions</span>
-            </a>
-          </li>
+          
         </ul>
       </nz-sider>
       <nz-layout>
@@ -63,3 +52,17 @@ import { Component } from '@angular/core';
   `]
 })
 export class OhsShellComponent {}
+
+
+// <li nz-menu-item nzMatchRouter>
+//             <a routerLink="inductions">
+//               <span nz-icon nzType="idcard"></span>
+//               <span>Inductions</span>
+//             </a>
+//           </li>
+//           <li nz-menu-item nzMatchRouter>
+//             <a routerLink="corrective-actions">
+//               <span nz-icon nzType="check-square"></span>
+//               <span>Corrective Actions</span>
+//             </a>
+//           </li>

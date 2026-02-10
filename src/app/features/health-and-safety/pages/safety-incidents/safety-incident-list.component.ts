@@ -1,18 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { OhsService } from '../../services/ohs.service';
 import { SafetyIncident } from '../../models/ohs.model';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-safety-incident-list',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="page-header">
-      <h1 class="text-2xl font-bold mb-4">Safety Incidents</h1>
+    <div class="page-header flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-bold">Safety Incidents</h1>
       <button nz-button nzType="primary" routerLink="create">Report Incident</button>
     </div>
 
-    <nz-table #table [nzData]="incidents" [nzLoading]="loading">
+    <nz-table #table [nzData]="incidents()" [nzLoading]="loading()">
       <thead>
         <tr>
           <th>Date</th>
@@ -25,15 +27,15 @@ import { NzMessageService } from 'ng-zorro-antd/message';
       </thead>
       <tbody>
         <tr *ngFor="let data of table.data">
-          <td>{{ data.incidentDate | date }}</td>
-          <td>{{ data.description }}</td>
+          <td>{{ data.incidentDateTime | date }}</td>
+          <td>{{ data.injuryDetails }}</td>
           <td>
             <nz-tag [nzColor]="getSeverityColor(data.severity)">{{ data.severity }}</nz-tag>
           </td>
           <td>
-            <nz-tag [nzColor]="getStatusColor(data.status)">{{ data.status }}</nz-tag>
+            <nz-tag [nzColor]="getStatusColor(data.investigationStatus)">{{ data.investigationStatus }}</nz-tag>
           </td>
-          <td>{{ data.reportedBy }}</td>
+          <td>{{ data.reportedBy.firstName }} {{ data.reportedBy.lastName }}</td>
           <td>
             <a [routerLink]="['view', data.id]">View</a>
             <nz-divider nzType="vertical" *ngIf="data.status === 'DRAFT'"></nz-divider>
@@ -45,53 +47,63 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `
 })
 export class SafetyIncidentListComponent implements OnInit {
-  incidents: SafetyIncident[] = [];
-  loading = false;
+  incidents = signal<SafetyIncident[]>([]);
+  loading = signal(false);
 
-  constructor(private ohsService: OhsService, private message: NzMessageService) {}
+  constructor(
+    private ohsService: OhsService, 
+    private message: NzMessageService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.loadData();
   }
 
   loadData() {
-    this.loading = true;
-    this.ohsService.getSafetyIncidents().subscribe({
-      next: (data) => {
-        this.incidents = data;
-        this.loading = false;
-      },
-      error: () => {
-        this.message.error('Failed to load incidents');
-        this.loading = false;
-      }
-    });
+    this.loading.set(true);
+    this.ohsService.getSafetyIncidents()
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (data) => {
+          this.incidents.set(data);
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.message.error('Failed to load incidents');
+        }
+      });
   }
 
   submit(incident: SafetyIncident) {
-    this.ohsService.submitSafetyIncident(incident).subscribe({
-      next: () => {
-        this.message.success('Incident submitted');
-        this.loadData();
-      },
-      error: () => this.message.error('Failed to submit incident')
-    });
+    this.loading.set(true);
+    this.ohsService.submitSafetyIncident(incident)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: () => {
+          this.message.success('Incident submitted');
+          this.loadData();
+        },
+        error: () => this.message.error('Failed to submit incident')
+      });
   }
 
   getSeverityColor(severity: string): string {
     switch (severity) {
-      case 'CRITICAL': return 'red';
-      case 'HIGH': return 'orange';
-      case 'MEDIUM': return 'gold';
-      default: return 'green';
+      case 'CATASTROPHIC': return 'red';
+      case 'FATALITY': return 'orange';
+      case 'MAJOR': return 'gold';
+      case 'SERIOUS': return 'blue';
+      case 'MODERATE': return 'cyan';
+      default: return 'green'; // MINOR
     }
   }
 
   getStatusColor(status: string): string {
     switch (status) {
-      case 'APPROVED': return 'green';
-      case 'REJECTED': return 'red';
-      case 'SUBMITTED': return 'blue';
+      case 'APPROVED': return 'success';
+      case 'REJECTED': return 'error';
+      case 'SUBMITTED': return 'processing';
       default: return 'default';
     }
   }

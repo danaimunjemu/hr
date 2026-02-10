@@ -1,156 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:host {
+  display: block;
+  font-family: 'Poppins', sans-serif;
+}
+
 .dashboard-container {
   padding: 24px;
-  background-color: #f5f7fa;
-  min-height: 100%;
+  background-color: #f8fafc; // Slightly lighter/cleaner background
+  min-height: 100vh;
 }
 
-.dashboard-section {
-  margin-bottom: 32px;
-
-  &__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-
-    h2 {
-      font-size: 20px;
-      font-weight: 600;
-      color: #1f2937;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-
-      i, span[nz-icon] {
-        color: #4b5563;
-      }
-    }
-  }
+h1, h2, h3, h4, h5, h6, .ant-card-head-title, .ant-statistic-title, .ant-statistic-content {
+  font-family: 'Poppins', sans-serif;
 }
 
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
-
-  @media (max-width: 1200px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.kpi-card {
-  background: #ffffff;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  border-left: 4px solid transparent;
-  transition: transform 0.2s, box-shadow 0.2s;
+// Custom Card Styling
+.custom-card {
+  box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  border: none; // Remove default border if shadow is used
+  height: 100%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.08);
   }
 
-  &--neutral { border-left-color: #9ca3af; }
-  &--info { border-left-color: #3b82f6; }
-  &--success { border-left-color: #10b981; }
-  &--warning { border-left-color: #f59e0b; }
-  &--critical { border-left-color: #ef4444; }
-
-  &__label {
-    font-size: 14px;
-    color: #6b7280;
-    font-weight: 500;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  &__value {
-    font-size: 28px;
-    font-weight: 700;
-    color: #111827;
-    line-height: 1.2;
-  }
-
-  &__subtitle {
-    font-size: 12px;
-    color: #9ca3af;
-    margin-top: 4px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-}
-
-.charts-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
-
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.chart-card {
-  background: #ffffff;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  height: 400px;
-  display: flex;
-  flex-direction: column;
-
-  &__header {
-    margin-bottom: 20px;
-    h3 {
-      font-size: 16px;
-      font-weight: 600;
-      color: #374151;
-      margin: 0;
-    }
-  }
-
-  &__body {
-    flex: 1;
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-  }
-}
-
-.loading-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 400px;
-  flex-direction: column;
-  gap: 16px;
-  color: #6b7280;
-}
-
-.error-state {
-  text-align: center;
-  padding: 48px;
-  background: #fee2e2;
-  border-radius: 8px;
-  color: #b91c1c;
-  
-  h3 {
-    margin-bottom: 8px;
+  ::ng-deep .ant-card-head {
+    border-bottom: 1px solid #f0f0f0;
     font-weight: 600;
   }
 }
 
-// Utility for charts container
+// Top cards can also use the style or remain default
+.top-card {
+  @extend .custom-card;
+  margin-bottom: 0; // Reset if needed
+}
+
 .chart-container {
   width: 100%;
-  height: 100%;
+  height: 300px;
+  position: relative;
+}
+
+.mb-6 {
+  margin-bottom: 24px;
+}
+
+.text-gray-500 {
+  color: #64748b;
+}
+
+.text-gray-800 {
+  color: #1e293b;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+// Table styling tweaks
+::ng-deep .ant-table-small {
+  font-size: 13px;
+}
+
+::ng-deep .ant-tag {
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .chart-container {
+    height: 250px;
+  }
+  
+  .dashboard-container {
+    padding: 16px;
+  }
 }

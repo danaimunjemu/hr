@@ -6,7 +6,6 @@ import { SharedModule } from '../../shared/shared-module';
 import { AntDesignModules } from '../../core/modules/antdesign.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DashboardComponent } from './pages/dashboard/dashboard';
-import { DashboardService } from './services/dashboard.service';
 
 @NgModule({
   declarations: [
@@ -19,9 +18,6 @@ import { DashboardService } from './services/dashboard.service';
     AntDesignModules,
     ReactiveFormsModule,
     FormsModule
-  ],
-  providers: [
-    DashboardService
   ]
 })
 export class DashboardModule { }

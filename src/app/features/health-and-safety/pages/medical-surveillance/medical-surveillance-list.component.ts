@@ -1,22 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { OhsService } from '../../services/ohs.service';
 import { MedicalSurveillance } from '../../models/ohs.model';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-medical-surveillance-list',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="page-header">
-      <h1 class="text-2xl font-bold mb-4">Medical Surveillance</h1>
+    <div class="page-header flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-bold">Medical Surveillance</h1>
       <button nz-button nzType="primary" routerLink="create">New Record</button>
     </div>
 
-    <nz-table #table [nzData]="records" [nzLoading]="loading">
+    <nz-table #table [nzData]="records()" [nzLoading]="loading()">
       <thead>
         <tr>
-          <th>Date</th>
           <th>Employee ID</th>
+          <th>Checkup Date</th>
           <th>Type</th>
           <th>Result</th>
           <th>Status</th>
@@ -25,10 +27,12 @@ import { NzMessageService } from 'ng-zorro-antd/message';
       </thead>
       <tbody>
         <tr *ngFor="let data of table.data">
-          <td>{{ data.checkupDate | date }}</td>
           <td>{{ data.employeeId }}</td>
+          <td>{{ data.checkupDate | date }}</td>
           <td>{{ data.type }}</td>
-          <td>{{ data.result }}</td>
+          <td>
+            <nz-tag [nzColor]="data.result === 'Unfit' ? 'red' : 'green'">{{ data.result }}</nz-tag>
+          </td>
           <td>
             <nz-tag [nzColor]="getStatusColor(data.status)">{{ data.status }}</nz-tag>
           </td>
@@ -43,44 +47,50 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `
 })
 export class MedicalSurveillanceListComponent implements OnInit {
-  records: MedicalSurveillance[] = [];
-  loading = false;
+  records = signal<MedicalSurveillance[]>([]);
+  loading = signal(false);
 
-  constructor(private ohsService: OhsService, private message: NzMessageService) {}
+  constructor(
+    private ohsService: OhsService, 
+    private message: NzMessageService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.loadData();
   }
 
   loadData() {
-    this.loading = true;
-    this.ohsService.getMedicalSurveillances().subscribe({
-      next: (data) => {
-        this.records = data;
-        this.loading = false;
-      },
-      error: () => {
-        this.message.error('Failed to load records');
-        this.loading = false;
-      }
-    });
+    this.loading.set(true);
+    this.ohsService.getMedicalSurveillances()
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (data) => {
+          this.records.set(data);
+          this.cdr.markForCheck();
+        },
+        error: () => this.message.error('Failed to load records')
+      });
   }
 
   submit(record: MedicalSurveillance) {
-    this.ohsService.submitMedicalSurveillance(record).subscribe({
-      next: () => {
-        this.message.success('Record submitted');
-        this.loadData();
-      },
-      error: () => this.message.error('Failed to submit record')
-    });
+    this.loading.set(true);
+    this.ohsService.submitMedicalSurveillance(record)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: () => {
+          this.message.success('Record submitted');
+          this.loadData();
+        },
+        error: () => this.message.error('Failed to submit record')
+      });
   }
 
   getStatusColor(status: string): string {
     switch (status) {
-      case 'APPROVED': return 'green';
-      case 'REJECTED': return 'red';
-      case 'SUBMITTED': return 'blue';
+      case 'APPROVED': return 'success';
+      case 'REJECTED': return 'error';
+      case 'SUBMITTED': return 'processing';
       default: return 'default';
     }
   }

@@ -1,23 +1,26 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { OhsService } from '../../services/ohs.service';
 import { Induction } from '../../models/ohs.model';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-induction-list',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="page-header">
-      <h1 class="text-2xl font-bold mb-4">Inductions</h1>
+    <div class="page-header flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-bold">Inductions</h1>
       <button nz-button nzType="primary" routerLink="create">New Induction</button>
     </div>
 
-    <nz-table #table [nzData]="inductions" [nzLoading]="loading">
+    <nz-table #table [nzData]="inductions()" [nzLoading]="loading()">
       <thead>
         <tr>
           <th>Title</th>
           <th>Valid From</th>
           <th>Valid Until</th>
+          <th>Status</th>
           <th>Required Roles</th>
           <th>Actions</th>
         </tr>
@@ -27,6 +30,9 @@ import { NzMessageService } from 'ng-zorro-antd/message';
           <td>{{ data.title }}</td>
           <td>{{ data.validFrom | date }}</td>
           <td>{{ data.validUntil | date }}</td>
+          <td>
+            <nz-tag [nzColor]="getStatusColor(data.status)">{{ data.status || 'SCHEDULED' }}</nz-tag>
+          </td>
           <td>{{ data.requiredForRoles.join(', ') }}</td>
           <td>
             <a [routerLink]="['edit', data.id]">Edit</a>
@@ -39,36 +45,53 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `
 })
 export class InductionListComponent implements OnInit {
-  inductions: Induction[] = [];
-  loading = false;
+  inductions = signal<Induction[]>([]);
+  loading = signal(false);
 
-  constructor(private ohsService: OhsService, private message: NzMessageService) {}
+  constructor(
+    private ohsService: OhsService, 
+    private message: NzMessageService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.loadData();
   }
 
   loadData() {
-    this.loading = true;
-    this.ohsService.getInductions().subscribe({
-      next: (data) => {
-        this.inductions = data;
-        this.loading = false;
-      },
-      error: () => {
-        this.message.error('Failed to load inductions');
-        this.loading = false;
-      }
-    });
+    this.loading.set(true);
+    this.ohsService.getInductions()
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (data) => {
+          this.inductions.set(data);
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.message.error('Failed to load inductions');
+        }
+      });
   }
 
   delete(id: string) {
-    this.ohsService.deleteInduction(id).subscribe({
-      next: () => {
-        this.message.success('Induction deleted');
-        this.loadData();
-      },
-      error: () => this.message.error('Failed to delete induction')
-    });
+    this.loading.set(true);
+    this.ohsService.deleteInduction(id)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: () => {
+          this.message.success('Induction deleted');
+          this.loadData();
+        },
+        error: () => this.message.error('Failed to delete induction')
+      });
+  }
+
+  getStatusColor(status?: string): string {
+    switch (status) {
+      case 'COMPLETED': return 'success';
+      case 'CANCELLED': return 'error';
+      case 'IN_PROGRESS': return 'processing';
+      default: return 'blue';
+    }
   }
 }

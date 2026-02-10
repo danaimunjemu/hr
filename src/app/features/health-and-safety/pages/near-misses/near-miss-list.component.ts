@@ -1,25 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { OhsService } from '../../services/ohs.service';
 import { NearMissReport } from '../../models/ohs.model';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-near-miss-list',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="page-header">
-      <h1 class="text-2xl font-bold mb-4">Near Miss Reports</h1>
+    <div class="page-header flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-bold">Near Miss Reports</h1>
       <button nz-button nzType="primary" routerLink="create">Report Near Miss</button>
     </div>
 
-    <nz-table #table [nzData]="reports" [nzLoading]="loading">
+    <nz-table #table [nzData]="reports()" [nzLoading]="loading()">
       <thead>
         <tr>
           <th>Date</th>
           <th>Description</th>
           <th>Potential Severity</th>
           <th>Status</th>
-          <th>Reported By</th>
+          <th>Location</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -33,7 +35,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
           <td>
             <nz-tag [nzColor]="getStatusColor(data.status)">{{ data.status }}</nz-tag>
           </td>
-          <td>{{ data.reportedBy }}</td>
+          <td>{{ data.location }}</td>
           <td>
             <a [routerLink]="['view', data.id]">View</a>
             <nz-divider nzType="vertical" *ngIf="data.status === 'DRAFT'"></nz-divider>
@@ -45,52 +47,58 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `
 })
 export class NearMissListComponent implements OnInit {
-  reports: NearMissReport[] = [];
-  loading = false;
+  reports = signal<NearMissReport[]>([]);
+  loading = signal(false);
 
-  constructor(private ohsService: OhsService, private message: NzMessageService) {}
+  constructor(
+    private ohsService: OhsService, 
+    private message: NzMessageService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.loadData();
   }
 
   loadData() {
-    this.loading = true;
-    this.ohsService.getNearMissReports().subscribe({
-      next: (data) => {
-        this.reports = data;
-        this.loading = false;
-      },
-      error: () => {
-        this.message.error('Failed to load reports');
-        this.loading = false;
-      }
-    });
+    this.loading.set(true);
+    this.ohsService.getNearMissReports()
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (data) => {
+          this.reports.set(data);
+          this.cdr.markForCheck();
+        },
+        error: () => this.message.error('Failed to load reports')
+      });
   }
 
   submit(report: NearMissReport) {
-    this.ohsService.submitNearMissReport(report).subscribe({
-      next: () => {
-        this.message.success('Report submitted');
-        this.loadData();
-      },
-      error: () => this.message.error('Failed to submit report')
-    });
+    this.loading.set(true);
+    this.ohsService.submitNearMissReport(report)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: () => {
+          this.message.success('Report submitted');
+          this.loadData();
+        },
+        error: () => this.message.error('Failed to submit report')
+      });
   }
 
   getSeverityColor(severity: string): string {
     switch (severity) {
-      case 'HIGH': return 'orange';
-      case 'MEDIUM': return 'gold';
+      case 'HIGH': return 'red';
+      case 'MEDIUM': return 'orange';
       default: return 'green';
     }
   }
 
   getStatusColor(status: string): string {
     switch (status) {
-      case 'APPROVED': return 'green';
-      case 'REJECTED': return 'red';
-      case 'SUBMITTED': return 'blue';
+      case 'APPROVED': return 'success';
+      case 'REJECTED': return 'error';
+      case 'SUBMITTED': return 'processing';
       default: return 'default';
     }
   }
