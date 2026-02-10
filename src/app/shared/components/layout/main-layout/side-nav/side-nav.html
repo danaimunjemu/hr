@@ -15,8 +15,6 @@
     }
   </div>
 
-  <!-- {{portal.value}} -->
-
   <ul nz-menu nzTheme="dark" nzMode="inline" class="mt-5">
     <li
       nz-menu-item
@@ -46,9 +44,6 @@
         <span class="nerd-sider-menu-text">Dashboard</span>
       </div>
     </li>
-
-
-
 
       <li
         nz-menu-item
@@ -245,8 +240,6 @@
         </div>
       </li>
 
-
-
       <li
         nz-menu-item
         routerLink="/app/chatbot"
@@ -262,94 +255,94 @@
           <span class="nerd-sider-menu-text">Chatbot</span>
         </div>
       </li>
+  </ul>
 
-    <div class="trigger-div absolute bottom-0 left-0 w-full flex justify-center pb-4">
-      <div class="flex flex-col">
-        <div
-          class="nav-user-area flex flex-row items-center gap-3 user-menu"
-          nz-dropdown
-          [nzDropdownMenu]="userMenu"
-          [nzPlacement]="'topRight'"
-        >
+  <div class="trigger-div absolute bottom-0 left-0 w-full flex justify-center pb-4">
+    <div class="flex flex-col">
+      <div
+        class="nav-user-area flex flex-row items-center gap-3 user-menu"
+        nz-dropdown
+        [nzDropdownMenu]="userMenu"
+        [nzPlacement]="'topRight'"
+      >
+        <div>
+          <nz-avatar
+            [nzText]="
+              (user?.username ?? '').charAt(0) + (user?.username ?? '').charAt(0)
+            "
+            style="color: #f56a00; background-color: #fde3cf"
+          ></nz-avatar>
+        </div>
+        @if (!isCollapsed) {
           <div>
-            <nz-avatar
-              [nzText]="
-                (user?.username ?? '').charAt(0) + (user?.username ?? '').charAt(0)
-              "
-              style="color: #f56a00; background-color: #fde3cf"
-            ></nz-avatar>
-          </div>
-          @if (!isCollapsed) {
-            <div>
-              <div class="flex flex-col leading-tight">
-                <div class="nav-user-name">
-                  {{ user!.username }}
-                </div>
-                <div class="nav-user-email">{{ user!.email }}</div>
+            <div class="flex flex-col leading-tight">
+              <div class="nav-user-name">
+                {{ user!.username }}
               </div>
+              <div class="nav-user-email">{{ user!.email }}</div>
             </div>
+          </div>
+        }
+      </div>
+      <nz-dropdown-menu #userMenu="nzDropdownMenu">
+        <ul nz-menu>
+          <li nz-menu-item (click)="navigate('/app/profile/user')">Account Settings</li>
+          <li nz-menu-item (click)="logout()">Logout</li>
+        </ul>
+      </nz-dropdown-menu>
+
+              <div class="nav-mode-toggler-area">
+                @if (isCollapsed) {
+                  <nz-segmented
+                    [nzOptions]="partOptions"
+                    (nzValueChange)="selectMode($event)"
+                    [ngModel]="selectedMode"
+                    nzVertical
+                  />
+                } @else {
+                  <nz-segmented
+                    [nzOptions]="fullOptions"
+                    (nzValueChange)="selectMode($event)"
+                    [ngModel]="selectedMode"
+                  />
+                }
+              </div>
+
+      <div class="side-nav-toggler">
+        <nz-icon class="trigger" (click)="isCollapsed = !isCollapsed">
+          @if (isCollapsed) {
+            <span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="1.4em"
+                height="1.4em"
+                viewBox="0 0 24 24"
+              >
+                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5">
+                  <path d="M20 18V6" />
+                  <path stroke-linejoin="round" d="M16 12H4m8-4s4 2.946 4 4s-4 4-4 4" />
+                </g>
+              </svg>
+            </span>
           }
-        </div>
-        <nz-dropdown-menu #userMenu="nzDropdownMenu">
-          <ul nz-menu>
-            <li nz-menu-item (click)="navigate('/app/profile/user')">Account Settings</li>
-            <li nz-menu-item (click)="logout()">Logout</li>
-          </ul>
-        </nz-dropdown-menu>
 
-        <!--        <div class="nav-mode-toggler-area">-->
-        <!--          @if (isCollapsed) {-->
-        <!--            <nz-segmented-->
-        <!--              [nzOptions]="partOptions"-->
-        <!--              (nzValueChange)="selectMode($event)"-->
-        <!--              [ngModel]="selectedMode"-->
-        <!--              nzVertical-->
-        <!--            />-->
-        <!--          } @else {-->
-        <!--            <nz-segmented-->
-        <!--              [nzOptions]="fullOptions"-->
-        <!--              (nzValueChange)="selectMode($event)"-->
-        <!--              [ngModel]="selectedMode"-->
-        <!--            />-->
-        <!--          }-->
-        <!--        </div>-->
-
-        <div class="side-nav-toggler">
-          <nz-icon class="trigger" (click)="isCollapsed = !isCollapsed">
-            @if (isCollapsed) {
-              <span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="1.4em"
-                  height="1.4em"
-                  viewBox="0 0 24 24"
-                >
-                  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5">
-                    <path d="M20 18V6" />
-                    <path stroke-linejoin="round" d="M16 12H4m8-4s4 2.946 4 4s-4 4-4 4" />
-                  </g>
-                </svg>
-              </span>
-            }
-
-            @if (!isCollapsed) {
-              <span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="1.4em"
-                  height="1.4em"
-                  viewBox="0 0 24 24"
-                >
-                  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5">
-                    <path d="M4 6v12" />
-                    <path stroke-linejoin="round" d="M8 12h12m-8-4s-4 2.946-4 4s4 4 4 4" />
-                  </g>
-                </svg>
-              </span>
-            }
-          </nz-icon>
-        </div>
+          @if (!isCollapsed) {
+            <span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="1.4em"
+                height="1.4em"
+                viewBox="0 0 24 24"
+              >
+                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5">
+                  <path d="M4 6v12" />
+                  <path stroke-linejoin="round" d="M8 12h12m-8-4s-4 2.946-4 4s4 4 4 4" />
+                </g>
+              </svg>
+            </span>
+          }
+        </nz-icon>
       </div>
     </div>
-  </ul>
+  </div>
 </nz-sider>

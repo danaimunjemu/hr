@@ -8,7 +8,7 @@
     <div class="messages-container" #scrollContainer>
       <div *ngFor="let msg of messages" class="message-wrapper" [ngClass]="{'user-message': msg.sender === 'user', 'bot-message': msg.sender === 'bot'}">
         <div class="message-bubble">
-          {{ msg.content }}
+          <markdown [data]="msg.content"></markdown>
         </div>
         <span class="message-time">{{ msg.timestamp | date:'shortTime' }}</span>
       </div>

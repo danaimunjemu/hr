@@ -253,6 +253,11 @@ export interface Employee {
   workContract?: WorkContract;
   workScheduleRule?: WorkScheduleRule;
   personnelFiles?: PersonnelFile[];
+  user?: {
+    id: number;
+    enabled: boolean;
+    username: string;
+  };
 }
 
 @Injectable({

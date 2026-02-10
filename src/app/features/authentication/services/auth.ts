@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import {CookiesService} from '../../../core/storage/cookies.service';
 import {Router} from '@angular/router';
-import { PortalService } from '../../../shared/services/portal';
 
 interface LoginRequest {
   username: string;
@@ -25,8 +24,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private cookiesService: CookiesService,
-    private router: Router,
-    private portalService: PortalService
+    private router: Router
   ) {}
 
   login(username: string, password: string): Observable<LoginResponse> {
@@ -39,10 +37,13 @@ export class AuthService {
       .post<LoginResponse>(`${this.API_URL}/login`, body)
       .pipe(
         tap((response) => {
+          console.log(response);
           // Store token(s) securely
           this.cookiesService.addCookie('token', response.accessToken);
           this.cookiesService.addCookie('refresh_token', response.refreshToken);
+          console.log(response.user);
           this.cookiesService.addCookie('user', response.user);
+          console.log("Cookie stored:", this.cookiesService.getCookie('user'));
           this.cookiesService.addCookie('portal', {
             value: 'ASSESSMENT',
             label: 'Assessment Portal'
@@ -59,5 +60,9 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return !!localStorage.getItem('access_token');
+  }
+
+  activateAccount(otp: string, payload: { username: string; password: string }): Observable<void> {
+    return this.http.post<void>(`${this.API_URL}/password-reset/${otp}`, payload);
   }
 }

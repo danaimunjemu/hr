@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { MarkdownModule } from 'ngx-markdown';
 
 // NG-ZORRO Imports
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -23,6 +24,7 @@ import { ChatbotService } from './services/chatbot.service';
     CommonModule,
     FormsModule,
     HttpClientModule,
+    MarkdownModule.forRoot(),
     ChatbotRoutingModule,
     NzButtonModule,
     NzInputModule,

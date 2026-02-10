@@ -8,20 +8,6 @@
           <input nz-input formControlName="name" />
         </nz-form-control>
       </nz-form-item>
-      <nz-form-item>
-        <nz-form-label [nzSpan]="24">Superior</nz-form-label>
-        <nz-form-control [nzSpan]="24">
-          <input nz-input formControlName="superior" />
-        </nz-form-control>
-      </nz-form-item>
-      <div formGroupName="secondSuperior">
-        <nz-form-item>
-          <nz-form-label [nzSpan]="24">Second Superior Name</nz-form-label>
-          <nz-form-control [nzSpan]="24">
-            <input nz-input formControlName="name" />
-          </nz-form-control>
-        </nz-form-item>
-      </div>
       <div class="flex justify-end"><button nz-button nzType="primary" [nzLoading]="loading()">Create</button></div>
     </form>
   </nz-card>

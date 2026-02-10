@@ -1,20 +1,39 @@
 @use '../design-tokens/colors' as *;
 
 body.dark {
-  --color-bg: #{$clr-primary-a0};
-  --color-surface: #1e1e1e;
-  --color-text: #f4f7f8;
-  --color-border: #333333;
-  --side-nav: #{$key-green};
-  --side-nav-text: #{$key-text};
-  --side-nav-selected: #{$key-li-selected};
-  --side-nav-selected-text: #{$key-li-selected-text};
+  // --color-bg: #{$clr-primary-a0};
+  // --color-surface: #1e1e1e;
+  // --color-text: #f4f7f8;
+  // --color-border: #333333;
+  // --side-nav: #{$key-green};
+  // --side-nav-text: #{$key-text};
+  // --side-nav-selected: #{$key-li-selected};
+  // --side-nav-selected-text: #{$key-li-selected-text};
 
-  --color-primary: #{$clr-primary-a10};
+  // --color-primary: #{$clr-primary-a10};
+  // --color-secondary: #{$clr-secondary-a20};
+  // --color-success: #{$clr-success-a0};
+  // --color-warning: #{$clr-warn-a0};
+  // --color-danger: #{$clr-danger-a0};
+
+  // --shadow-card: 0 2px 6px rgba(255, 255, 255, 0.05);
+
+  --color-bg: #f4f7f8;
+  --color-surface: #ffffff;
+  --color-surface-selected: #{$clr-secondary-a10};
+  --color-surface-hover: #{$clr-secondary-a0};
+  --color-text: #2c3e50;
+  --color-border: #e0e0e0;
+  --side-nav: #ffffff;
+  --side-nav-text: #2c3e50;
+  --side-nav-selected: #{$clr-secondary-a0};
+  --side-nav-selected-text: #2c3e50;
+
+  --color-primary: #{$clr-primary-a20};
   --color-secondary: #{$clr-secondary-a20};
   --color-success: #{$clr-success-a0};
   --color-warning: #{$clr-warn-a0};
   --color-danger: #{$clr-danger-a0};
 
-  --shadow-card: 0 2px 6px rgba(255, 255, 255, 0.05);
+  --shadow-card: 0 2px 6px rgba(0, 0, 0, 0.05);
 }

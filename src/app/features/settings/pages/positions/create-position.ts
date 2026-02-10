@@ -17,12 +17,7 @@ export class CreatePosition {
 
   constructor(fb: FormBuilder, private service: PositionsService, private router: Router, private msg: NzMessageService) {
     this.form = fb.group({
-      name: ['', [Validators.required]],
-      superior: [''],
-      secondSuperior: fb.group({
-        name: ['']
-      }),
-      subordinates: [[]]
+      name: ['', [Validators.required]]
     });
   }
 

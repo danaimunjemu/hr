@@ -1,0 +1,65 @@
+<div class="authentication-page">
+  <div class="auth-page-header">Activate Account</div>
+  <div class="auth-page-subheader">Set up your password to activate your account.</div>
+
+  <form nz-form [formGroup]="form" (ngSubmit)="submit()" class="login-form">
+    <nz-form-item>
+      <nz-form-control nzErrorTip="Please input your Username/Phone Number!">
+        <nz-input-wrapper>
+          <nz-icon nzInputPrefix nzType="user" />
+          <input type="text" nz-input formControlName="username" placeholder="Phone Number / Username" required />
+        </nz-input-wrapper>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control nzErrorTip="Please input the OTP sent to you!">
+        <nz-input-wrapper>
+          <nz-icon nzInputPrefix nzType="key" />
+          <input type="text" nz-input formControlName="otp" placeholder="OTP" required />
+        </nz-input-wrapper>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control [nzErrorTip]="passwordErrorTpl">
+        <nz-input-password>
+          <nz-icon nzInputPrefix nzType="lock" />
+          <input nz-input type="password" formControlName="password" placeholder="New Password" required />
+        </nz-input-password>
+        <ng-template #passwordErrorTpl let-control>
+          <div *ngIf="control.hasError('required')">Password is required</div>
+          <div *ngIf="control.hasError('strongPassword')">
+            Must contain: 10+ chars, uppercase, lowercase, digit, no spaces.
+          </div>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control nzErrorTip="Passwords do not match!">
+        <nz-input-password>
+          <nz-icon nzInputPrefix nzType="lock" />
+          <input nz-input type="password" formControlName="confirmPassword" placeholder="Confirm Password" required />
+        </nz-input-password>
+      </nz-form-control>
+    </nz-form-item>
+
+    <div class="flex justify-center">
+      <nerd-button
+        [label]="'Activate Account'"
+        [disableButton]="isLoading() || form.invalid"
+        [loading]="isLoading()"
+        [style]="'primary'"
+        [size]="'md'"
+      />
+    </div>
+
+    <nz-divider nzText="Or"></nz-divider>
+
+    <div class="flex justify-center">
+      <span class="auth-footer-text">Already have an account?</span>
+      <a class="auth-link" routerLink="/auth/login">Login here!</a>
+    </div>
+  </form>
+</div>

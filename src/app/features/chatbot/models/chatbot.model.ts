@@ -9,7 +9,7 @@ export interface ChatbotRequest {
   message: string;
 }
 
-// Adjust this interface based on the actual backend response structure
 export interface ChatbotResponse {
-  response: string; // Assumed field name, update if backend returns 'message', 'reply', etc.
+  memoryId: string;
+  responseMessage: string;
 }

@@ -40,7 +40,7 @@ export class ChatbotPageComponent implements AfterViewChecked {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (res) => {
-          this.addMessage(res.response || 'I received your message but got no text reply.', 'bot');
+          this.addMessage(res.responseMessage || 'I received your message but got no text reply.', 'bot');
         },
         error: () => {
           this.addMessage('Sorry, I encountered an error connecting to the server.', 'bot');

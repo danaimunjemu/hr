@@ -6,11 +6,13 @@ import {SharedModule} from '../../shared/shared-module';
 import {AntDesignModules} from '../../core/modules/antdesign.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { Login } from './pages/login/login';
+import { ActivateAccount } from './pages/activate-account/activate-account';
 
 
 @NgModule({
   declarations: [
-    Login
+    Login,
+    ActivateAccount
   ],
   imports: [
     CommonModule,

@@ -1,77 +1,336 @@
-<nz-page-header nzTitle="Onboarding">
-  <nz-page-header-extra>
-    <button nz-button>Checklists</button>
-    <button nz-button nzType="primary">New Hire</button>
-  </nz-page-header-extra>
-</nz-page-header>
-
-<div class="page-content">
-  <!-- Loading & Error States -->
-  <div *ngIf="loading" class="loading-container">
-    <nz-spin nzSimple></nz-spin>
+<div class="onboarding-container">
+  <div class="header">
+    <h1>Employee Onboarding Wizard</h1>
+    <p>Complete the steps below to onboard a new employee and set up their access.</p>
   </div>
 
-  <div *ngIf="error" class="error-container">
-    <nz-alert nzType="error" [nzMessage]="error" nzShowIcon></nz-alert>
-  </div>
+  <nz-card>
+    <nz-steps [nzCurrent]="currentStep">
+      <nz-step nzTitle="Employee Details" nzDescription="Profile Info"></nz-step>
+      <nz-step nzTitle="User Account" nzDescription="Role & Login"></nz-step>
+      <nz-step nzTitle="Activate" nzDescription="Send OTP"></nz-step>
+      <nz-step nzTitle="Complete" nzDescription="Status"></nz-step>
+    </nz-steps>
 
-  <div *ngIf="!loading && !error">
-    <!-- Active Onboarding Grid -->
-    <nz-card nzTitle="Active Onboarding" [nzExtra]="extraTemplate">
-      <div nz-row [nzGutter]="16">
-        <div nz-col [nzSpan]="8" *ngFor="let item of onboardingList">
-          <nz-card nzType="inner" [nzTitle]="item.name" [nzExtra]="statusTpl">
-            <div class="onboarding-card-content">
-              <div class="info-row">
-                <span class="label">Position:</span>
-                <span class="value">{{ item.position }}</span>
-              </div>
-              <div class="info-row">
-                <span class="label">Start Date:</span>
-                <span class="value">{{ item.startDate }}</span>
-              </div>
-              <div class="progress-section">
-                <span>Progress</span>
-                <nz-progress [nzPercent]="item.progress" nzSize="small"></nz-progress>
-              </div>
+    <div class="steps-content">
+      
+      <!-- STEP 1: Employee Details -->
+      <div *ngIf="currentStep === 0">
+        <form nz-form [formGroup]="employeeForm" nzLayout="vertical">
+          
+          <!-- 1. Personal Information -->
+          <nz-divider nzText="Personal Information" nzOrientation="left"></nz-divider>
+          <div nz-row [nzGutter]="16">
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label nzRequired>First Name</nz-form-label>
+                <nz-form-control nzErrorTip="Required">
+                  <input nz-input formControlName="firstName" placeholder="John" />
+                </nz-form-control>
+              </nz-form-item>
             </div>
-            <ng-template #statusTpl>
-              <nz-tag [nzColor]="'blue'">{{ item.department }}</nz-tag>
-            </ng-template>
-          </nz-card>
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label nzRequired>Last Name</nz-form-label>
+                <nz-form-control nzErrorTip="Required">
+                  <input nz-input formControlName="lastName" placeholder="Doe" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label nzRequired>Gender</nz-form-label>
+                <nz-form-control nzErrorTip="Required">
+                  <nz-select formControlName="gender" nzPlaceHolder="Select Gender">
+                    <nz-option nzValue="MALE" nzLabel="Male"></nz-option>
+                    <nz-option nzValue="FEMALE" nzLabel="Female"></nz-option>
+                    <nz-option nzValue="OTHER" nzLabel="Other"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <div nz-row [nzGutter]="16">
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label nzRequired>Date of Birth</nz-form-label>
+                <nz-form-control nzErrorTip="Required">
+                  <nz-date-picker formControlName="dateOfBirth" style="width: 100%;"></nz-date-picker>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label nzRequired>National ID</nz-form-label>
+                <nz-form-control nzErrorTip="Required">
+                  <input nz-input formControlName="nationalId" placeholder="ID Number" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <!-- 2. Employment Details -->
+          <nz-divider nzText="Employment Details" nzOrientation="left"></nz-divider>
+          <div nz-row [nzGutter]="16">
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label nzRequired>Employee Number</nz-form-label>
+                <nz-form-control nzErrorTip="Required">
+                  <input nz-input formControlName="employeeNumber" placeholder="EMP001" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label nzRequired>Date Joined</nz-form-label>
+                <nz-form-control nzErrorTip="Required">
+                  <nz-date-picker formControlName="dateJoined" style="width: 100%;"></nz-date-picker>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label nzRequired>Company</nz-form-label>
+                <nz-form-control nzErrorTip="Required">
+                  <nz-select formControlName="companyId" nzPlaceHolder="Select Company" nzShowSearch nzAllowClear>
+                    <nz-option *ngFor="let item of companies$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <div nz-row [nzGutter]="16">
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label nzRequired>Position</nz-form-label>
+                <nz-form-control nzErrorTip="Required">
+                  <nz-select formControlName="positionId" nzPlaceHolder="Select Position" nzShowSearch nzAllowClear>
+                    <nz-option *ngFor="let item of positions$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label nzRequired>Job Description</nz-form-label>
+                <nz-form-control nzErrorTip="Required">
+                  <nz-select formControlName="jobDescriptionId" nzPlaceHolder="Select Job Description" nzShowSearch nzAllowClear>
+                    <nz-option *ngFor="let item of jobDescriptions$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <!-- Employment Groups -->
+           <div nz-row [nzGutter]="16">
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label nzRequired>Employee Group</nz-form-label>
+                <nz-form-control nzErrorTip="Required">
+                  <nz-select formControlName="groupId" nzPlaceHolder="Select Group" nzShowSearch nzAllowClear>
+                    <nz-option *ngFor="let item of groups$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+             <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label nzRequired>Employee Sub-Group</nz-form-label>
+                <nz-form-control nzErrorTip="Required">
+                  <nz-select formControlName="subGroupId" nzPlaceHolder="Select Sub-Group" nzShowSearch nzAllowClear>
+                    <nz-option *ngFor="let item of subGroups$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+             <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label nzRequired>PS Group</nz-form-label>
+                <nz-form-control nzErrorTip="Required">
+                  <nz-select formControlName="psGroupId" nzPlaceHolder="Select PS Group" nzShowSearch nzAllowClear>
+                    <nz-option *ngFor="let item of psGroups$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <div nz-row [nzGutter]="16">
+            <div nz-col [nzSpan]="12">
+              <nz-form-item>
+                <nz-form-label nzRequired>Work Contract</nz-form-label>
+                <nz-form-control nzErrorTip="Required">
+                  <nz-select formControlName="workContractId" nzPlaceHolder="Select Work Contract" nzShowSearch nzAllowClear>
+                    <nz-option *ngFor="let item of workContracts$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="12">
+               <nz-form-item>
+                <nz-form-label nzRequired>Work Schedule Rule</nz-form-label>
+                <nz-form-control nzErrorTip="Required">
+                  <nz-select formControlName="workScheduleRuleId" nzPlaceHolder="Select Work Schedule Rule" nzShowSearch nzAllowClear>
+                    <nz-option *ngFor="let item of workScheduleRules$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <!-- 3. Organization Structure -->
+          <nz-divider nzText="Organization Structure" nzOrientation="left"></nz-divider>
+          <div nz-row [nzGutter]="16">
+             <div nz-col [nzSpan]="12">
+              <nz-form-item>
+                <nz-form-label nzRequired>Organizational Unit</nz-form-label>
+                <nz-form-control nzErrorTip="Required">
+                  <nz-select formControlName="organizationalUnitId" nzPlaceHolder="Select Org Unit" nzShowSearch nzAllowClear>
+                    <nz-option *ngFor="let item of orgUnits$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+             <div nz-col [nzSpan]="12">
+              <nz-form-item>
+                <nz-form-label nzRequired>Cost Center</nz-form-label>
+                <nz-form-control nzErrorTip="Required">
+                  <nz-select formControlName="costCenterId" nzPlaceHolder="Select Cost Center" nzShowSearch nzAllowClear>
+                    <nz-option *ngFor="let item of costCenters$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <div nz-row [nzGutter]="16">
+            <div nz-col [nzSpan]="12">
+              <nz-form-item>
+                <nz-form-label nzRequired>Personnel Area</nz-form-label>
+                <nz-form-control nzErrorTip="Required">
+                  <nz-select formControlName="personnelAreaId" nzPlaceHolder="Select Personnel Area" nzShowSearch nzAllowClear>
+                    <nz-option *ngFor="let item of personnelAreas$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="12">
+              <nz-form-item>
+                <nz-form-label nzRequired>Personnel Sub-Area</nz-form-label>
+                <nz-form-control nzErrorTip="Required">
+                  <nz-select formControlName="personnelSubAreaId" nzPlaceHolder="Select Personnel Sub-Area" nzShowSearch nzAllowClear>
+                    <nz-option *ngFor="let item of personnelSubAreas$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <!-- 4. Demographics -->
+          <nz-divider nzText="Demographics" nzOrientation="left"></nz-divider>
+          <div nz-row [nzGutter]="16">
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label nzRequired>Ethnic Group</nz-form-label>
+                <nz-form-control nzErrorTip="Required">
+                  <nz-select formControlName="ethnicGroupId" nzPlaceHolder="Select Ethnic Group" nzShowSearch nzAllowClear>
+                    <nz-option *ngFor="let item of ethnicGroups$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- STEP 2: User Account -->
+      <div *ngIf="currentStep === 1">
+        <nz-alert nzType="info" nzShowIcon nzMessage="Employee Record Created" 
+                  [nzDescription]="'Employee ID: ' + createdEmployeeId + '. Now link a user account.'"></nz-alert>
+        <div class="mt-4">
+          <form nz-form [formGroup]="userForm" nzLayout="vertical">
+            <nz-form-item>
+              <nz-form-label nzRequired>Username (Login ID)</nz-form-label>
+              <nz-form-control nzErrorTip="Please input username!">
+                <input nz-input formControlName="username" />
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label nzRequired>Phone Number (for OTP)</nz-form-label>
+              <nz-form-control nzErrorTip="Valid phone number required!">
+                <input nz-input formControlName="phoneNumber" placeholder="+263..." />
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label nzRequired>Assign Role</nz-form-label>
+              <nz-form-control nzErrorTip="Please select a role!">
+                <nz-select formControlName="roleId" nzPlaceHolder="Select role">
+                  <!-- Hardcoded roles for example, normally fetched from API -->
+                  <nz-option [nzValue]="1" nzLabel="Administrator"></nz-option>
+                  <nz-option [nzValue]="2" nzLabel="HR Manager"></nz-option>
+                  <nz-option [nzValue]="3" nzLabel="Employee"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </form>
         </div>
       </div>
-    </nz-card>
-    <ng-template #extraTemplate>
-      <a>View All</a>
-    </ng-template>
 
-    <!-- Tasks Due -->
-    <div style="margin-top: 24px;">
-      <nz-card nzTitle="Tasks Due Today">
-        <nz-list nzItemLayout="horizontal">
-          <nz-list-item>
-            <nz-list-item-meta
-              nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-              nzTitle="Prepare Laptop for John Doe"
-              nzDescription="IT Department">
-            </nz-list-item-meta>
-            <ul nz-list-item-actions>
-              <nz-list-item-action><a (click)="completeTask()">Mark Complete</a></nz-list-item-action>
-            </ul>
-          </nz-list-item>
-          <nz-list-item>
-            <nz-list-item-meta
-              nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-              nzTitle="Welcome Email to Sarah Smith"
-              nzDescription="HR Department">
-            </nz-list-item-meta>
-            <ul nz-list-item-actions>
-              <nz-list-item-action><a (click)="completeTask()">Mark Complete</a></nz-list-item-action>
-            </ul>
-          </nz-list-item>
-        </nz-list>
-      </nz-card>
+      <!-- STEP 3: Activate Account -->
+      <div *ngIf="currentStep === 2">
+        <div class="text-center py-8">
+          <span nz-icon nzType="mobile" nzTheme="twotone" style="font-size: 48px; margin-bottom: 16px;"></span>
+          <h3 class="text-lg font-semibold">Ready to Activate?</h3>
+          <p class="text-gray-500 mb-6">Click below to send an activation OTP to <strong>{{ createdPhoneNumber || createdUsername }}</strong>.</p>
+          <button nz-button nzType="primary" nzSize="large" (click)="sendOtp()" [nzLoading]="isLoading" [disabled]="otpCooldown > 0">
+            {{ otpCooldown > 0 ? 'Wait ' + otpCooldown + 's' : 'Send Activation OTP' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Success State -->
+      <div *ngIf="isComplete" class="success-result">
+        <nz-result
+          nzStatus="success"
+          nzTitle="Onboarding Completed Successfully!"
+          nzSubTitle="Employee onboarding is complete. The user must activate their account to set their password."
+        >
+          <div nz-result-extra>
+            <button nz-button nzType="primary" (click)="resetOnboarding()">Onboard Another</button>
+          </div>
+        </nz-result>
+      </div>
+
     </div>
-  </div>
+
+    <!-- Footer Actions -->
+    <div class="steps-action" *ngIf="!isComplete">
+      <!-- Step 1 Actions -->
+      <div *ngIf="currentStep === 0">
+        <button nz-button nzType="primary" (click)="submitEmployee()" [nzLoading]="isLoading">
+          Create Employee & Continue
+        </button>
+      </div>
+
+      <!-- Step 2 Actions -->
+      <div *ngIf="currentStep === 1">
+        <button nz-button nzType="default" (click)="pre()" class="mr-2">Back</button>
+        <button nz-button nzType="primary" (click)="submitUser()" [nzLoading]="isLoading">
+          Create User & Continue
+        </button>
+      </div>
+
+      <!-- Step 3 Actions -->
+      <div *ngIf="currentStep === 2">
+        <button nz-button nzType="default" (click)="pre()">Back</button>
+        <!-- Forward navigation happens via the main button inside the step content -->
+      </div>
+    </div>
+  </nz-card>
 </div>
