@@ -34,7 +34,8 @@ export class TopNav implements OnInit{
    }
 
   ngOnInit() {
-    this.user = this.cookiesService.getCookie('user');
+    const userStr = localStorage.getItem('user');
+    this.user = userStr ? JSON.parse(userStr) : null;
     console.log("This user: ", this.user);
   }
 

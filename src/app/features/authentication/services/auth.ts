@@ -41,9 +41,8 @@ export class AuthService {
           // Store token(s) securely
           this.cookiesService.addCookie('token', response.accessToken);
           this.cookiesService.addCookie('refresh_token', response.refreshToken);
-          console.log(response.user);
-          this.cookiesService.addCookie('user', response.user);
-          console.log("Cookie stored:", this.cookiesService.getCookie('user'));
+          // Store user in localStorage to avoid cookie size limits
+          localStorage.setItem('user', JSON.stringify(response.user));
           this.cookiesService.addCookie('portal', {
             value: 'ASSESSMENT',
             label: 'Assessment Portal'

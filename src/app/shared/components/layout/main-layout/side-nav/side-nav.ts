@@ -38,7 +38,8 @@ export class SideNav implements OnInit, OnDestroy {
   portal?: any;
 
   ngOnInit(): void {
-    this.user = this.cookiesService.getCookie('user');
+    const userStr = localStorage.getItem('user');
+    this.user = userStr ? JSON.parse(userStr) : null;
     console.log("This user: ", this.user);
     // this.initializeMode();
     // Reapply user override on navigation
