@@ -27,7 +27,7 @@ import { finalize } from 'rxjs';
       </thead>
       <tbody>
         <tr *ngFor="let data of table.data">
-          <td>{{ data.incidentDate | date }}</td>
+          <td>{{ data.incidentDateTime | date }}</td>
           <td>{{ data.description }}</td>
           <td>
             <nz-tag [nzColor]="getSeverityColor(data.potentialSeverity)">{{ data.potentialSeverity }}</nz-tag>

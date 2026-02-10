@@ -27,11 +27,11 @@ import { finalize } from 'rxjs';
       </thead>
       <tbody>
         <tr *ngFor="let data of table.data">
-          <td>{{ data.employeeId }}</td>
-          <td>{{ data.checkupDate | date }}</td>
-          <td>{{ data.type }}</td>
+          <td>{{ data.employee }}</td>
+          <td>{{ data.examinationDate | date }}</td>
+          <td>{{ data.examinationType }}</td>
           <td>
-            <nz-tag [nzColor]="data.result === 'Unfit' ? 'red' : 'green'">{{ data.result }}</nz-tag>
+            <nz-tag [nzColor]="data.fitnessStatus ? 'red' : 'green'">{{ data.fitnessStatus }}</nz-tag>
           </td>
           <td>
             <nz-tag [nzColor]="getStatusColor(data.status)">{{ data.status }}</nz-tag>
