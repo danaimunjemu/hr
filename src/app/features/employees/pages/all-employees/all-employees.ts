@@ -1,5 +1,6 @@
-import { Component, OnInit, signal, WritableSignal } from '@angular/core';
-import { finalize } from 'rxjs';
+import { Component, inject, computed } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { catchError, map, of, startWith } from 'rxjs';
 import { Employee, EmployeesService } from '../../services/employees.service';
 
 @Component({
@@ -8,31 +9,23 @@ import { Employee, EmployeesService } from '../../services/employees.service';
   templateUrl: './all-employees.html',
   styleUrl: './all-employees.scss',
 })
-export class AllEmployees implements OnInit {
-  employeesSignal: WritableSignal<Employee[]> = signal([]);
-  loadingSignal: WritableSignal<boolean> = signal(false);
-  errorSignal: WritableSignal<string | null> = signal(null);
+export class AllEmployees {
+  private employeesService = inject(EmployeesService);
 
-  constructor(private employeesService: EmployeesService) {}
+  // Reactive state signal derived from the service observable
+  // Handles loading, success, and error states automatically
+  private state = toSignal(
+    this.employeesService.getEmployees().pipe(
+      map(data => ({ loading: false, data, error: null })),
+      startWith({ loading: true, data: [] as Employee[], error: null }),
+      catchError(err => of({ loading: false, data: [] as Employee[], error: err.message }))
+    ),
+    { initialValue: { loading: true, data: [] as Employee[], error: null } }
+  );
 
-  ngOnInit(): void {
-    this.fetchEmployees();
-  }
-
-  fetchEmployees(): void {
-    this.loadingSignal.set(true);
-    this.errorSignal.set(null);
-    
-    this.employeesService.getEmployees()
-      .pipe(finalize(() => this.loadingSignal.set(false)))
-      .subscribe({
-        next: (data) => {
-          this.employeesSignal.set(data);
-          console.log(data);
-        },
-        error: (err) => {
-          this.errorSignal.set(err.message);
-        }
-      });
-  }
+  // Computed signals exposed to the template
+  // The template will automatically update when these computed values change
+  employees = computed(() => this.state().data);
+  loading = computed(() => this.state().loading);
+  error = computed(() => this.state().error);
 }

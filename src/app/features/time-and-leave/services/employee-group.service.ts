@@ -7,7 +7,7 @@ import { EmployeeGroup } from '../models/employee-group.model';
   providedIn: 'root'
 })
 export class EmployeeGroupService {
-  private readonly apiUrl = 'http://localhost:8090/api/employee-groups';
+  private readonly apiUrl = 'http://localhost:8090/api/employee-group';
 
   constructor(private http: HttpClient) {}
 

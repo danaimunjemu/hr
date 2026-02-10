@@ -13,22 +13,40 @@
   <nz-table #basicTable [nzData]="rules" [nzLoading]="loading">
     <thead>
       <tr>
+        <th>Code</th>
         <th>Name</th>
-        <th>Condition</th>
+        <th>Type</th>
         <th>Multiplier</th>
-        <th>Threshold (min)</th>
+        <th>Time Range</th>
+        <th>Effective Dates</th>
+        <th>Org Unit</th>
+        <th>Status</th>
         <th>Priority</th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let data of basicTable.data">
-        <td>{{ data.name }}</td>
+        <td>{{ data.ruleCode }}</td>
+        <td>{{ data.ruleName }}</td>
         <td>
-          <nz-tag [nzColor]="'blue'">{{ data.conditionType }}</nz-tag>
+          <nz-tag [nzColor]="'blue'">{{ data.overtimeType }}</nz-tag>
         </td>
-        <td>x{{ data.rateMultiplier }}</td>
-        <td>{{ data.thresholdMinutes || '-' }}</td>
+        <td>x{{ data.multiplier }}</td>
+        <td>{{ data.startTime | date:'HH:mm' }} - {{ data.endTime | date:'HH:mm' }}</td>
+        <td>
+          <div class="text-xs">
+            <div>{{ data.effectiveFrom | date:'mediumDate' }}</div>
+            <div class="text-gray-400">to</div>
+            <div>{{ data.effectiveTo | date:'mediumDate' }}</div>
+          </div>
+        </td>
+        <td>{{ data.organizationalUnit?.name || '-' }}</td>
+        <td>
+          <nz-tag [nzColor]="data.active ? 'success' : 'error'">
+            {{ data.active ? 'Active' : 'Inactive' }}
+          </nz-tag>
+        </td>
         <td>{{ data.priority }}</td>
         <td>
           <a class="action-btn" [routerLink]="['view', data.id]">View</a>

@@ -4,6 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { OvertimeRuleService } from '../../../services/overtime-rule.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { OvertimeRule } from '../../../models/overtime-rule.model';
+import { OrganizationalUnitsService } from '../../../../settings/services/organizational-units.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-overtime-rule-form',
@@ -12,7 +14,7 @@ import { OvertimeRule } from '../../../models/overtime-rule.model';
   styles: [`
     :host {
       display: block;
-      max-width: 600px;
+      max-width: 800px;
       margin: 0 auto;
     }
   `]
@@ -24,12 +26,16 @@ export class OvertimeRuleFormComponent implements OnInit {
   loading = false;
   submitting = false;
 
-  conditionTypes = [
-    { label: 'Daily Excess Hours', value: 'DAILY_EXCESS' },
-    { label: 'Weekly Excess Hours', value: 'WEEKLY_EXCESS' },
-    { label: 'Weekend Work', value: 'WEEKEND' },
-    { label: 'Holiday Work', value: 'HOLIDAY' },
-    { label: 'Rest Day Work', value: 'REST_DAY' }
+  orgUnits$: Observable<any[]>;
+
+  overtimeTypes = [
+    { label: 'Standard', value: 'STANDARD' },
+    { label: 'Night Shift', value: 'NIGHT_SHIFT' },
+    { label: 'Weekend', value: 'WEEKEND' },
+    { label: 'Public Holiday', value: 'PUBLIC_HOLIDAY' },
+    { label: 'Double Time', value: 'DOUBLE_TIME' },
+    { label: 'Call Out', value: 'CALL_OUT' },
+    { label: 'Standby', value: 'STANDBY' }
   ];
 
   constructor(
@@ -37,14 +43,28 @@ export class OvertimeRuleFormComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private ruleService: OvertimeRuleService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private orgUnitService: OrganizationalUnitsService
   ) {
+    this.orgUnits$ = this.orgUnitService.getAll();
+
     this.form = this.fb.group({
-      name: ['', [Validators.required]],
-      conditionType: ['DAILY_EXCESS', [Validators.required]],
-      rateMultiplier: [1.5, [Validators.required, Validators.min(1)]],
-      thresholdMinutes: [0, [Validators.min(0)]],
-      priority: [1, [Validators.required, Validators.min(1)]]
+      ruleCode: ['', [Validators.required]],
+      ruleName: ['', [Validators.required]],
+      description: [''],
+      overtimeType: ['STANDARD', [Validators.required]],
+      multiplier: [1.5, [Validators.required, Validators.min(0)]],
+      startTime: [null, [Validators.required]],
+      endTime: [null, [Validators.required]],
+      appliesToWeekdays: [true],
+      appliesToSaturdays: [false],
+      appliesToSundays: [false],
+      appliesToPublicHolidays: [false],
+      organizationalUnitId: [null, [Validators.required]],
+      effectiveFrom: [null, [Validators.required]],
+      effectiveTo: [null, [Validators.required]],
+      active: [true],
+      priority: [0, [Validators.required, Validators.min(0)]]
     });
   }
 
@@ -56,23 +76,24 @@ export class OvertimeRuleFormComponent implements OnInit {
         this.loadRule(this.ruleId);
       }
     });
-
-    // Watch condition type to toggle threshold validation/visibility if needed
-    this.form.get('conditionType')?.valueChanges.subscribe(val => {
-       if (val === 'DAILY_EXCESS' || val === 'WEEKLY_EXCESS') {
-         this.form.get('thresholdMinutes')?.enable();
-       } else {
-         this.form.get('thresholdMinutes')?.disable();
-         this.form.get('thresholdMinutes')?.setValue(0);
-       }
-    });
   }
 
   loadRule(id: number): void {
     this.loading = true;
     this.ruleService.getById(id).subscribe({
-      next: (rule) => {
-        this.form.patchValue(rule);
+      next: (rule: any) => {
+        // Transform backend time objects {hour, minute...} to Date objects for nz-time-picker
+        const startDate = this.timeToDate(rule.startTime);
+        const endDate = this.timeToDate(rule.endTime);
+
+        this.form.patchValue({
+          ...rule,
+          startTime: startDate,
+          endTime: endDate,
+          organizationalUnitId: rule.organizationalUnit?.id,
+          effectiveFrom: rule.effectiveFrom ? new Date(rule.effectiveFrom) : null,
+          effectiveTo: rule.effectiveTo ? new Date(rule.effectiveTo) : null
+        });
         this.loading = false;
       },
       error: () => {
@@ -80,6 +101,34 @@ export class OvertimeRuleFormComponent implements OnInit {
         this.router.navigate(['../'], { relativeTo: this.route });
       }
     });
+  }
+
+  private timeToDate(timeInput: any): Date | null {
+    if (!timeInput) return null;
+    if (timeInput instanceof Date) return timeInput;
+    if (typeof timeInput === 'string') return new Date(timeInput);
+    // Fallback for object format just in case
+    if (typeof timeInput === 'object' && 'hour' in timeInput) {
+       const d = new Date();
+       d.setHours(timeInput.hour || 0);
+       d.setMinutes(timeInput.minute || 0);
+       d.setSeconds(timeInput.second || 0);
+       return d;
+    }
+    return null;
+  }
+
+  // private dateToTimeObj(date: Date): string | null {
+  //   if (!date) return null;
+  //   return date.toISOString();
+  // }
+
+  private dateToTimeObj(date: Date): string | null {
+    if (!date) return null;
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
   }
 
   onSubmit(): void {
@@ -94,37 +143,50 @@ export class OvertimeRuleFormComponent implements OnInit {
     }
 
     this.submitting = true;
-    const ruleData: OvertimeRule = {
-      ...this.form.value,
-      id: this.ruleId || 0
+    const formVal = this.form.value;
+
+    const payload = {
+      ruleCode: formVal.ruleCode,
+      ruleName: formVal.ruleName,
+      description: formVal.description,
+      overtimeType: formVal.overtimeType,
+      multiplier: formVal.multiplier,
+      startTime: this.dateToTimeObj(formVal.startTime),
+      endTime: this.dateToTimeObj(formVal.endTime),
+      appliesToWeekdays: formVal.appliesToWeekdays,
+      appliesToSaturdays: formVal.appliesToSaturdays,
+      appliesToSundays: formVal.appliesToSundays,
+      appliesToPublicHolidays: formVal.appliesToPublicHolidays,
+      organizationalUnit: { id: formVal.organizationalUnitId },
+      effectiveFrom: formVal.effectiveFrom ? formVal.effectiveFrom.toISOString().split('T')[0] : null,
+      effectiveTo: formVal.effectiveTo ? formVal.effectiveTo.toISOString().split('T')[0] : null,
+      active: formVal.active,
+      priority: formVal.priority,
+      // Timestamps typically ignored on update or handled by backend, but included for completeness if required
+      createdOn: new Date().toISOString(), 
+      updatedOn: new Date().toISOString(),
+      deletedOn: null
     };
 
-    if (this.isEditMode && this.ruleId) {
-      this.ruleService.update(this.ruleId, ruleData).subscribe({
-        next: () => {
-          this.message.success('Rule updated successfully');
-          this.router.navigate(['../'], { relativeTo: this.route });
-        },
-        error: () => {
-          this.message.error('Failed to update rule');
-          this.submitting = false;
-        }
-      });
-    } else {
-      this.ruleService.create(ruleData).subscribe({
-        next: () => {
-          this.message.success('Rule created successfully');
-          this.router.navigate(['../'], { relativeTo: this.route });
-        },
-        error: () => {
-          this.message.error('Failed to create rule');
-          this.submitting = false;
-        }
-      });
-    }
+    const request$ = (this.isEditMode && this.ruleId)
+      ? this.ruleService.update(this.ruleId, payload as any)
+      : this.ruleService.create(payload as any);
+
+    request$.subscribe({
+      next: () => {
+        this.message.success(this.isEditMode ? 'Rule updated successfully' : 'Rule created successfully');
+        this.router.navigate(['../'], { relativeTo: this.route });
+      },
+      error: (err) => {
+        console.error(err);
+        this.message.error('Failed to save rule');
+        this.submitting = false;
+      }
+    });
   }
 
   onCancel(): void {
     this.router.navigate(['../'], { relativeTo: this.route });
   }
 }
+

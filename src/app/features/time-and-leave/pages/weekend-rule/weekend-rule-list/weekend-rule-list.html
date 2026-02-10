@@ -10,7 +10,7 @@
 </div>
 
 <nz-card>
-  <nz-table #basicTable [nzData]="rules" [nzLoading]="loading">
+  <nz-table #basicTable [nzData]="rules() || []" [nzLoading]="loading()">
     <thead>
       <tr>
         <th>Name</th>
@@ -20,24 +20,26 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of basicTable.data">
-        <td>{{ data.name }}</td>
-        <td>
-          <span nz-icon [nzType]="data.saturday ? 'check-circle' : 'close-circle'" 
-                [nzTheme]="data.saturday ? 'twotone' : 'outline'"
-                [nzTwotoneColor]="data.saturday ? '#52c41a' : '#ff4d4f'"></span>
-        </td>
-        <td>
-          <span nz-icon [nzType]="data.sunday ? 'check-circle' : 'close-circle'" 
-                [nzTheme]="data.sunday ? 'twotone' : 'outline'"
-                [nzTwotoneColor]="data.sunday ? '#52c41a' : '#ff4d4f'"></span>
-        </td>
-        <td>
-          <a class="action-btn" [routerLink]="['view', data.id]">View</a>
-          <nz-divider nzType="vertical"></nz-divider>
-          <a [routerLink]="['edit', data.id]">Edit</a>
-        </td>
-      </tr>
+      @for (data of basicTable.data; track data.id) {
+        <tr>
+          <td>{{ data.name }}</td>
+          <td>
+            <span nz-icon [nzType]="data.saturday ? 'check-circle' : 'close-circle'" 
+                  [nzTheme]="data.saturday ? 'twotone' : 'outline'"
+                  [nzTwotoneColor]="data.saturday ? '#52c41a' : '#ff4d4f'"></span>
+          </td>
+          <td>
+            <span nz-icon [nzType]="data.sunday ? 'check-circle' : 'close-circle'" 
+                  [nzTheme]="data.sunday ? 'twotone' : 'outline'"
+                  [nzTwotoneColor]="data.sunday ? '#52c41a' : '#ff4d4f'"></span>
+          </td>
+          <td>
+            <a class="action-btn" [routerLink]="['view', data.id]">View</a>
+            <nz-divider nzType="vertical"></nz-divider>
+            <a [routerLink]="['edit', data.id]">Edit</a>
+          </td>
+        </tr>
+      }
     </tbody>
   </nz-table>
 </nz-card>

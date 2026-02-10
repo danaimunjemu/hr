@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WorkContractService } from '../../../services/work-contract.service';
-import { WorkContract } from '../../../models/work-contract.model';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, map, switchMap, startWith, catchError, of } from 'rxjs';
+import { WorkContract } from '../../../models/work-contract.model';
 
 @Component({
   selector: 'app-work-contract-view',
@@ -26,41 +28,30 @@ import { NzMessageService } from 'ng-zorro-antd/message';
     }
   `]
 })
-export class WorkContractViewComponent implements OnInit {
-  contract: WorkContract | null = null;
-  loading = true;
+export class WorkContractViewComponent {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private service = inject(WorkContractService);
+  private message = inject(NzMessageService);
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private workContractService: WorkContractService,
-    private message: NzMessageService
-  ) {}
+  private state = toSignal(
+    this.route.params.pipe(
+      map(p => p['id']),
+      filter(id => !!id),
+      switchMap(id => this.service.getById(+id).pipe(
+        map(data => ({ loading: false, data, error: null })),
+        startWith({ loading: true, data: null as WorkContract | null, error: null }),
+        catchError(err => {
+          this.message.error('Failed to load contract details');
+          return of({ loading: false, data: null, error: err });
+        })
+      ))
+    ),
+    { initialValue: { loading: true, data: null as WorkContract | null, error: null } }
+  );
 
-  ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      const id = +params['id'];
-      if (id) {
-        this.loadContract(id);
-      } else {
-        this.router.navigate(['../'], { relativeTo: this.route });
-      }
-    });
-  }
-
-  loadContract(id: number): void {
-    this.loading = true;
-    this.workContractService.getById(id).subscribe({
-      next: (data) => {
-        this.contract = data;
-        this.loading = false;
-      },
-      error: (err: any) => {
-        this.message.error('Failed to load contract details');
-        this.router.navigate(['../../'], { relativeTo: this.route });
-      }
-    });
-  }
+  contract = computed(() => this.state().data);
+  loading = computed(() => this.state().loading);
 
   onBack(): void {
     this.router.navigate(['../../'], { relativeTo: this.route });

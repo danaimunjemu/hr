@@ -7,7 +7,7 @@ import { WorkScheduleRule } from '../models/work-schedule-rule.model';
   providedIn: 'root'
 })
 export class WorkScheduleRuleService {
-  private readonly apiUrl = 'http://localhost:8090/api/work-schedule-rules';
+  private readonly apiUrl = 'http://localhost:8090/api/work-schedule-rule';
 
   constructor(private http: HttpClient) {}
 

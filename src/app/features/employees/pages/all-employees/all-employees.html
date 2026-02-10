@@ -8,11 +8,15 @@
 </nz-page-header>
 <div class="p-6">
   <nz-card>
-    <div *ngIf="errorSignal()" class="mb-4">
-      <nz-alert [nzType]="'error'" [nzMessage]="errorSignal()" nzShowIcon></nz-alert>
-    </div>
+    <!-- Use @if for error handling -->
+    @if (error()) {
+      <div class="mb-4">
+        <nz-alert [nzType]="'error'" [nzMessage]="error()!" nzShowIcon></nz-alert>
+      </div>
+    }
 
-    <nz-table #basicTable [nzData]="employeesSignal()" [nzLoading]="loadingSignal()" [nzPageSize]="10">
+    <!-- Bind directly to computed signals -->
+    <nz-table #basicTable [nzData]="employees()" [nzLoading]="loading()" [nzPageSize]="10">
       <thead>
         <tr>
           <th>Employee No.</th>
@@ -26,36 +30,45 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let data of basicTable.data">
-          <td>{{ data.employeeNumber }}</td>
-          <td>{{ data.firstName }} {{ data.lastName }}</td>
-          <td>{{ data.email }}</td>
-          <td>{{ data.jobDescription?.name || '-' }}</td>
-          <td>{{ data.organizationalUnit?.name || '-' }}</td>
-          <td>
-            <nz-tag [nzColor]="data.employmentStatus === 'ACTIVE' ? 'success' : 'error'">
-              {{ data.employmentStatus }}
-            </nz-tag>
-          </td>
-          <td>
-            <nz-tag *ngIf="data.user?.enabled" nzColor="success">Active</nz-tag>
-            <nz-tag *ngIf="data.user && !data.user.enabled" nzColor="warning">Pending</nz-tag>
-            <nz-tag *ngIf="!data.user" nzColor="default">No User</nz-tag>
-          </td>
-          <td>
-            <nz-space>
-              <button *ngIf="!data.user || !data.user.enabled" nz-button nzType="primary" nzSize="small" nzGhost [routerLink]="['/app/onboarding']" [queryParams]="{ employeeId: data.id }">
-                Continue Onboarding
-              </button>
-              <a *nzSpaceItem nz-button nzType="default" nzSize="small" [routerLink]="['/app/employees/view', data.id]">
-                <span nz-icon nzType="eye" nzTheme="outline"></span>
-              </a>
-              <a *nzSpaceItem nz-button nzType="primary" nzSize="small" [routerLink]="['/app/employees/edit', data.id]">
-                <span nz-icon nzType="edit" nzTheme="outline"></span>
-              </a>
-            </nz-space>
-          </td>
-        </tr>
+        <!-- Iterate over the table's processed data -->
+        @for (data of basicTable.data; track data.id) {
+          <tr>
+            <td>{{ data.employeeNumber }}</td>
+            <td>{{ data.firstName }} {{ data.lastName }}</td>
+            <td>{{ data.email }}</td>
+            <td>{{ data.jobDescription?.name || '-' }}</td>
+            <td>{{ data.organizationalUnit?.name || '-' }}</td>
+            <td>
+              <nz-tag [nzColor]="data.employmentStatus === 'ACTIVE' ? 'success' : 'error'">
+                {{ data.employmentStatus }}
+              </nz-tag>
+            </td>
+            <td>
+              @if (data.user?.enabled) {
+                <nz-tag nzColor="success">Active</nz-tag>
+              } @else if (data.user && !data.user.enabled) {
+                <nz-tag nzColor="warning">Pending</nz-tag>
+              } @else {
+                <nz-tag nzColor="default">No User</nz-tag>
+              }
+            </td>
+            <td>
+              <nz-space>
+                @if (!data.user || !data.user.enabled) {
+                  <button *nzSpaceItem nz-button nzType="primary" nzSize="small" nzGhost [routerLink]="['/app/onboarding']" [queryParams]="{ employeeId: data.id }">
+                    Continue Onboarding
+                  </button>
+                }
+                <a *nzSpaceItem nz-button nzType="default" nzSize="small" [routerLink]="['/app/employees/view', data.id]">
+                  <span nz-icon nzType="eye" nzTheme="outline"></span>
+                </a>
+                <a *nzSpaceItem nz-button nzType="primary" nzSize="small" [routerLink]="['/app/employees/edit', data.id]">
+                  <span nz-icon nzType="edit" nzTheme="outline"></span>
+                </a>
+              </nz-space>
+            </td>
+          </tr>
+        }
       </tbody>
     </nz-table>
   </nz-card>

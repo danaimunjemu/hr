@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, computed, effect, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { Observable } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { OnboardingService, EmployeeDto, UserDto } from '../../services/onboarding.service';
 import { EmployeesService } from '../../../employees/services/employees.service';
 
@@ -28,100 +29,84 @@ import { EthnicGroupsService } from '../../../settings/services/ethnic-groups.se
   styleUrls: ['./onboarding-page.component.scss']
 })
 export class OnboardingPageComponent implements OnInit {
-  currentStep = 0;
-  isLoading = false;
-  createdEmployeeId: number | null = null;
-  createdUsername: string | null = null;
-  createdPhoneNumber: string | null = null;
+  // Signals for state
+  currentStep = signal(0);
+  isLoading = signal(false);
+  createdEmployeeId = signal<number | null>(null);
+  createdUsername = signal<string | null>(null);
+  createdPhoneNumber = signal<string | null>(null);
+  otpSent = signal(false);
+  otpCooldown = signal(0);
+  isComplete = signal(false);
 
   // Forms
   employeeForm!: FormGroup;
   userForm!: FormGroup;
-  // otpForm removed
-  // passwordForm removed
 
-  // Dropdown Observables
-  companies$!: Observable<any[]>;
-  positions$!: Observable<any[]>;
-  jobDescriptions$!: Observable<any[]>;
-  orgUnits$!: Observable<any[]>;
-  personnelAreas$!: Observable<any[]>;
-  personnelSubAreas$!: Observable<any[]>;
-  workContracts$!: Observable<any[]>;
-  workScheduleRules$!: Observable<any[]>;
-  costCenters$!: Observable<any[]>;
-  groups$!: Observable<any[]>;
-  subGroups$!: Observable<any[]>;
-  psGroups$!: Observable<any[]>;
-  ethnicGroups$!: Observable<any[]>;
-
-  // UI State
-  otpSent = false;
-  otpCooldown = 0;
-  isComplete = false;
+  // Dropdown Signals (using toSignal for async data)
+  companies = toSignal(inject(CompaniesService).getCompanies(), { initialValue: [] });
+  positions = toSignal(inject(PositionsService).getAll(), { initialValue: [] });
+  jobDescriptions = toSignal(inject(JobDescriptionsService).getAll(), { initialValue: [] });
+  orgUnits = toSignal(inject(OrganizationalUnitsService).getAll(), { initialValue: [] });
+  personnelAreas = toSignal(inject(PersonnelAreasService).getAll(), { initialValue: [] });
+  personnelSubAreas = toSignal(inject(PersonnelSubAreasService).getAll(), { initialValue: [] });
+  workContracts = toSignal(inject(WorkContractsService).getAll(), { initialValue: [] });
+  workScheduleRules = toSignal(inject(WorkScheduleRulesService).getAll(), { initialValue: [] });
+  costCenters = toSignal(inject(CostCentersService).getCostCenters(), { initialValue: [] });
+  groups = toSignal(inject(EmployeeGroupsService).getEmployeeGroups(), { initialValue: [] });
+  subGroups = toSignal(inject(EmployeeSubGroupsService).getEmployeeSubGroups(), { initialValue: [] });
+  psGroups = toSignal(inject(PsGroupsService).getAll(), { initialValue: [] });
+  ethnicGroups = toSignal(inject(EthnicGroupsService).getAll(), { initialValue: [] });
 
   constructor(
     private fb: FormBuilder,
     private onboardingService: OnboardingService,
     private employeesService: EmployeesService,
     private message: NzMessageService,
-    private route: ActivatedRoute,
-    // Inject Settings Services
-    private companiesService: CompaniesService,
-    private positionsService: PositionsService,
-    private jobDescriptionsService: JobDescriptionsService,
-    private orgUnitsService: OrganizationalUnitsService,
-    private personnelAreasService: PersonnelAreasService,
-    private personnelSubAreasService: PersonnelSubAreasService,
-    private workContractsService: WorkContractsService,
-    private workScheduleRulesService: WorkScheduleRulesService,
-    private costCentersService: CostCentersService,
-    private employeeGroupsService: EmployeeGroupsService,
-    private employeeSubGroupsService: EmployeeSubGroupsService,
-    private psGroupsService: PsGroupsService,
-    private ethnicGroupsService: EthnicGroupsService
-  ) {}
+    private route: ActivatedRoute
+  ) {
+    // Effect to log step changes (example usage of effect)
+    effect(() => {
+      console.log(`Current step changed to: ${this.currentStep()}`);
+    });
+  }
 
   ngOnInit(): void {
     this.initForms();
-    this.loadDropdownData();
     this.checkResume();
   }
 
   private checkResume(): void {
     const employeeId = this.route.snapshot.queryParamMap.get('employeeId');
     if (employeeId) {
-      this.isLoading = true;
+      this.isLoading.set(true);
       this.employeesService.getById(Number(employeeId)).subscribe({
         next: (emp) => {
-          this.isLoading = false;
-          this.createdEmployeeId = emp.id;
+          this.isLoading.set(false);
+          this.createdEmployeeId.set(emp.id);
           
-          // Populate Step 1 (Employee Form) partially for context
           this.employeeForm.patchValue({
             firstName: emp.firstName,
             lastName: emp.lastName,
             email: emp.email,
             mobilePhone: emp.mobilePhone,
             employeeNumber: emp.employeeNumber
-            // Add other fields if necessary
           });
-          this.employeeForm.disable(); // Lock Step 1
+          this.employeeForm.disable();
 
-          // Determine Step
           if (!emp.user) {
-            this.currentStep = 1; // Go to Create User
+            this.currentStep.set(1);
           } else if (!emp.user.enabled) {
-            this.currentStep = 2; // Go to Activate (OTP)
-            this.createdUsername = emp.user.username;
-            this.createdPhoneNumber = emp.mobilePhone; 
+            this.currentStep.set(2);
+            this.createdUsername.set(emp.user.username);
+            this.createdPhoneNumber.set(emp.mobilePhone); 
           } else {
-            this.isComplete = true; // Already done
-            this.currentStep = 2; // Last step visual
+            this.isComplete.set(true);
+            this.currentStep.set(2);
           }
         },
         error: () => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.message.error('Failed to load employee for onboarding resume.');
         }
       });
@@ -129,76 +114,43 @@ export class OnboardingPageComponent implements OnInit {
   }
 
   private initForms(): void {
-    // Step 1: Employee Details (Expanded per prompt requirements)
     this.employeeForm = this.fb.group({
-      // Personal
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
       gender: [null, [Validators.required]],
       dateOfBirth: [null, [Validators.required]],
       nationalId: ['', [Validators.required]],
-
-      // Employment
       employeeNumber: ['', [Validators.required]],
       dateJoined: [null, [Validators.required]],
-      
-      // Relations (IDs)
       companyId: [null, [Validators.required]],
       positionId: [null, [Validators.required]],
       jobDescriptionId: [null, [Validators.required]],
       workContractId: [null, [Validators.required]],
       workScheduleRuleId: [null, [Validators.required]],
-      
-      // Groups
       groupId: [null, [Validators.required]],
       subGroupId: [null, [Validators.required]],
       psGroupId: [null, [Validators.required]],
-      
-      // Org Structure
       organizationalUnitId: [null, [Validators.required]],
       personnelAreaId: [null, [Validators.required]],
       personnelSubAreaId: [null, [Validators.required]],
       costCenterId: [null, [Validators.required]],
-      
-      // Demographics
       ethnicGroupId: [null, [Validators.required]]
     });
 
-    // Step 2: User Account Setup
     this.userForm = this.fb.group({
       username: ['', [Validators.required]],
-      phoneNumber: ['', [Validators.required, Validators.pattern(/^\+?[0-9]{10,15}$/)]], // Added phone number
+      phoneNumber: ['', [Validators.required, Validators.pattern(/^\+?[0-9]{10,15}$/)]],
       roleId: [null, [Validators.required]]
     });
   }
 
-  private loadDropdownData(): void {
-    this.companies$ = this.companiesService.getCompanies();
-    this.positions$ = this.positionsService.getAll();
-    this.jobDescriptions$ = this.jobDescriptionsService.getAll();
-    this.orgUnits$ = this.orgUnitsService.getAll();
-    this.personnelAreas$ = this.personnelAreasService.getAll();
-    this.personnelSubAreas$ = this.personnelSubAreasService.getAll();
-    this.workContracts$ = this.workContractsService.getAll();
-    this.workScheduleRules$ = this.workScheduleRulesService.getAll();
-    this.costCenters$ = this.costCentersService.getCostCenters();
-    this.groups$ = this.employeeGroupsService.getEmployeeGroups();
-    this.subGroups$ = this.employeeSubGroupsService.getEmployeeSubGroups();
-    this.psGroups$ = this.psGroupsService.getAll();
-    this.ethnicGroups$ = this.ethnicGroupsService.getAll();
-  }
-
-  // --- Steps Logic ---
-
   pre(): void {
-    this.currentStep -= 1;
+    this.currentStep.update(step => step - 1);
   }
 
   next(): void {
-    this.currentStep += 1;
+    this.currentStep.update(step => step + 1);
   }
-
-  // --- Step 1: Create Employee ---
 
   submitEmployee(): void {
     if (this.employeeForm.invalid) {
@@ -207,10 +159,9 @@ export class OnboardingPageComponent implements OnInit {
       return;
     }
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     const formVal = this.employeeForm.value;
     
-    // Transform flat form to nested DTO matching prompt exactly
     const employeePayload: EmployeeDto = {
       firstName: formVal.firstName,
       lastName: formVal.lastName,
@@ -219,7 +170,6 @@ export class OnboardingPageComponent implements OnInit {
       nationalId: formVal.nationalId,
       employeeNumber: formVal.employeeNumber,
       dateJoined: this.formatDate(formVal.dateJoined),
-      
       company: { id: formVal.companyId },
       position: { id: formVal.positionId },
       jobDescription: { id: formVal.jobDescriptionId },
@@ -237,13 +187,13 @@ export class OnboardingPageComponent implements OnInit {
 
     this.onboardingService.createEmployee(employeePayload).subscribe({
       next: (res) => {
-        this.isLoading = false;
-        this.createdEmployeeId = res.id!;
+        this.isLoading.set(false);
+        this.createdEmployeeId.set(res.id!);
         this.message.success('Employee created successfully!');
         this.next();
       },
       error: (err) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         console.error(err);
         this.message.error('Failed to create employee. Please check the details or try again.');
       }
@@ -255,20 +205,18 @@ export class OnboardingPageComponent implements OnInit {
     return date.toISOString().split('T')[0];
   }
 
-  // --- Step 2: Create User ---
-
   submitUser(): void {
     if (this.userForm.invalid) {
       this.updateValidity(this.userForm);
       return;
     }
 
-    if (!this.createdEmployeeId) {
+    if (!this.createdEmployeeId()) {
       this.message.error('Missing employee ID. Please restart the process.');
       return;
     }
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     const formVal = this.userForm.value;
     const employeeFormVal = this.employeeForm.getRawValue();
     
@@ -276,44 +224,40 @@ export class OnboardingPageComponent implements OnInit {
       username: formVal.username,
       email: employeeFormVal.email || '', 
       phoneNumber: formVal.phoneNumber,
-      employee: { id: this.createdEmployeeId },
+      employee: { id: this.createdEmployeeId()! },
       roles: [{ id: formVal.roleId }]
     };
 
     this.onboardingService.registerUser(userPayload).subscribe({
       next: () => {
-        this.isLoading = false;
-        this.createdUsername = formVal.username;
-        this.createdPhoneNumber = formVal.phoneNumber;
+        this.isLoading.set(false);
+        this.createdUsername.set(formVal.username);
+        this.createdPhoneNumber.set(formVal.phoneNumber);
         this.message.success('User account created successfully!');
         this.next();
       },
       error: (err) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         console.error(err);
         this.message.error('Failed to create user account.');
       }
     });
   }
 
-  // --- Step 3: Send OTP (Final Step for HR) ---
-
   sendOtp(): void {
-    const target = this.createdPhoneNumber || this.createdUsername;
+    const target = this.createdPhoneNumber() || this.createdUsername();
     if (!target) return;
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.onboardingService.activateAccount({ username: target }).subscribe({
       next: () => {
-        this.isLoading = false;
-        this.otpSent = true;
-        this.isComplete = true; // Mark as complete
+        this.isLoading.set(false);
+        this.otpSent.set(true);
+        this.isComplete.set(true);
         this.message.success('OTP sent successfully to ' + target);
-        // this.startCooldown(); // No cooldown needed here if flow ends
-        // this.next(); // Stay on success view or just show success content
       },
       error: (err) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         console.error(err);
         this.message.error('Failed to send OTP.');
       }
@@ -321,11 +265,11 @@ export class OnboardingPageComponent implements OnInit {
   }
 
   resetOnboarding(): void {
-    this.currentStep = 0;
-    this.createdEmployeeId = null;
-    this.createdUsername = null;
-    this.otpSent = false;
-    this.isComplete = false;
+    this.currentStep.set(0);
+    this.createdEmployeeId.set(null);
+    this.createdUsername.set(null);
+    this.otpSent.set(false);
+    this.isComplete.set(false);
     this.employeeForm.reset();
     this.userForm.reset();
   }

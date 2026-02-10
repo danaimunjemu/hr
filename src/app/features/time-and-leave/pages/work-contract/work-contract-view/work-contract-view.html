@@ -3,22 +3,24 @@
   [nzBackIcon]="'arrow-left'"
   (nzBack)="onBack()"
   [nzTitle]="'Work Contract Details'"
-  [nzSubtitle]="contract?.name"
+  [nzSubtitle]="contract()?.name"
 >
 </nz-page-header>
 
-<nz-card [nzLoading]="loading">
-  <div *ngIf="contract">
-    <nz-descriptions [nzColumn]="1" nzTitle="Contract Information" nzBordered>
-      <nz-descriptions-item nzTitle="Name">{{ contract.name }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Normal Hours / Day">{{ contract.normalHoursPerDay }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Normal Hours / Week">{{ contract.normalHoursPerWeek }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Overtime Policy">
-        <nz-tag [nzColor]="'blue'">{{ contract.overtimePolicy }}</nz-tag>
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Daily Overtime Threshold">{{ contract.overtimeDailyThreshold }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Weekly Overtime Threshold">{{ contract.overtimeWeeklyThreshold }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Rounding (Minutes)">{{ contract.roundingMinutes }}</nz-descriptions-item>
-    </nz-descriptions>
-  </div>
+<nz-card [nzLoading]="loading()">
+  @if (contract(); as c) {
+    <div>
+      <nz-descriptions [nzColumn]="1" nzTitle="Contract Information" nzBordered>
+        <nz-descriptions-item nzTitle="Name">{{ c.name }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Normal Hours / Day">{{ c.normalHoursPerDay }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Normal Hours / Week">{{ c.normalHoursPerWeek }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Overtime Policy">
+          <nz-tag [nzColor]="'blue'">{{ c.overtimePolicy }}</nz-tag>
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Daily Overtime Threshold">{{ c.overtimeDailyThreshold }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Weekly Overtime Threshold">{{ c.overtimeWeeklyThreshold }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Rounding (Minutes)">{{ c.roundingMinutes }}</nz-descriptions-item>
+      </nz-descriptions>
+    </div>
+  }
 </nz-card>

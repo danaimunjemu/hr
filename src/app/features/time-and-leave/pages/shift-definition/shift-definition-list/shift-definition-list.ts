@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { catchError, map, of, startWith } from 'rxjs';
 import { ShiftDefinition } from '../../../models/shift-definition.model';
 import { ShiftDefinitionService } from '../../../services/shift-definition.service';
 
@@ -15,27 +17,22 @@ import { ShiftDefinitionService } from '../../../services/shift-definition.servi
     }
   `]
 })
-export class ShiftDefinitionListComponent implements OnInit {
-  loading = true;
-  shifts: ShiftDefinition[] = [];
+export class ShiftDefinitionListComponent {
+  private service = inject(ShiftDefinitionService);
 
-  constructor(private shiftDefinitionService: ShiftDefinitionService) {}
-
-  ngOnInit(): void {
-    this.loadData();
-  }
-
-  loadData(): void {
-    this.loading = true;
-    this.shiftDefinitionService.getAll().subscribe({
-      next: (data) => {
-        this.shifts = data;
-        this.loading = false;
-      },
-      error: (err: any) => {
+  private state = toSignal(
+    this.service.getAll().pipe(
+      map(data => ({ loading: false, data, error: null })),
+      startWith({ loading: true, data: [] as ShiftDefinition[], error: null }),
+      catchError(err => {
         console.error('Failed to load shift definitions', err);
-        this.loading = false;
-      }
-    });
-  }
+        return of({ loading: false, data: [] as ShiftDefinition[], error: err });
+      })
+    ),
+    { initialValue: { loading: true, data: [] as ShiftDefinition[], error: null } }
+  );
+
+  shifts = computed(() => this.state().data);
+  loading = computed(() => this.state().loading);
+  error = computed(() => this.state().error);
 }

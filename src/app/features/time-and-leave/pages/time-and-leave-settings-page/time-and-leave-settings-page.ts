@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 interface MenuItem {
   title: string;
@@ -13,9 +13,9 @@ interface MenuItem {
   styleUrl: './time-and-leave-settings-page.scss'
 })
 export class TimeAndLeaveSettingsPageComponent {
-  isCollapsed = false;
+  isCollapsed = signal(false);
 
-  menuItems: MenuItem[] = [
+  menuItems = signal<MenuItem[]>([
     { title: 'Work Contract', icon: 'file-protect', route: '/app/time-and-leave/work-contract' },
     { title: 'Overtime Rule', icon: 'percentage', route: '/app/time-and-leave/overtime-rule' },
     { title: 'Work Schedule Rule', icon: 'schedule', route: '/app/time-and-leave/work-schedule-rule' },
@@ -29,5 +29,5 @@ export class TimeAndLeaveSettingsPageComponent {
     { title: 'Schedule Exception', icon: 'exclamation-circle', route: '/app/time-and-leave/schedule-exception' },
     { title: 'Timesheet', icon: 'table', route: '/app/time-and-leave/timesheet' },
     { title: 'Leave Types & Requests', icon: 'rest', route: '/app/time-and-leave/leave' }
-  ];
+  ]);
 }

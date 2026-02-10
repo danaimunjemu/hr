@@ -5,7 +5,7 @@
   </div>
 
   <nz-card>
-    <nz-steps [nzCurrent]="currentStep">
+    <nz-steps [nzCurrent]="currentStep()">
       <nz-step nzTitle="Employee Details" nzDescription="Profile Info"></nz-step>
       <nz-step nzTitle="User Account" nzDescription="Role & Login"></nz-step>
       <nz-step nzTitle="Activate" nzDescription="Send OTP"></nz-step>
@@ -15,7 +15,7 @@
     <div class="steps-content">
       
       <!-- STEP 1: Employee Details -->
-      <div *ngIf="currentStep === 0">
+      <div *ngIf="currentStep() === 0">
         <form nz-form [formGroup]="employeeForm" nzLayout="vertical">
           
           <!-- 1. Personal Information -->
@@ -94,7 +94,7 @@
                 <nz-form-label nzRequired>Company</nz-form-label>
                 <nz-form-control nzErrorTip="Required">
                   <nz-select formControlName="companyId" nzPlaceHolder="Select Company" nzShowSearch nzAllowClear>
-                    <nz-option *ngFor="let item of companies$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                    <nz-option *ngFor="let item of companies()" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
                   </nz-select>
                 </nz-form-control>
               </nz-form-item>
@@ -107,7 +107,7 @@
                 <nz-form-label nzRequired>Position</nz-form-label>
                 <nz-form-control nzErrorTip="Required">
                   <nz-select formControlName="positionId" nzPlaceHolder="Select Position" nzShowSearch nzAllowClear>
-                    <nz-option *ngFor="let item of positions$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                    <nz-option *ngFor="let item of positions()" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
                   </nz-select>
                 </nz-form-control>
               </nz-form-item>
@@ -117,7 +117,7 @@
                 <nz-form-label nzRequired>Job Description</nz-form-label>
                 <nz-form-control nzErrorTip="Required">
                   <nz-select formControlName="jobDescriptionId" nzPlaceHolder="Select Job Description" nzShowSearch nzAllowClear>
-                    <nz-option *ngFor="let item of jobDescriptions$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                    <nz-option *ngFor="let item of jobDescriptions()" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
                   </nz-select>
                 </nz-form-control>
               </nz-form-item>
@@ -131,7 +131,7 @@
                 <nz-form-label nzRequired>Employee Group</nz-form-label>
                 <nz-form-control nzErrorTip="Required">
                   <nz-select formControlName="groupId" nzPlaceHolder="Select Group" nzShowSearch nzAllowClear>
-                    <nz-option *ngFor="let item of groups$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                    <nz-option *ngFor="let item of groups()" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
                   </nz-select>
                 </nz-form-control>
               </nz-form-item>
@@ -141,7 +141,7 @@
                 <nz-form-label nzRequired>Employee Sub-Group</nz-form-label>
                 <nz-form-control nzErrorTip="Required">
                   <nz-select formControlName="subGroupId" nzPlaceHolder="Select Sub-Group" nzShowSearch nzAllowClear>
-                    <nz-option *ngFor="let item of subGroups$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                    <nz-option *ngFor="let item of subGroups()" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
                   </nz-select>
                 </nz-form-control>
               </nz-form-item>
@@ -151,7 +151,7 @@
                 <nz-form-label nzRequired>PS Group</nz-form-label>
                 <nz-form-control nzErrorTip="Required">
                   <nz-select formControlName="psGroupId" nzPlaceHolder="Select PS Group" nzShowSearch nzAllowClear>
-                    <nz-option *ngFor="let item of psGroups$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                    <nz-option *ngFor="let item of psGroups()" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
                   </nz-select>
                 </nz-form-control>
               </nz-form-item>
@@ -164,7 +164,7 @@
                 <nz-form-label nzRequired>Work Contract</nz-form-label>
                 <nz-form-control nzErrorTip="Required">
                   <nz-select formControlName="workContractId" nzPlaceHolder="Select Work Contract" nzShowSearch nzAllowClear>
-                    <nz-option *ngFor="let item of workContracts$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                    <nz-option *ngFor="let item of workContracts()" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
                   </nz-select>
                 </nz-form-control>
               </nz-form-item>
@@ -174,7 +174,7 @@
                 <nz-form-label nzRequired>Work Schedule Rule</nz-form-label>
                 <nz-form-control nzErrorTip="Required">
                   <nz-select formControlName="workScheduleRuleId" nzPlaceHolder="Select Work Schedule Rule" nzShowSearch nzAllowClear>
-                    <nz-option *ngFor="let item of workScheduleRules$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                    <nz-option *ngFor="let item of workScheduleRules()" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
                   </nz-select>
                 </nz-form-control>
               </nz-form-item>
@@ -189,7 +189,7 @@
                 <nz-form-label nzRequired>Organizational Unit</nz-form-label>
                 <nz-form-control nzErrorTip="Required">
                   <nz-select formControlName="organizationalUnitId" nzPlaceHolder="Select Org Unit" nzShowSearch nzAllowClear>
-                    <nz-option *ngFor="let item of orgUnits$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                    <nz-option *ngFor="let item of orgUnits()" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
                   </nz-select>
                 </nz-form-control>
               </nz-form-item>
@@ -199,7 +199,7 @@
                 <nz-form-label nzRequired>Cost Center</nz-form-label>
                 <nz-form-control nzErrorTip="Required">
                   <nz-select formControlName="costCenterId" nzPlaceHolder="Select Cost Center" nzShowSearch nzAllowClear>
-                    <nz-option *ngFor="let item of costCenters$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                    <nz-option *ngFor="let item of costCenters()" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
                   </nz-select>
                 </nz-form-control>
               </nz-form-item>
@@ -212,7 +212,7 @@
                 <nz-form-label nzRequired>Personnel Area</nz-form-label>
                 <nz-form-control nzErrorTip="Required">
                   <nz-select formControlName="personnelAreaId" nzPlaceHolder="Select Personnel Area" nzShowSearch nzAllowClear>
-                    <nz-option *ngFor="let item of personnelAreas$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                    <nz-option *ngFor="let item of personnelAreas()" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
                   </nz-select>
                 </nz-form-control>
               </nz-form-item>
@@ -222,7 +222,7 @@
                 <nz-form-label nzRequired>Personnel Sub-Area</nz-form-label>
                 <nz-form-control nzErrorTip="Required">
                   <nz-select formControlName="personnelSubAreaId" nzPlaceHolder="Select Personnel Sub-Area" nzShowSearch nzAllowClear>
-                    <nz-option *ngFor="let item of personnelSubAreas$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                    <nz-option *ngFor="let item of personnelSubAreas()" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
                   </nz-select>
                 </nz-form-control>
               </nz-form-item>
@@ -237,7 +237,7 @@
                 <nz-form-label nzRequired>Ethnic Group</nz-form-label>
                 <nz-form-control nzErrorTip="Required">
                   <nz-select formControlName="ethnicGroupId" nzPlaceHolder="Select Ethnic Group" nzShowSearch nzAllowClear>
-                    <nz-option *ngFor="let item of ethnicGroups$ | async" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                    <nz-option *ngFor="let item of ethnicGroups()" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
                   </nz-select>
                 </nz-form-control>
               </nz-form-item>
@@ -248,9 +248,9 @@
       </div>
 
       <!-- STEP 2: User Account -->
-      <div *ngIf="currentStep === 1">
+      <div *ngIf="currentStep() === 1">
         <nz-alert nzType="info" nzShowIcon nzMessage="Employee Record Created" 
-                  [nzDescription]="'Employee ID: ' + createdEmployeeId + '. Now link a user account.'"></nz-alert>
+                  [nzDescription]="'Employee ID: ' + createdEmployeeId() + '. Now link a user account.'"></nz-alert>
         <div class="mt-4">
           <form nz-form [formGroup]="userForm" nzLayout="vertical">
             <nz-form-item>
@@ -283,19 +283,19 @@
       </div>
 
       <!-- STEP 3: Activate Account -->
-      <div *ngIf="currentStep === 2">
+      <div *ngIf="currentStep() === 2">
         <div class="text-center py-8">
           <span nz-icon nzType="mobile" nzTheme="twotone" style="font-size: 48px; margin-bottom: 16px;"></span>
           <h3 class="text-lg font-semibold">Ready to Activate?</h3>
-          <p class="text-gray-500 mb-6">Click below to send an activation OTP to <strong>{{ createdPhoneNumber || createdUsername }}</strong>.</p>
-          <button nz-button nzType="primary" nzSize="large" (click)="sendOtp()" [nzLoading]="isLoading" [disabled]="otpCooldown > 0">
-            {{ otpCooldown > 0 ? 'Wait ' + otpCooldown + 's' : 'Send Activation OTP' }}
+          <p class="text-gray-500 mb-6">Click below to send an activation OTP to <strong>{{ createdPhoneNumber() || createdUsername() }}</strong>.</p>
+          <button nz-button nzType="primary" nzSize="large" (click)="sendOtp()" [nzLoading]="isLoading()" [disabled]="otpCooldown() > 0">
+            {{ otpCooldown() > 0 ? 'Wait ' + otpCooldown() + 's' : 'Send Activation OTP' }}
           </button>
         </div>
       </div>
 
       <!-- Success State -->
-      <div *ngIf="isComplete" class="success-result">
+      <div *ngIf="isComplete()" class="success-result">
         <nz-result
           nzStatus="success"
           nzTitle="Onboarding Completed Successfully!"
@@ -310,24 +310,24 @@
     </div>
 
     <!-- Footer Actions -->
-    <div class="steps-action" *ngIf="!isComplete">
+    <div class="steps-action" *ngIf="!isComplete()">
       <!-- Step 1 Actions -->
-      <div *ngIf="currentStep === 0">
-        <button nz-button nzType="primary" (click)="submitEmployee()" [nzLoading]="isLoading">
+      <div *ngIf="currentStep() === 0">
+        <button nz-button nzType="primary" (click)="submitEmployee()" [nzLoading]="isLoading()">
           Create Employee & Continue
         </button>
       </div>
 
       <!-- Step 2 Actions -->
-      <div *ngIf="currentStep === 1">
+      <div *ngIf="currentStep() === 1">
         <button nz-button nzType="default" (click)="pre()" class="mr-2">Back</button>
-        <button nz-button nzType="primary" (click)="submitUser()" [nzLoading]="isLoading">
+        <button nz-button nzType="primary" (click)="submitUser()" [nzLoading]="isLoading()">
           Create User & Continue
         </button>
       </div>
 
       <!-- Step 3 Actions -->
-      <div *ngIf="currentStep === 2">
+      <div *ngIf="currentStep() === 2">
         <button nz-button nzType="default" (click)="pre()">Back</button>
         <!-- Forward navigation happens via the main button inside the step content -->
       </div>

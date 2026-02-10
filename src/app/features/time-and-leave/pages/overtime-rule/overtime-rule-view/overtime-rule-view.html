@@ -3,22 +3,53 @@
   [nzBackIcon]="'arrow-left'"
   (nzBack)="onBack()"
   [nzTitle]="'Overtime Rule Details'"
-  [nzSubtitle]="rule?.name"
+  [nzSubtitle]="rule?.ruleName"
 >
 </nz-page-header>
 
-<nz-card [nzLoading]="loading">
-  <div *ngIf="rule">
-    <nz-descriptions [nzColumn]="1" nzTitle="Rule Information" nzBordered>
-      <nz-descriptions-item nzTitle="Name">{{ rule.name }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Condition Type">
-        <nz-tag [nzColor]="'blue'">{{ rule.conditionType }}</nz-tag>
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Rate Multiplier">x{{ rule.rateMultiplier }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Priority">{{ rule.priority }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Threshold (Minutes)" *ngIf="rule.thresholdMinutes">
-        {{ rule.thresholdMinutes }} mins
-      </nz-descriptions-item>
-    </nz-descriptions>
-  </div>
-</nz-card>
+<div class="p-4">
+  <nz-card [nzLoading]="loading">
+    <div *ngIf="rule">
+      <nz-descriptions [nzColumn]="2" nzTitle="Rule Information" nzBordered>
+        <nz-descriptions-item nzTitle="Rule Code">{{ rule.ruleCode }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Rule Name">{{ rule.ruleName }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Description" [nzSpan]="2">{{ rule.description || '-' }}</nz-descriptions-item>
+        
+        <nz-descriptions-item nzTitle="Overtime Type">
+          <nz-tag [nzColor]="'blue'">{{ rule.overtimeType }}</nz-tag>
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Multiplier">x{{ rule.multiplier }}</nz-descriptions-item>
+        
+        <nz-descriptions-item nzTitle="Start Time">{{ rule.startTime | date:'HH:mm:ss' }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="End Time">{{ rule.endTime | date:'HH:mm:ss' }}</nz-descriptions-item>
+
+        <nz-descriptions-item nzTitle="Organizational Unit">{{ rule.organizationalUnit?.name || '-' }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Priority">{{ rule.priority }}</nz-descriptions-item>
+
+        <nz-descriptions-item nzTitle="Effective From">{{ rule.effectiveFrom | date:'mediumDate' }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Effective To">{{ rule.effectiveTo | date:'mediumDate' }}</nz-descriptions-item>
+
+        <nz-descriptions-item nzTitle="Status">
+          <nz-tag [nzColor]="rule.active ? 'success' : 'error'">
+            {{ rule.active ? 'Active' : 'Inactive' }}
+          </nz-tag>
+        </nz-descriptions-item>
+      </nz-descriptions>
+
+      <nz-divider nzText="Applicability"></nz-divider>
+      
+      <div class="flex gap-4">
+        <nz-tag [nzColor]="rule.appliesToWeekdays ? 'green' : 'default'">Weekdays: {{ rule.appliesToWeekdays ? 'Yes' : 'No' }}</nz-tag>
+        <nz-tag [nzColor]="rule.appliesToSaturdays ? 'green' : 'default'">Saturdays: {{ rule.appliesToSaturdays ? 'Yes' : 'No' }}</nz-tag>
+        <nz-tag [nzColor]="rule.appliesToSundays ? 'green' : 'default'">Sundays: {{ rule.appliesToSundays ? 'Yes' : 'No' }}</nz-tag>
+        <nz-tag [nzColor]="rule.appliesToPublicHolidays ? 'green' : 'default'">Public Holidays: {{ rule.appliesToPublicHolidays ? 'Yes' : 'No' }}</nz-tag>
+      </div>
+
+      <nz-divider nzText="Audit Info"></nz-divider>
+      <nz-descriptions [nzColumn]="2" nzSize="small">
+        <nz-descriptions-item nzTitle="Created On">{{ rule.createdOn | date:'medium' }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Updated On">{{ rule.updatedOn | date:'medium' }}</nz-descriptions-item>
+      </nz-descriptions>
+    </div>
+  </nz-card>
+</div>

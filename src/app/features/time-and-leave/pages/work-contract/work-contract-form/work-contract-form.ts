@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, signal, effect, computed } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WorkContractService } from '../../../services/work-contract.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { WorkContract } from '../../../models/work-contract.model';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, map, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-work-contract-form',
@@ -17,55 +19,53 @@ import { WorkContract } from '../../../models/work-contract.model';
     }
   `]
 })
-export class WorkContractFormComponent implements OnInit {
-  form: FormGroup;
-  isEditMode = false;
-  contractId: number | null = null;
-  loading = false;
-  submitting = false;
+export class WorkContractFormComponent {
+  private fb = inject(FormBuilder);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private service = inject(WorkContractService);
+  private message = inject(NzMessageService);
 
-  constructor(
-    private fb: FormBuilder,
-    private route: ActivatedRoute,
-    private router: Router,
-    private workContractService: WorkContractService,
-    private message: NzMessageService
-  ) {
-    this.form = this.fb.group({
-      name: ['', [Validators.required]],
-      normalHoursPerDay: [8, [Validators.required, Validators.min(0)]],
-      normalHoursPerWeek: [40, [Validators.required, Validators.min(0)]],
-      overtimePolicy: ['DAILY', [Validators.required]],
-      overtimeDailyThreshold: [0, [Validators.required, Validators.min(0)]],
-      overtimeWeeklyThreshold: [0, [Validators.required, Validators.min(0)]],
-      roundingMinutes: [0, [Validators.required, Validators.min(0)]]
-    });
-  }
+  form: FormGroup = this.fb.group({
+    name: ['', [Validators.required]],
+    normalHoursPerDay: [8, [Validators.required, Validators.min(0)]],
+    normalHoursPerWeek: [40, [Validators.required, Validators.min(0)]],
+    overtimePolicy: ['DAILY', [Validators.required]],
+    overtimeDailyThreshold: [0, [Validators.required, Validators.min(0)]],
+    overtimeWeeklyThreshold: [0, [Validators.required, Validators.min(0)]],
+    roundingMinutes: [0, [Validators.required, Validators.min(0)]]
+  });
 
-  ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      if (params['id']) {
-        this.isEditMode = true;
-        this.contractId = +params['id'];
-        this.loadContract(this.contractId);
+  isEditMode = signal(false);
+  contractId = signal<number | null>(null);
+  submitting = signal(false);
+
+  // Load contract data when ID is present
+  private contractData = toSignal(
+    this.route.params.pipe(
+      map(params => params['id']),
+      filter(id => !!id),
+      tap(id => {
+        this.isEditMode.set(true);
+        this.contractId.set(+id);
+      }),
+      switchMap(id => this.service.getById(+id))
+    )
+  );
+
+  // Effect to patch form when data loads
+  constructor() {
+    effect(() => {
+      const data = this.contractData();
+      if (data) {
+        this.form.patchValue(data);
       }
     });
   }
 
-  loadContract(id: number): void {
-    this.loading = true;
-    this.workContractService.getById(id).subscribe({
-      next: (contract) => {
-        this.form.patchValue(contract);
-        this.loading = false;
-      },
-      error: (err: any) => {
-        this.message.error('Failed to load contract details');
-        this.loading = false;
-        this.router.navigate(['../../'], { relativeTo: this.route });
-      }
-    });
-  }
+  // Derived loading state
+  // If we are in edit mode (ID exists) but data hasn't loaded yet, we are loading.
+  loading = computed(() => this.isEditMode() && !this.contractData());
 
   onSubmit(): void {
     if (this.form.invalid) {
@@ -78,32 +78,24 @@ export class WorkContractFormComponent implements OnInit {
       return;
     }
 
-    this.submitting = true;
+    this.submitting.set(true);
     const contractData: WorkContract = this.form.value;
+    const id = this.contractId();
 
-    if (this.isEditMode && this.contractId) {
-      this.workContractService.update(this.contractId, contractData).subscribe({
-        next: () => {
-          this.message.success('Work contract updated successfully');
-          this.router.navigate(['../../'], { relativeTo: this.route });
-        },
-        error: () => {
-          this.message.error('Failed to update work contract');
-          this.submitting = false;
-        }
-      });
-    } else {
-      this.workContractService.create(contractData).subscribe({
-        next: () => {
-          this.message.success('Work contract created successfully');
-          this.router.navigate(['../'], { relativeTo: this.route });
-        },
-        error: () => {
-          this.message.error('Failed to create work contract');
-          this.submitting = false;
-        }
-      });
-    }
+    const request$ = (this.isEditMode() && id)
+      ? this.service.update(id, contractData)
+      : this.service.create(contractData);
+
+    request$.subscribe({
+      next: () => {
+        this.message.success(this.isEditMode() ? 'Work contract updated successfully' : 'Work contract created successfully');
+        this.router.navigate(['../../'], { relativeTo: this.route });
+      },
+      error: () => {
+        this.message.error(this.isEditMode() ? 'Failed to update work contract' : 'Failed to create work contract');
+        this.submitting.set(false);
+      }
+    });
   }
 
   onCancel(): void {

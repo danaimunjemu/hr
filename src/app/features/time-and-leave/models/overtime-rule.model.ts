@@ -3,9 +3,23 @@ export interface OvertimeRule {
   createdOn?: string;
   updatedOn?: string;
   deletedOn?: string;
-  name: string;
-  rateMultiplier: number;
-  conditionType: 'DAILY_EXCESS' | 'WEEKLY_EXCESS' | 'WEEKEND' | 'HOLIDAY' | 'REST_DAY';
-  thresholdMinutes?: number; // For daily/weekly excess
+  ruleCode: string;
+  ruleName: string;
+  description: string;
+  overtimeType: string;
+  multiplier: number;
+  startTime: string;
+  endTime: string;
+  appliesToWeekdays: boolean;
+  appliesToSaturdays: boolean;
+  appliesToSundays: boolean;
+  appliesToPublicHolidays: boolean;
+  organizationalUnit: {
+    id: number;
+    name: string;
+  };
+  effectiveFrom: string;
+  effectiveTo: string;
+  active: boolean;
   priority: number;
 }

@@ -3,7 +3,7 @@
     <div class="flex flex-col">
 
       <div class="top-nav-user-greeting">
-        Hello {{ user?.employee.firstName }} {{ user?.employee.lastName }}
+        Hello {{ user()?.employee?.firstName }} {{ user()?.employee?.lastName }}
       </div>
 
       <div class="top-nav-time-greeting">

@@ -10,7 +10,7 @@
 </div>
 
 <nz-card>
-  <nz-table #basicTable [nzData]="shifts" [nzLoading]="loading">
+  <nz-table #basicTable [nzData]="shifts() || []" [nzLoading]="loading()">
     <thead>
       <tr>
         <th>Name</th>
@@ -22,18 +22,20 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of basicTable.data">
-        <td>{{ data.name }}</td>
-        <td><nz-tag [nzColor]="'blue'">{{ data.code }}</nz-tag></td>
-        <td>{{ data.startTime }}</td>
-        <td>{{ data.endTime }}</td>
-        <td>{{ data.paidHours }}</td>
-        <td>
-          <a class="action-btn" [routerLink]="['view', data.id]">View</a>
-          <nz-divider nzType="vertical"></nz-divider>
-          <a [routerLink]="['edit', data.id]">Edit</a>
-        </td>
-      </tr>
+      @for (data of basicTable.data; track data.id) {
+        <tr>
+          <td>{{ data.name }}</td>
+          <td><nz-tag [nzColor]="'blue'">{{ data.code }}</nz-tag></td>
+          <td>{{ data.startTime }}</td>
+          <td>{{ data.endTime }}</td>
+          <td>{{ data.paidHours }}</td>
+          <td>
+            <a class="action-btn" [routerLink]="['view', data.id]">View</a>
+            <nz-divider nzType="vertical"></nz-divider>
+            <a [routerLink]="['edit', data.id]">Edit</a>
+          </td>
+        </tr>
+      }
     </tbody>
   </nz-table>
 </nz-card>

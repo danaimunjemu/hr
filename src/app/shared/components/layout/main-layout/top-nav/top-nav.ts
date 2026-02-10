@@ -16,8 +16,8 @@ import { PortalService } from '../../../../services/portal';
 })
 export class TopNav implements OnInit{
 
-  user!: any | null;
   isLoading = signal(true);
+  user?: any;
 
 
 
@@ -28,15 +28,15 @@ export class TopNav implements OnInit{
     private cookiesService: CookiesService,
     private portalService: PortalService
   ) {
+    this.user = this.authService.currentUser;
     this.selectedPortal = this.portalService.getPortal();
     this.selectedPortalValue = this.portalService.getPortal()?.value;
     console.log("This selected portal: ", this.selectedPortal);
    }
 
   ngOnInit() {
-    const userStr = localStorage.getItem('user');
-    this.user = userStr ? JSON.parse(userStr) : null;
-    console.log("This user: ", this.user);
+    // User is now a signal, no need to manually load from localStorage here
+    console.log("This user signal: ", this.user());
   }
 
   onPortalChangeByValue(value: string) {

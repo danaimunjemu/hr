@@ -87,8 +87,7 @@ export class LeaveTypeFormComponent implements OnInit {
 
     this.submitting = true;
     const typeData: LeaveType = {
-      ...this.form.value,
-      id: this.typeId || 0
+      ...this.form.value
     };
 
     if (this.isEditMode && this.typeId) {
