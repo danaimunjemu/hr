@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { OhsService } from '../../services/ohs.service';
+import { SafetyIncident } from '../../models/ohs.model';
 
 @Component({
   selector: 'app-health-and-safety-page',
@@ -9,40 +11,35 @@ import { Component, OnInit } from '@angular/core';
 export class HealthAndSafetyPageComponent implements OnInit {
   loading = false;
   error: string | null = null;
-  
-  // Sample Data
-  incidents = [
-    {
-      date: '2026-02-04',
-      type: 'Near Miss',
-      location: 'Warehouse B',
-      reporter: 'Alex Brown',
-      severity: 'Low',
-      status: 'Investigating'
-    },
-    {
-      date: '2026-01-20',
-      type: 'Injury',
-      location: 'Production Line',
-      reporter: 'Sarah Connor',
-      severity: 'Medium',
-      status: 'Resolved'
-    }
-  ];
+  incidents: SafetyIncident[] = [];
+
+  constructor(private ohsService: OhsService) {}
 
   ngOnInit(): void {
+    this.loadData();
+  }
+
+  loadData() {
     this.loading = true;
-    setTimeout(() => {
-      this.loading = false;
-    }, 800);
+    this.ohsService.getSafetyIncidents().subscribe({
+      next: (data) => {
+        this.incidents = data.slice(0, 5); // Show last 5
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.error = 'Failed to load dashboard data';
+        this.loading = false;
+      }
+    });
   }
 
   getSeverityColor(severity: string): string {
     switch (severity) {
-      case 'High': return 'red';
-      case 'Medium': return 'orange';
-      case 'Low': return 'green';
-      default: return 'default';
+      case 'CRITICAL': return 'red';
+      case 'HIGH': return 'orange';
+      case 'MEDIUM': return 'gold';
+      default: return 'green';
     }
   }
 }

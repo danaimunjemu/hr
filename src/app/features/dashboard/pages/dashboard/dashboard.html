@@ -1,69 +1,222 @@
-<nz-page-header nzTitle="Dashboard">
-  <nz-page-header-extra>
-    <button nz-button>Export Report</button>
-    <button nz-button nzType="primary">Refresh</button>
-  </nz-page-header-extra>
-</nz-page-header>
-
-<div class="page-content">
-  <div nz-row [nzGutter]="16">
-    <div nz-col [nzSpan]="6">
-      <nz-card>
-        <nz-statistic [nzValue]="128" [nzTitle]="'Total Employees'" [nzPrefix]="prefixTplUser"></nz-statistic>
-        <ng-template #prefixTplUser><span nz-icon nzType="user"></span></ng-template>
-      </nz-card>
-    </div>
-    <div nz-col [nzSpan]="6">
-      <nz-card>
-        <nz-statistic [nzValue]="'92%'" [nzTitle]="'Attendance'" [nzPrefix]="prefixTplCheck"></nz-statistic>
-        <ng-template #prefixTplCheck><span nz-icon nzType="check-circle"></span></ng-template>
-      </nz-card>
-    </div>
-    <div nz-col [nzSpan]="6">
-      <nz-card>
-        <nz-statistic [nzValue]="1" [nzTitle]="'Pending Leaves'" [nzPrefix]="prefixTplFile"></nz-statistic>
-        <ng-template #prefixTplFile><span nz-icon nzType="file-text"></span></ng-template>
-      </nz-card>
-    </div>
-    <div nz-col [nzSpan]="6">
-      <nz-card>
-        <nz-statistic [nzValue]="'+12%'" [nzTitle]="'Growth'" [nzPrefix]="prefixTplRise"
-          [nzValueStyle]="{ color: '#3f8600' }"></nz-statistic>
-        <ng-template #prefixTplRise><span nz-icon nzType="arrow-up"></span></ng-template>
-      </nz-card>
-    </div>
+<div class="dashboard-container">
+  
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <nz-spin nzSimple nzSize="large"></nz-spin>
+    <p>Loading Dashboard Analytics...</p>
   </div>
 
-  <div nz-row [nzGutter]="16" style="margin-top: 24px;">
-    <div nz-col [nzSpan]="16">
-      <nz-card nzTitle="Recent Activities">
-        <nz-list nzItemLayout="horizontal">
-          <nz-list-item>
-            <nz-list-item-meta nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-              nzTitle="John Doe updated profile" nzDescription="2 hours ago">
-            </nz-list-item-meta>
-          </nz-list-item>
-          <nz-list-item>
-            <nz-list-item-meta nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-              nzTitle="New policy added: Remote Work" nzDescription="5 hours ago">
-            </nz-list-item-meta>
-          </nz-list-item>
-          <nz-list-item>
-            <nz-list-item-meta nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-              nzTitle="Salary Review Completed" nzDescription="1 day ago">
-            </nz-list-item-meta>
-          </nz-list-item>
-        </nz-list>
-      </nz-card>
-    </div>
-    <div nz-col [nzSpan]="8">
-      <nz-card nzTitle="Quick Links">
-        <div class="flex flex-col gap-2">
-          <button nz-button nzBlock>New Employee</button>
-          <button nz-button nzBlock>Approve Leaves</button>
-          <button nz-button nzBlock>Generate Report</button>
+  <!-- Error State -->
+  <div *ngIf="error" class="error-state">
+    <h3>Data Load Error</h3>
+    <p>{{ error }}</p>
+    <button nz-button nzType="primary" (click)="loadDashboardData()">Retry</button>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!loading && !error && data">
+    
+    <!-- 1. OHS Section -->
+    <section class="dashboard-section">
+      <div class="dashboard-section__header">
+        <h2>
+          <span nz-icon nzType="safety-certificate" nzTheme="outline"></span>
+          Occupational Health & Safety
+        </h2>
+      </div>
+      
+      <div class="kpi-grid">
+        <div class="kpi-card" [ngClass]="'kpi-card--' + data.ohs.kpis.safetyIncidents.severity">
+          <div class="kpi-card__label">{{ data.ohs.kpis.safetyIncidents.label }}</div>
+          <div class="kpi-card__value">{{ data.ohs.kpis.safetyIncidents.value }}</div>
+          <div class="kpi-card__subtitle" *ngIf="data.ohs.kpis.safetyIncidents.subtitle">
+            {{ data.ohs.kpis.safetyIncidents.subtitle }}
+          </div>
         </div>
-      </nz-card>
-    </div>
+        <div class="kpi-card" [ngClass]="'kpi-card--' + data.ohs.kpis.openInvestigations.severity">
+          <div class="kpi-card__label">{{ data.ohs.kpis.openInvestigations.label }}</div>
+          <div class="kpi-card__value">{{ data.ohs.kpis.openInvestigations.value }}</div>
+        </div>
+        <div class="kpi-card" [ngClass]="'kpi-card--' + data.ohs.kpis.highSeverityIncidents.severity">
+          <div class="kpi-card__label">{{ data.ohs.kpis.highSeverityIncidents.label }}</div>
+          <div class="kpi-card__value">{{ data.ohs.kpis.highSeverityIncidents.value }}</div>
+        </div>
+        <div class="kpi-card" [ngClass]="'kpi-card--' + data.ohs.kpis.daysLost.severity">
+          <div class="kpi-card__label">{{ data.ohs.kpis.daysLost.label }}</div>
+          <div class="kpi-card__value">{{ data.ohs.kpis.daysLost.value }}</div>
+        </div>
+        <div class="kpi-card" [ngClass]="'kpi-card--' + data.ohs.kpis.nearMisses.severity">
+          <div class="kpi-card__label">{{ data.ohs.kpis.nearMisses.label }}</div>
+          <div class="kpi-card__value">{{ data.ohs.kpis.nearMisses.value }}</div>
+        </div>
+        <div class="kpi-card" [ngClass]="'kpi-card--' + data.ohs.kpis.medicalSurveillanceDue.severity">
+          <div class="kpi-card__label">{{ data.ohs.kpis.medicalSurveillanceDue.label }}</div>
+          <div class="kpi-card__value">{{ data.ohs.kpis.medicalSurveillanceDue.value }}</div>
+        </div>
+        <div class="kpi-card" [ngClass]="'kpi-card--' + data.ohs.kpis.unfitEmployees.severity">
+          <div class="kpi-card__label">{{ data.ohs.kpis.unfitEmployees.label }}</div>
+          <div class="kpi-card__value">{{ data.ohs.kpis.unfitEmployees.value }}</div>
+        </div>
+        <div class="kpi-card" [ngClass]="'kpi-card--' + data.ohs.kpis.correctiveActionsPending.severity">
+          <div class="kpi-card__label">{{ data.ohs.kpis.correctiveActionsPending.label }}</div>
+          <div class="kpi-card__value">{{ data.ohs.kpis.correctiveActionsPending.value }}</div>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-card__header"><h3>Incidents by Type</h3></div>
+          <div class="chart-card__body"><div #chartContainer class="chart-container"></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card__header"><h3>Incident Trend (Monthly)</h3></div>
+          <div class="chart-card__body"><div #chartContainer class="chart-container"></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card__header"><h3>Investigation Status</h3></div>
+          <div class="chart-card__body"><div #chartContainer class="chart-container"></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card__header"><h3>Near Miss Severity</h3></div>
+          <div class="chart-card__body"><div #chartContainer class="chart-container"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Employee Relations Section -->
+    <section class="dashboard-section">
+      <div class="dashboard-section__header">
+        <h2>
+          <span nz-icon nzType="team" nzTheme="outline"></span>
+          Employee Relations
+        </h2>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card" [ngClass]="'kpi-card--' + data.er.kpis.activeCases.severity">
+          <div class="kpi-card__label">{{ data.er.kpis.activeCases.label }}</div>
+          <div class="kpi-card__value">{{ data.er.kpis.activeCases.value }}</div>
+        </div>
+        <div class="kpi-card" [ngClass]="'kpi-card--' + data.er.kpis.casesAtRisk.severity">
+          <div class="kpi-card__label">{{ data.er.kpis.casesAtRisk.label }}</div>
+          <div class="kpi-card__value">{{ data.er.kpis.casesAtRisk.value }}</div>
+        </div>
+        <div class="kpi-card" [ngClass]="'kpi-card--' + data.er.kpis.openTasks.severity">
+          <div class="kpi-card__label">{{ data.er.kpis.openTasks.label }}</div>
+          <div class="kpi-card__value">{{ data.er.kpis.openTasks.value }}</div>
+        </div>
+        <div class="kpi-card" [ngClass]="'kpi-card--' + data.er.kpis.overdueTasks.severity">
+          <div class="kpi-card__label">{{ data.er.kpis.overdueTasks.label }}</div>
+          <div class="kpi-card__value">{{ data.er.kpis.overdueTasks.value }}</div>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-card__header"><h3>Cases by Stage</h3></div>
+          <div class="chart-card__body"><div #chartContainer class="chart-container"></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card__header"><h3>Case Volume by Department</h3></div>
+          <div class="chart-card__body"><div #chartContainer class="chart-container"></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card__header"><h3>Case Priority Distribution</h3></div>
+          <div class="chart-card__body"><div #chartContainer class="chart-container"></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card__header"><h3>Tasks by Assignee</h3></div>
+          <div class="chart-card__body"><div #chartContainer class="chart-container"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Time & Leave Section -->
+    <section class="dashboard-section">
+      <div class="dashboard-section__header">
+        <h2>
+          <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
+          Time & Leave
+        </h2>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card" [ngClass]="'kpi-card--' + data.timeLeave.kpis.pendingLeaveRequests.severity">
+          <div class="kpi-card__label">{{ data.timeLeave.kpis.pendingLeaveRequests.label }}</div>
+          <div class="kpi-card__value">{{ data.timeLeave.kpis.pendingLeaveRequests.value }}</div>
+        </div>
+        <div class="kpi-card" [ngClass]="'kpi-card--' + data.timeLeave.kpis.employeesOnLeave.severity">
+          <div class="kpi-card__label">{{ data.timeLeave.kpis.employeesOnLeave.label }}</div>
+          <div class="kpi-card__value">{{ data.timeLeave.kpis.employeesOnLeave.value }}</div>
+        </div>
+        <div class="kpi-card" [ngClass]="'kpi-card--' + data.timeLeave.kpis.pendingTimesheets.severity">
+          <div class="kpi-card__label">{{ data.timeLeave.kpis.pendingTimesheets.label }}</div>
+          <div class="kpi-card__value">{{ data.timeLeave.kpis.pendingTimesheets.value }}</div>
+        </div>
+        <div class="kpi-card" [ngClass]="'kpi-card--' + data.timeLeave.kpis.totalOvertimeHours.severity">
+          <div class="kpi-card__label">{{ data.timeLeave.kpis.totalOvertimeHours.label }}</div>
+          <div class="kpi-card__value">{{ data.timeLeave.kpis.totalOvertimeHours.value }}</div>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-card__header"><h3>Leave Type Distribution</h3></div>
+          <div class="chart-card__body"><div #chartContainer class="chart-container"></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card__header"><h3>Overtime Trend</h3></div>
+          <div class="chart-card__body"><div #chartContainer class="chart-container"></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card__header"><h3>Leave Status Overview</h3></div>
+          <div class="chart-card__body"><div #chartContainer class="chart-container"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Workforce Section -->
+    <section class="dashboard-section">
+      <div class="dashboard-section__header">
+        <h2>
+          <span nz-icon nzType="usergroup-add" nzTheme="outline"></span>
+          Workforce Metrics
+        </h2>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card" [ngClass]="'kpi-card--' + data.workforce.kpis.totalHeadcount.severity">
+          <div class="kpi-card__label">{{ data.workforce.kpis.totalHeadcount.label }}</div>
+          <div class="kpi-card__value">{{ data.workforce.kpis.totalHeadcount.value }}</div>
+        </div>
+        <div class="kpi-card" [ngClass]="'kpi-card--' + data.workforce.kpis.newHires.severity">
+          <div class="kpi-card__label">{{ data.workforce.kpis.newHires.label }}</div>
+          <div class="kpi-card__value">{{ data.workforce.kpis.newHires.value }}</div>
+        </div>
+        <div class="kpi-card" [ngClass]="'kpi-card--' + data.workforce.kpis.terminations.severity">
+          <div class="kpi-card__label">{{ data.workforce.kpis.terminations.label }}</div>
+          <div class="kpi-card__value">{{ data.workforce.kpis.terminations.value }}</div>
+        </div>
+        <div class="kpi-card" [ngClass]="'kpi-card--' + data.workforce.kpis.genderDiversity.severity">
+          <div class="kpi-card__label">{{ data.workforce.kpis.genderDiversity.label }}</div>
+          <div class="kpi-card__value">{{ data.workforce.kpis.genderDiversity.value }}</div>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-card__header"><h3>Headcount by Department</h3></div>
+          <div class="chart-card__body"><div #chartContainer class="chart-container"></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card__header"><h3>Employment Type Split</h3></div>
+          <div class="chart-card__body"><div #chartContainer class="chart-container"></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card__header"><h3>Tenure Distribution</h3></div>
+          <div class="chart-card__body"><div #chartContainer class="chart-container"></div></div>
+        </div>
+      </div>
+    </section>
   </div>
 </div>

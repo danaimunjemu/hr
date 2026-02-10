@@ -23,7 +23,7 @@ export class CreateEthnicGroup {
     if (this.form.valid) {
       this.loading.set(true);
       this.service.create(this.form.value).pipe(finalize(() => this.loading.set(false))).subscribe({
-        next: () => { this.msg.success('Created successfully'); this.router.navigate(['/settings/ethnic-groups']); },
+        next: () => { this.msg.success('Created successfully'); this.router.navigate(['/app/settings/ethnic-groups']); },
         error: () => this.msg.error('Failed to create')
       });
     }

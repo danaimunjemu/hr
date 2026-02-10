@@ -10,7 +10,7 @@
 <nz-card [nzLoading]="loading">
   <div *ngIf="rule">
     <nz-descriptions [nzColumn]="1" nzTitle="Rule Information" nzBordered>
-      <nz-descriptions-item nzTitle="Employee Group">{{ rule.employeeGroup?.name }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Employee Group">{{ rule.employeeGroup.name }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Rotation Type">
         <nz-tag [nzColor]="rule.rotationType === 'FIXED' ? 'blue' : 'purple'">
           {{ rule.rotationType }}

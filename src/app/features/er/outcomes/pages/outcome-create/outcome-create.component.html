@@ -1,0 +1,76 @@
+<div class="page-header">
+  <h1 class="text-2xl font-bold mb-4">Record Case Outcome</h1>
+</div>
+
+<nz-card>
+  <form nz-form [formGroup]="form" (ngSubmit)="submit()" nzLayout="vertical">
+    
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Linked Case</nz-form-label>
+          <nz-form-control nzErrorTip="Select a case">
+            <nz-select formControlName="erCase" nzShowSearch nzAllowClear nzPlaceHolder="Select case">
+              <nz-option *ngFor="let c of cases" [nzValue]="c.id" [nzLabel]="(c.caseNumber || 'ID ' + c.id) + ': ' + c.title"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Outcome Type</nz-form-label>
+          <nz-form-control nzErrorTip="Select outcome type">
+            <nz-select formControlName="outcomeType" nzPlaceHolder="Select type">
+              <nz-option nzValue="WRITTEN_WARNING" nzLabel="Written Warning"></nz-option>
+              <nz-option nzValue="VERBAL_WARNING" nzLabel="Verbal Warning"></nz-option>
+              <nz-option nzValue="DISMISSAL" nzLabel="Dismissal"></nz-option>
+              <nz-option nzValue="SUSPENSION" nzLabel="Suspension"></nz-option>
+              <nz-option nzValue="EXONERATED" nzLabel="Exonerated"></nz-option>
+              <nz-option nzValue="OTHER" nzLabel="Other"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Decided By</nz-form-label>
+          <nz-form-control nzErrorTip="Select decision maker">
+            <nz-select formControlName="decidedBy" nzShowSearch nzAllowClear nzPlaceHolder="Select employee">
+              <nz-option *ngFor="let emp of employees" [nzValue]="emp.id" [nzLabel]="emp.firstName + ' ' + emp.lastName"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Decision Date</nz-form-label>
+          <nz-form-control nzErrorTip="Required">
+            <nz-date-picker formControlName="decisionAt" nzShowTime style="width: 100%"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <nz-form-item>
+      <nz-form-label nzRequired>Action Taken</nz-form-label>
+      <nz-form-control nzErrorTip="Enter action taken">
+        <input nz-input formControlName="actionTaken" placeholder="e.g. Final written warning issued" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label nzRequired>Decision Summary</nz-form-label>
+      <nz-form-control nzErrorTip="Enter summary">
+        <textarea nz-input formControlName="decisionSummary" rows="4" placeholder="Rationale for decision..."></textarea>
+      </nz-form-control>
+    </nz-form-item>
+
+    <div class="flex justify-end gap-2">
+      <button nz-button type="button" (click)="cancel()">Cancel</button>
+      <button nz-button nzType="primary" type="submit" [nzLoading]="loading">Record Outcome</button>
+    </div>
+  </form>
+</nz-card>

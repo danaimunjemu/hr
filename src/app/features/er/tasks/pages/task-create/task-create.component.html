@@ -1,0 +1,77 @@
+<nz-page-header (nzBack)="onCancel()" nzBackIcon nzTitle="Create New Task">
+</nz-page-header>
+
+<nz-card>
+  <form nz-form [formGroup]="form" (ngSubmit)="submit()" nzLayout="vertical">
+    <div nz-row [nzGutter]="16">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Case</nz-form-label>
+          <nz-form-control nzErrorTip="Please select a case">
+            <nz-select formControlName="erCase" nzShowSearch nzPlaceHolder="Select case">
+              <nz-option *ngFor="let c of cases" [nzValue]="c.id" [nzLabel]="c.caseNumber + ' - ' + c.title"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Title</nz-form-label>
+          <nz-form-control nzErrorTip="Please enter title">
+            <input nz-input formControlName="title" placeholder="Task title" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="16">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Type</nz-form-label>
+          <nz-form-control nzErrorTip="Please select type">
+            <nz-select formControlName="taskType">
+              <nz-option nzValue="INVESTIGATION" nzLabel="Investigation"></nz-option>
+              <nz-option nzValue="REVIEW" nzLabel="Review"></nz-option>
+              <nz-option nzValue="MEETING" nzLabel="Meeting"></nz-option>
+              <nz-option nzValue="DOCUMENTATION" nzLabel="Documentation"></nz-option>
+              <nz-option nzValue="OTHER" nzLabel="Other"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Assigned To</nz-form-label>
+          <nz-form-control nzErrorTip="Please select assignee">
+            <nz-select formControlName="assignedTo" nzShowSearch nzPlaceHolder="Select employee">
+              <nz-option *ngFor="let emp of employees" [nzValue]="emp.id" [nzLabel]="emp.firstName + ' ' + emp.lastName"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="16">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label>Due Date</nz-form-label>
+          <nz-form-control>
+            <nz-date-picker formControlName="dueAt" nzShowTime style="width: 100%"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <nz-form-item>
+      <nz-form-label>Description</nz-form-label>
+      <nz-form-control>
+        <textarea nz-input formControlName="description" rows="4"></textarea>
+      </nz-form-control>
+    </nz-form-item>
+
+    <div class="flex justify-end gap-2">
+      <button nz-button type="button" (click)="onCancel()">Cancel</button>
+      <button nz-button nzType="primary" [nzLoading]="loading">Create</button>
+    </div>
+  </form>
+</nz-card>

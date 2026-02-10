@@ -22,7 +22,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let data of basicTable.data">
-        <td>{{ data.employeeGroup?.name }}</td>
+        <td>{{ data.employeeGroup.name }}</td>
         <td>
           <nz-tag [nzColor]="data.rotationType === 'FIXED' ? 'blue' : 'purple'">
             {{ data.rotationType }}

@@ -28,6 +28,7 @@ export class AllEmployees implements OnInit {
       .subscribe({
         next: (data) => {
           this.employeesSignal.set(data);
+          console.log(data);
         },
         error: (err) => {
           this.errorSignal.set(err.message);

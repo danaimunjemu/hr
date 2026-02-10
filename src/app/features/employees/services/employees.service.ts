@@ -155,16 +155,45 @@ export interface EmployeeDto {
   workScheduleRule?: { id: number };
 }
 
-export interface UserRegistrationRequest {
+export interface RegisterUserRequest {
+  /**
+   * Required. Unique username for login.
+   * Controlled by: Frontend (User input)
+   */
   username: string;
-  email: string;
+
+  /**
+   * Required. Plaintext password.
+   * Controlled by: Frontend (User input)
+   * Validation: Must match ^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\S).{10,}$
+   */
   password: string;
-  phoneNumber: string;
-  mfaEnabled: boolean;
-  changePassword: boolean;
-  enabled: boolean;
-  roles: { role: string }[];
-  employee: EmployeeDto;
+
+  /**
+   * Optional. User's email address.
+   * Controlled by: Frontend (User input)
+   */
+  email?: string;
+
+  /**
+   * Optional. User's phone number.
+   * Controlled by: Frontend (User input)
+   */
+  phoneNumber?: string;
+
+  /**
+   * Optional. List of roles to assign.
+   * Controlled by: Frontend (Admin selection)
+   * Context: Admin flow only. Self-registration usually omits this.
+   */
+  roles?: { id: number }[];
+
+  /**
+   * Optional. Link to an existing employee record.
+   * Controlled by: Frontend (Admin selection/System context)
+   * Context: Admin creating a user for an existing employee.
+   */
+  employee?: { id: number };
 }
 
 export interface PersonnelFile {
@@ -199,31 +228,31 @@ export interface Employee {
   gender: string;
   maritalStatus: string;
   nationality: string;
-  address: Address;
+  address?: Address;
   dateOfBirth: string;
   dateJoined: string;
-  confirmationDate: string;
-  terminationDate: string;
-  bankDetail: BankDetail;
+  confirmationDate?: string;
+  terminationDate?: string;
+  bankDetail?: BankDetail;
   employmentStatus: string;
-  superior: string;
-  subordinates: string[];
-  company: Company;
-  costCenter: CostCenter;
-  group: Group;
-  employmentType: string;
-  subGroup: SubGroup;
-  ethnicGroup: EthnicGroup;
-  grade: Grade;
-  jobDescription: JobDescription;
-  organizationalUnit: OrganizationalUnit;
-  personnelArea: PersonnelArea;
-  personnelSubArea: PersonnelSubArea;
-  position: Position;
-  psGroup: PsGroup;
-  workContract: WorkContract;
-  workScheduleRule: WorkScheduleRule;
-  personnelFiles: PersonnelFile[];
+  superior?: string;
+  subordinates?: string[];
+  company?: Company;
+  costCenter?: CostCenter;
+  group?: Group;
+  employmentType?: string;
+  subGroup?: SubGroup;
+  ethnicGroup?: EthnicGroup;
+  grade?: Grade;
+  jobDescription?: JobDescription;
+  organizationalUnit?: OrganizationalUnit;
+  personnelArea?: PersonnelArea;
+  personnelSubArea?: PersonnelSubArea;
+  position?: Position;
+  psGroup?: PsGroup;
+  workContract?: WorkContract;
+  workScheduleRule?: WorkScheduleRule;
+  personnelFiles?: PersonnelFile[];
 }
 
 @Injectable({
@@ -279,7 +308,7 @@ export class EmployeesService {
     );
   }
 
-  registerUser(payload: UserRegistrationRequest): Observable<void> {
+  registerUser(payload: RegisterUserRequest): Observable<void> {
     return this.http.post<void>(`${this.API_URL}/auth/register`, payload).pipe(
       catchError(error => {
         console.error('Error registering user', error);

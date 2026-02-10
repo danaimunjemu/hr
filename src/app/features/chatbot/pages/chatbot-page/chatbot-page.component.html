@@ -1,0 +1,39 @@
+<div class="page-header">
+  <h1 class="text-2xl font-bold mb-4">NerdSmart Chatbot</h1>
+</div>
+
+<div class="chatbot-layout">
+  <nz-card class="chat-card" [nzBodyStyle]="{ padding: '0', display: 'flex', flexDirection: 'column', height: '100%' }">
+    <!-- Messages Area -->
+    <div class="messages-container" #scrollContainer>
+      <div *ngFor="let msg of messages" class="message-wrapper" [ngClass]="{'user-message': msg.sender === 'user', 'bot-message': msg.sender === 'bot'}">
+        <div class="message-bubble">
+          {{ msg.content }}
+        </div>
+        <span class="message-time">{{ msg.timestamp | date:'shortTime' }}</span>
+      </div>
+      
+      <!-- Loading Indicator -->
+      <div *ngIf="isLoading()" class="message-wrapper bot-message">
+        <div class="message-bubble loading-bubble">
+          <span nz-icon nzType="loading" nzTheme="outline"></span> Typing...
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="input-area">
+      <nz-input-group [nzSuffix]="suffixButton" nzSize="large">
+        <input type="text" nz-input placeholder="Type a message..." 
+               [(ngModel)]="userInput" 
+               (keyup.enter)="sendMessage()"
+               [disabled]="isLoading()" />
+      </nz-input-group>
+      <ng-template #suffixButton>
+        <button nz-button nzType="primary" nzSize="large" (click)="sendMessage()" [disabled]="!userInput.trim() || isLoading()">
+          <span nz-icon nzType="send" nzTheme="outline"></span> Send
+        </button>
+      </ng-template>
+    </div>
+  </nz-card>
+</div>

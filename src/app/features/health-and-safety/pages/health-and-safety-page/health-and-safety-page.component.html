@@ -1,7 +1,7 @@
 <nz-page-header nzTitle="Health & Safety">
   <nz-page-header-extra>
     <button nz-button>Reports</button>
-    <button nz-button nzType="primary" nzDanger>Report Incident</button>
+    <button nz-button nzType="primary" nzDanger routerLink="../incidents/create">Report Incident</button>
   </nz-page-header-extra>
 </nz-page-header>
 
@@ -43,7 +43,7 @@
     </div>
 
     <!-- Incident Log -->
-    <nz-card nzTitle="Incident Log" class="content-card">
+    <nz-card nzTitle="Recent Incidents" class="content-card">
       <div class="table-actions">
         <nz-input-group [nzSuffix]="suffixIconSearch" class="search-input">
           <input type="text" nz-input placeholder="Search incidents..." />
@@ -57,7 +57,7 @@
         <thead>
           <tr>
             <th>Date</th>
-            <th>Type</th>
+            <th>Description</th>
             <th>Location</th>
             <th>Reported By</th>
             <th>Severity</th>
@@ -67,16 +67,16 @@
         </thead>
         <tbody>
           <tr *ngFor="let data of basicTable.data">
-            <td>{{ data.date }}</td>
-            <td>{{ data.type }}</td>
+            <td>{{ data.incidentDate | date }}</td>
+            <td>{{ data.description }}</td>
             <td>{{ data.location }}</td>
-            <td>{{ data.reporter }}</td>
+            <td>{{ data.reportedBy }}</td>
             <td>
               <nz-tag [nzColor]="getSeverityColor(data.severity)">{{ data.severity }}</nz-tag>
             </td>
             <td>{{ data.status }}</td>
             <td>
-              <button nz-button nzType="link" nzSize="small">Details</button>
+              <button nz-button nzType="link" nzSize="small" [routerLink]="['../incidents/view', data.id]">Details</button>
             </td>
           </tr>
         </tbody>

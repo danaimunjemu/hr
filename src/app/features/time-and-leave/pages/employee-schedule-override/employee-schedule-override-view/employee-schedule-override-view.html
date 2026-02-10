@@ -10,7 +10,7 @@
 <nz-card [nzLoading]="loading">
   <div *ngIf="override">
     <nz-descriptions [nzColumn]="1" nzTitle="Override Information" nzBordered>
-      <nz-descriptions-item nzTitle="Employee">{{ override.employee?.firstName }} {{ override.employee?.lastName }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Employee">{{ override.employee.firstName }} {{ override.employee.lastName }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Rotation Type">
         <nz-tag [nzColor]="override.rotationType === 'FIXED' ? 'blue' : 'purple'">
           {{ override.rotationType }}

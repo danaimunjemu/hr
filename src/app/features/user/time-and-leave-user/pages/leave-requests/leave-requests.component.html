@@ -25,7 +25,7 @@
       <tr *ngFor="let data of basicTable.data">
         <td>{{ data.startDate | date }}</td>
         <td>{{ data.endDate | date }}</td>
-        <td>{{ data.leaveType?.name }}</td>
+        <td>{{ data.leaveType.name }}</td>
         <td>{{ data.reason }}</td>
         <td>
           <nz-tag [nzColor]="getStatusColor(data.status)">{{ data.status }}</nz-tag>

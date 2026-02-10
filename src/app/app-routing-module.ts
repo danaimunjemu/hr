@@ -1,7 +1,9 @@
+// Force router rebuild
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {MainLayout} from './shared/components/layout/main-layout/main-layout';
 import {NotFound} from './core/pages/not-found/not-found';
+import { ErWorkspaceComponent } from './features/er/er-workspace/er-workspace.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'auth', pathMatch: 'full' },
@@ -55,9 +57,7 @@ const routes: Routes = [
       },
       {
         path: 'employee-relations',
-        loadChildren: () =>
-          import('./features/employee-relations/employee-relations-module').then((m) => m.EmployeeRelationsModule),
-        canActivate: [],
+        loadChildren: () => import('./features/er/er.module').then(m => m.ErModule)
       },
       {
         path: 'training-and-skills',
@@ -76,6 +76,10 @@ const routes: Routes = [
         loadChildren: () =>
           import('./features/reports/reports-module').then((m) => m.ReportsModule),
         canActivate: [],
+      },
+      {
+        path: 'chatbot',
+        loadChildren: () => import('./features/chatbot/chatbot.module').then(m => m.ChatbotModule)
       },
       {
         path: 'settings',
