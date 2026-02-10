@@ -1,0 +1,152 @@
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-2xl font-bold">360 Setup</h1>
+    <p class="text-gray-500">View your 360 review setup details.</p>
+  </div>
+  <button nz-button nzType="primary" (click)="openAddModal()">
+    <span nz-icon nzType="plus"></span>
+    Add 360 Setup
+  </button>
+</div>
+
+<nz-card>
+  <nz-table #basicTable [nzData]="setups()" [nzLoading]="loading()">
+    <thead>
+      <tr>
+        <th>Cycle</th>
+        <th>Employee</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Anonymous</th>
+        <th>Status</th>
+        <th>Reviewers</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{ data.cycle?.name || '-' }}</td>
+        <td>{{ getEmployeeName(data) }}</td>
+        <td>{{ data.startDate | date }}</td>
+        <td>{{ data.endDate | date }}</td>
+        <td>{{ data.anonymous ? 'Yes' : 'No' }}</td>
+        <td>
+          <nz-tag [nzColor]="getStatusColor(data.status)">
+            {{ data.status || '-' }}
+          </nz-tag>
+        </td>
+        <td>{{ getReviewerCount(data) }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+
+<nz-modal
+  [nzVisible]="isAddModalVisible()"
+  [nzTitle]="'Add 360 Setup'"
+  (nzOnCancel)="closeAddModal()"
+  (nzOnOk)="submitAdd()"
+  [nzOkLoading]="submitting()"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="form" nzLayout="vertical">
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="24">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="24" nzRequired nzFor="employeeId">Employee</nz-form-label>
+            <nz-form-control [nzSpan]="24" nzErrorTip="Please select an employee">
+              <nz-select
+                formControlName="employeeId"
+                id="employeeId"
+                nzPlaceHolder="Select employee"
+                nzShowSearch
+                [nzLoading]="loadingEmployees()"
+                style="width: 100%"
+              >
+                <nz-option *ngFor="let employee of employees()" [nzValue]="employee.id" [nzLabel]="getEmployeeLabel(employee)"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="24">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="24" nzRequired nzFor="cycleId">Cycle</nz-form-label>
+            <nz-form-control [nzSpan]="24" nzErrorTip="Please select a cycle">
+              <nz-select
+                formControlName="cycleId"
+                id="cycleId"
+                nzPlaceHolder="Select cycle"
+                [nzLoading]="loadingCycles()"
+                style="width: 100%"
+              >
+                <nz-option *ngFor="let cycle of cycles()" [nzValue]="cycle.id" [nzLabel]="cycle.name"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="24" nzRequired nzFor="startDate">Start Date</nz-form-label>
+            <nz-form-control [nzSpan]="24" nzErrorTip="Please select a start date">
+              <nz-date-picker
+                formControlName="startDate"
+                id="startDate"
+                style="width: 100%"
+                nzFormat="yyyy-MM-dd"
+              ></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="24" nzRequired nzFor="endDate">End Date</nz-form-label>
+            <nz-form-control [nzSpan]="24" nzErrorTip="Please select an end date">
+              <nz-date-picker
+                formControlName="endDate"
+                id="endDate"
+                style="width: 100%"
+                nzFormat="yyyy-MM-dd"
+              ></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="24">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="24" nzRequired nzFor="reviewerIds">Reviewers</nz-form-label>
+            <nz-form-control [nzSpan]="24" nzErrorTip="Please select reviewers">
+              <nz-select
+                formControlName="reviewerIds"
+                id="reviewerIds"
+                nzMode="multiple"
+                nzPlaceHolder="Select reviewers"
+                nzShowSearch
+                [nzLoading]="loadingEmployees()"
+                style="width: 100%"
+              >
+                <nz-option *ngFor="let employee of employees()" [nzValue]="employee.id" [nzLabel]="getEmployeeLabel(employee)"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="24">
+          <nz-form-item>
+            <nz-form-control [nzSpan]="24">
+              <label nz-checkbox formControlName="anonymous">Anonymous</label>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </form>
+  </ng-container>
+</nz-modal>

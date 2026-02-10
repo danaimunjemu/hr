@@ -1,0 +1,80 @@
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-2xl font-bold">Goal Settings</h1>
+    <p class="text-gray-500">View all assigned goal settings.</p>
+  </div>
+  <button nz-button nzType="primary" routerLink="assign">
+    <span nz-icon nzType="plus"></span>
+    Assign Goal Setting
+  </button>
+</div>
+
+<nz-card>
+  <nz-table #basicTable [nzData]="goalSettings()" [nzLoading]="loading()">
+    <thead>
+      <tr>
+        <th>Employee Name</th>
+        <th>Manager Name</th>
+        <th>Cycle</th>
+        <th>Status</th>
+        <th>Submitted Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{ data.employee ? (data.employee.firstName + ' ' + data.employee.lastName) : (data.employeeName || '-') }}</td>
+        <td>{{ data.manager ? (data.manager.firstName + ' ' + data.manager.lastName) : '-' }}</td>
+        <td>{{ data.cycle?.name || data.cycleName || '-' }}</td>
+        <td>
+          <nz-tag [nzColor]="'blue'">{{ data.workFlowStatus || data.status || 'Pending' }}</nz-tag>
+        </td>
+        <td>{{ data.submittedDate || 'Not submitted' }}</td>
+        <td>
+          <a class="action-btn" (click)="openGoalsModal(data)">View</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+
+<nz-modal
+  [nzVisible]="isGoalsModalVisible()"
+  [nzTitle]="'Goals'"
+  (nzOnCancel)="closeGoalsModal()"
+  [nzFooter]="null"
+>
+  <ng-container *nzModalContent>
+    <div class="mb-4">
+      <div class="font-semibold">
+        {{ selectedGoalSetting()?.employee ? (selectedGoalSetting()?.employee?.firstName + ' ' + selectedGoalSetting()?.employee?.lastName) : '-' }}
+      </div>
+      <div class="text-gray-500 text-sm">
+        {{ selectedGoalSetting()?.cycle?.name || '-' }}
+      </div>
+    </div>
+
+    <nz-table
+      #goalsTable
+      [nzData]="selectedGoalSetting()?.goals || []"
+      [nzShowPagination]="false"
+    >
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Weight</th>
+          <th>Measurement</th>
+          <th>Due Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let goal of goalsTable.data">
+          <td>{{ goal.description || '-' }}</td>
+          <td>{{ goal.weight ?? '-' }}</td>
+          <td>{{ goal.measurement || '-' }}</td>
+          <td>{{ goal.dueDate || '-' }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </ng-container>
+</nz-modal>

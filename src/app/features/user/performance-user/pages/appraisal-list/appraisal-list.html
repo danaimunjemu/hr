@@ -1,0 +1,37 @@
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-2xl font-bold">My Appraisals</h1>
+    <p class="text-gray-500">View and manage your performance appraisals.</p>
+  </div>
+</div>
+
+<nz-card>
+  <nz-table #basicTable [nzData]="appraisals()" [nzLoading]="loading()">
+    <thead>
+      <tr>
+        <th>Cycle</th>
+        <th>Employee</th>
+        <th>Manager</th>
+        <th>Status</th>
+        <th>Final Score</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{ data.cycle?.name || '-' }}</td>
+        <td>{{ getEmployeeName(data) }}</td>
+        <td>{{ getManagerName(data) }}</td>
+        <td>
+          <nz-tag [nzColor]="getStatusColor(data.status)">
+            {{ data.status }}
+          </nz-tag>
+        </td>
+        <td>{{ data.finalScore || '-' }}</td>
+        <td>
+          <a class="action-btn" [routerLink]="['view', data.id]">View</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>

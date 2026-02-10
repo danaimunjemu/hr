@@ -1,0 +1,110 @@
+<nz-page-header
+  [nzGhost]="false"
+  [nzBackIcon]="'arrow-left'"
+  (nzBack)="onCancel()"
+  [nzTitle]="'Add Goal Template Items'"
+>
+</nz-page-header>
+
+<nz-card>
+  <form nz-form [formGroup]="form" (ngSubmit)="onSubmit()" nzLayout="vertical">
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="24">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24" nzRequired nzFor="templateId">Goal Template</nz-form-label>
+          <nz-form-control [nzSpan]="24" nzErrorTip="Please select a template">
+            <nz-select
+              formControlName="templateId"
+              id="templateId"
+              nzPlaceHolder="Select a template"
+              [nzLoading]="loadingTemplates()"
+              (ngModelChange)="onTemplateChange($event)"
+              style="width: 100%"
+            >
+              <nz-option *ngFor="let template of templates()" [nzValue]="template.id" [nzLabel]="template.name"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <nz-divider nzText="Goal Items"></nz-divider>
+
+    <div formArrayName="items">
+      <div *ngFor="let item of items.controls; let i = index" [formGroupName]="i" class="mb-4">
+        <nz-card [nzTitle]="'Item ' + (i + 1)" [nzExtra]="extraTemplate">
+          <ng-template #extraTemplate>
+            <button nz-button nzType="text" nzDanger (click)="removeItem(i)" type="button" *ngIf="items.length > 1">
+              <span nz-icon nzType="delete"></span>
+              Remove
+            </button>
+          </ng-template>
+
+          <div nz-row [nzGutter]="16">
+            <div nz-col [nzSpan]="12">
+              <nz-form-item>
+                <nz-form-label nzRequired nzFor="title-{{i}}">Title</nz-form-label>
+                <nz-form-control nzErrorTip="Please enter a title">
+                  <input nz-input formControlName="title" id="title-{{i}}" placeholder="Goal title" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="12">
+              <nz-form-item>
+                <nz-form-label nzRequired nzFor="weight-{{i}}">Weight (%)</nz-form-label>
+                <nz-form-control nzErrorTip="Please enter weight">
+                  <nz-input-number formControlName="weight" id="weight-{{i}}" [nzMin]="0" [nzMax]="100" style="width: 100%"></nz-input-number>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <div nz-row [nzGutter]="16">
+            <div nz-col [nzSpan]="24">
+              <nz-form-item>
+                <nz-form-label nzRequired nzFor="description-{{i}}">Description</nz-form-label>
+                <nz-form-control nzErrorTip="Please enter a description">
+                  <textarea nz-input formControlName="description" id="description-{{i}}" rows="3" placeholder="Describe the goal"></textarea>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <div nz-row [nzGutter]="16">
+            <div nz-col [nzSpan]="12">
+              <nz-form-item>
+                <nz-form-label nzRequired nzFor="measurement-{{i}}">Measurement</nz-form-label>
+                <nz-form-control nzErrorTip="Please enter measurement">
+                  <input nz-input formControlName="measurement" id="measurement-{{i}}" placeholder="How to measure success" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="12">
+              <nz-form-item>
+                <nz-form-label nzRequired nzFor="dueDate-{{i}}">Due Date</nz-form-label>
+                <nz-form-control nzErrorTip="Please select a due date">
+                  <nz-date-picker formControlName="dueDate" id="dueDate-{{i}}" style="width: 100%" nzFormat="yyyy-MM-dd"></nz-date-picker>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </nz-card>
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <button nz-button nzType="dashed" (click)="addItem()" type="button" style="width: 100%">
+        <span nz-icon nzType="plus"></span>
+        Add Item
+      </button>
+    </div>
+
+    <div class="flex justify-end gap-4 mt-6">
+      <button nz-button type="button" (click)="onCancel()">Cancel</button>
+      <button nz-button nzType="primary" [nzLoading]="submitting()">
+        Submit
+      </button>
+    </div>
+  </form>
+</nz-card>
