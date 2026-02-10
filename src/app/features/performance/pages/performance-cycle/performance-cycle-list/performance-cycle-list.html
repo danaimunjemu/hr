@@ -1,0 +1,39 @@
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-2xl font-bold">Performance Cycles</h1>
+    <p class="text-gray-500">Manage performance cycles.</p>
+  </div>
+  <button nz-button nzType="primary" routerLink="new">
+    <span nz-icon nzType="plus"></span>
+    Add Cycle
+  </button>
+</div>
+
+<nz-card>
+  <nz-table #basicTable [nzData]="cycles()" [nzLoading]="loading()">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{ data.name }}</td>
+        <td>{{ data.startDate }}</td>
+        <td>{{ data.endDate }}</td>
+        <td>
+          <nz-tag [nzColor]="data.active ? 'green' : 'default'">
+            {{ data.active ? 'Active' : 'Inactive' }}
+          </nz-tag>
+        </td>
+        <td>
+          <a [routerLink]="['edit', data.id]">Edit</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>

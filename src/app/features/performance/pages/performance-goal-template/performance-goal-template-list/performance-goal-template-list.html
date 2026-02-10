@@ -1,0 +1,41 @@
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-2xl font-bold">Performance Goal Templates</h1>
+    <p class="text-gray-500">Manage performance goal templates and cycles.</p>
+  </div>
+  <button nz-button nzType="primary" routerLink="new">
+    <span nz-icon nzType="plus"></span>
+    Add Goal Template
+  </button>
+</div>
+
+<nz-card>
+  <nz-table #basicTable [nzData]="templates()" [nzLoading]="loading()">
+    <thead>
+      <tr>
+        <th>Template Name</th>
+        <th>Cycle Name</th>
+        <th>Locked</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{ data.name }}</td>
+        <td>{{ data.cycle.name }}</td>
+        <td>
+          <nz-tag [nzColor]="data.locked ? 'red' : 'green'">
+            {{ data.locked ? 'Locked' : 'Unlocked' }}
+          </nz-tag>
+        </td>
+        <td>
+          <a class="action-btn" [routerLink]="['view', data.id]">View</a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <a [routerLink]="['edit', data.id]">Edit</a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <a [routerLink]="['../goal-template-items', data.id]">Items</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>

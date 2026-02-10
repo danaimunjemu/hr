@@ -1,0 +1,83 @@
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-2xl font-bold">My Reviews</h1>
+    <p class="text-gray-500">View your assigned 360 reviews.</p>
+  </div>
+</div>
+
+<nz-card>
+  <nz-table #basicTable [nzData]="reviews()" [nzLoading]="loading()">
+    <thead>
+      <tr>
+<!--        <th>Setup</th>-->
+        <th>Reviewer</th>
+        <th>Status</th>
+        <th>Feedback Items</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+<!--        <td>{{ data.setup || '-' }}</td>-->
+        <td>{{ getReviewerName(data) }}</td>
+        <td>
+          <nz-tag [nzColor]="getStatusColor(data.completed)">
+            {{ data.completed ? 'Completed' : 'Pending' }}
+          </nz-tag>
+        </td>
+        <td>{{ getFeedbackCount(data) }}</td>
+        <td>
+          <span *ngIf="data.completed" class="text-gray-400">Completed</span>
+          <a *ngIf="!data.completed" class="action-btn" (click)="openFeedbackModal(data)">Give Feedback</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+
+<nz-modal
+  [nzVisible]="isFeedbackModalVisible()"
+  [nzTitle]="'Give Feedback'"
+  (nzOnCancel)="closeFeedbackModal()"
+  (nzOnOk)="submitFeedback()"
+  [nzOkLoading]="submitting()"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="form" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" nzRequired nzFor="startDoing">Start Doing</nz-form-label>
+        <nz-form-control [nzSpan]="24" nzErrorTip="Please enter start doing">
+          <textarea nz-input formControlName="startDoing" id="startDoing" rows="2"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" nzRequired nzFor="stopDoing">Stop Doing</nz-form-label>
+        <nz-form-control [nzSpan]="24" nzErrorTip="Please enter stop doing">
+          <textarea nz-input formControlName="stopDoing" id="stopDoing" rows="2"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" nzRequired nzFor="continueDoing">Continue Doing</nz-form-label>
+        <nz-form-control [nzSpan]="24" nzErrorTip="Please enter continue doing">
+          <textarea nz-input formControlName="continueDoing" id="continueDoing" rows="2"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" nzRequired nzFor="maximiseImpact">Maximise Impact</nz-form-label>
+        <nz-form-control [nzSpan]="24" nzErrorTip="Please enter maximise impact">
+          <textarea nz-input formControlName="maximiseImpact" id="maximiseImpact" rows="2"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" nzRequired nzFor="rating">Rating</nz-form-label>
+        <nz-form-control [nzSpan]="24" nzErrorTip="Please enter rating">
+          <input nz-input type="number" formControlName="rating" id="rating" min="0" />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

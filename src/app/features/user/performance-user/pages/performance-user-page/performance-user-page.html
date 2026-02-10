@@ -1,0 +1,23 @@
+<nz-layout class="layout-container">
+  <nz-sider nzCollapsible [(nzCollapsed)]="isCollapsed" [nzWidth]="260" [nzTheme]="'light'">
+    <div class="logo-container">
+      <h2 *ngIf="!isCollapsed" class="text-lg font-semibold px-6 py-4 border-b">My Performance</h2>
+      <div *ngIf="isCollapsed" class="text-center py-4 border-b">
+        <span nz-icon nzType="star" nzTheme="outline" class="text-lg"></span>
+      </div>
+    </div>
+    <ul nz-menu nzMode="inline" [nzTheme]="'light'">
+      <li nz-menu-item *ngFor="let item of menuItems" [routerLink]="item.route" routerLinkActive="ant-menu-item-selected">
+        <span nz-icon [nzType]="item.icon"></span>
+        <span>{{ item.title }}</span>
+      </li>
+    </ul>
+  </nz-sider>
+  <nz-layout>
+    <nz-content>
+      <div class="inner-content">
+        <router-outlet></router-outlet>
+      </div>
+    </nz-content>
+  </nz-layout>
+</nz-layout>

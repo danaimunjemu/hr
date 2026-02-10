@@ -1,0 +1,142 @@
+<nz-page-header
+  [nzGhost]="false"
+  [nzBackIcon]="'arrow-left'"
+  (nzBack)="onCancel()"
+  [nzTitle]="'Assign Goal Setting'"
+>
+</nz-page-header>
+
+<nz-card *ngIf="!showResults()">
+  <form nz-form [formGroup]="form" (ngSubmit)="onSubmit()" nzLayout="vertical">
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="24">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24" nzRequired nzFor="templateId">Goal Template</nz-form-label>
+          <nz-form-control [nzSpan]="24" nzErrorTip="Please select a template">
+            <nz-select
+              formControlName="templateId"
+              id="templateId"
+              nzPlaceHolder="Select a template"
+              [nzLoading]="loadingTemplates()"
+              style="width: 100%"
+            >
+              <nz-option *ngFor="let template of templates()" [nzValue]="template.id" [nzLabel]="template.name"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <nz-divider nzText="Assignment Criteria"></nz-divider>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="24">
+        <nz-radio-group formControlName="assignmentMode">
+          <label nz-radio nzValue="employees">Select Employees</label>
+          <label nz-radio nzValue="assignmentType">Assignment Type</label>
+          <label nz-radio nzValue="departments">Select Departments</label>
+        </nz-radio-group>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24" class="mt-4" *ngIf="form.value.assignmentMode === 'employees'">
+      <div nz-col [nzSpan]="24">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24" nzFor="employeeIds">Employees</nz-form-label>
+          <nz-form-control [nzSpan]="24">
+            <nz-select
+              formControlName="employeeIds"
+              id="employeeIds"
+              nzMode="multiple"
+              nzPlaceHolder="Select employees"
+              nzShowSearch
+              [nzLoading]="loadingEmployees()"
+              style="width: 100%"
+            >
+              <nz-option *ngFor="let employee of employees()" [nzValue]="employee.id" [nzLabel]="getEmployeeLabel(employee)"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24" class="mt-4" *ngIf="form.value.assignmentMode === 'assignmentType'">
+      <div nz-col [nzSpan]="24">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24" nzFor="assignmentType">Assignment Type</nz-form-label>
+          <nz-form-control [nzSpan]="24">
+            <nz-select
+              formControlName="assignmentType"
+              id="assignmentType"
+              nzPlaceHolder="Select assignment type"
+              style="width: 100%"
+            >
+              <nz-option *ngFor="let option of assignmentTypeOptions" [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24" class="mt-4" *ngIf="form.value.assignmentMode === 'departments'">
+      <div nz-col [nzSpan]="24">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24" nzFor="departmentIds">Departments</nz-form-label>
+          <nz-form-control [nzSpan]="24">
+            <nz-select
+              formControlName="departmentIds"
+              id="departmentIds"
+              nzMode="multiple"
+              nzPlaceHolder="Select departments"
+              [nzLoading]="loadingEmployees()"
+              style="width: 100%"
+            >
+              <nz-option *ngFor="let dept of departments()" [nzValue]="dept.id" [nzLabel]="dept.name"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-4 mt-6">
+      <button nz-button type="button" (click)="onCancel()">Cancel</button>
+      <button nz-button nzType="primary" [nzLoading]="submitting()">
+        Assign
+      </button>
+    </div>
+  </form>
+</nz-card>
+
+<nz-card *ngIf="showResults()">
+  <div class="mb-4">
+    <h2 class="text-xl font-bold">Assignment Results</h2>
+    <p class="text-gray-500">Goal settings have been successfully created for the following employees:</p>
+  </div>
+
+  <nz-table #resultsTable [nzData]="assignedGoals()" [nzPageSize]="10">
+    <thead>
+      <tr>
+        <th>Employee Name</th>
+        <th>Cycle</th>
+        <th>Status</th>
+        <th>Submitted Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let goal of resultsTable.data">
+        <td>{{ goal.employeeName }}</td>
+        <td>{{ goal.cycleName }}</td>
+        <td>
+          <nz-tag [nzColor]="'blue'">{{ goal.status || 'Pending' }}</nz-tag>
+        </td>
+        <td>{{ goal.submittedDate || 'Not submitted' }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+
+  <div class="flex justify-end gap-4 mt-6">
+    <button nz-button type="button" (click)="onBackToForm()">Assign More</button>
+    <button nz-button nzType="primary" (click)="onGoToList()">View All Goal Settings</button>
+  </div>
+</nz-card>

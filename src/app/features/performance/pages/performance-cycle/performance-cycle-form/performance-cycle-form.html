@@ -1,0 +1,69 @@
+<nz-page-header
+  [nzGhost]="false"
+  [nzBackIcon]="'arrow-left'"
+  (nzBack)="onCancel()"
+  [nzTitle]="isEditMode ? 'Edit Performance Cycle' : 'New Performance Cycle'"
+>
+</nz-page-header>
+
+<nz-card [nzLoading]="loading()">
+  <form nz-form [formGroup]="form" (ngSubmit)="onSubmit()" nzLayout="vertical">
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="24">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24" nzRequired nzFor="name">Cycle Name</nz-form-label>
+          <nz-form-control [nzSpan]="24" nzErrorTip="Please enter a cycle name">
+            <input nz-input formControlName="name" id="name" placeholder="e.g. Q1 2026" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24" nzRequired nzFor="startDate">Start Date</nz-form-label>
+          <nz-form-control [nzSpan]="24" nzErrorTip="Please select a start date">
+            <nz-date-picker
+              formControlName="startDate"
+              id="startDate"
+              style="width: 100%"
+              nzFormat="yyyy-MM-dd"
+            ></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24" nzRequired nzFor="endDate">End Date</nz-form-label>
+          <nz-form-control [nzSpan]="24" nzErrorTip="Please select an end date">
+            <nz-date-picker
+              formControlName="endDate"
+              id="endDate"
+              style="width: 100%"
+              nzFormat="yyyy-MM-dd"
+            ></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="24">
+        <nz-form-item>
+          <nz-form-control [nzSpan]="24">
+            <label nz-checkbox formControlName="active">Active</label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-4 mt-6">
+      <button nz-button type="button" (click)="onCancel()">Cancel</button>
+      <button nz-button nzType="primary" [nzLoading]="submitting()">
+        {{ isEditMode ? 'Update' : 'Create' }}
+      </button>
+    </div>
+  </form>
+</nz-card>

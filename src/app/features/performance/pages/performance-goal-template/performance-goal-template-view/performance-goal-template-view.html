@@ -1,0 +1,31 @@
+<nz-page-header
+  [nzGhost]="false"
+  [nzBackIcon]="'arrow-left'"
+  (nzBack)="onBack()"
+  [nzTitle]="'Performance Goal Template Details'"
+  [nzSubtitle]="template()?.name"
+>
+</nz-page-header>
+
+<nz-card [nzLoading]="loading()">
+  <ng-container *ngIf="template() as templateData">
+    <nz-descriptions [nzColumn]="1" nzTitle="Template Information" nzBordered>
+      <nz-descriptions-item nzTitle="Template Name">{{ templateData.name }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Template ID">{{ templateData.id }}</nz-descriptions-item>
+    </nz-descriptions>
+
+    <nz-divider></nz-divider>
+
+    <nz-descriptions [nzColumn]="1" nzTitle="Performance Cycle" nzBordered>
+      <nz-descriptions-item nzTitle="Cycle Name">{{ templateData.cycle.name }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Start Date">{{ templateData.cycle.startDate }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="End Date">{{ templateData.cycle.endDate }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Status">
+        <nz-tag [nzColor]="templateData.cycle.active ? 'green' : 'default'">
+          {{ templateData.cycle.active ? 'Active' : 'Inactive' }}
+        </nz-tag>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Cycle ID">{{ templateData.cycle.id }}</nz-descriptions-item>
+    </nz-descriptions>
+  </ng-container>
+</nz-card>

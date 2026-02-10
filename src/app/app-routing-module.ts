@@ -50,6 +50,12 @@ const routes: Routes = [
         canActivate: [],
       },
       {
+        path: 'performance-user',
+        loadChildren: () =>
+          import('./features/user/performance-user/performance-user-module').then((m) => m.PerformanceUserModule),
+        canActivate: [],
+      },
+      {
         path: 'health-and-safety',
         loadChildren: () =>
           import('./features/health-and-safety/health-and-safety-module').then((m) => m.HealthAndSafetyModule),
@@ -85,6 +91,12 @@ const routes: Routes = [
         path: 'settings',
         loadChildren: () =>
           import('./features/settings/settings-module').then((m) => m.SettingsModule),
+        canActivate: [],
+      },
+      {
+        path: 'performance',
+        loadChildren: () =>
+          import('./features/performance/performance-module').then((m) => m.PerformanceModule),
         canActivate: [],
       }
     ],
