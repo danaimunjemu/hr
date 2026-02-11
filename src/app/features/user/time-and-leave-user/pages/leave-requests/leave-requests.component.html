@@ -10,7 +10,7 @@
 </div>
 
 <nz-card>
-  <nz-table #basicTable [nzData]="requests" [nzLoading]="loading" [nzPageSize]="10">
+  <nz-table #basicTable [nzData]="requests()" [nzLoading]="loading()" [nzPageSize]="10">
     <thead>
       <tr>
         <th>Start Date</th>
@@ -31,12 +31,12 @@
           <nz-tag [nzColor]="getStatusColor(data.status)">{{ data.status }}</nz-tag>
         </td>
         <td>
-          <ng-container *ngIf="data.status === 'PENDING'">
+          <ng-container *ngIf="data.status === 'DRAFT'">
             <a (click)="openEditModal(data)">Edit</a>
             <nz-divider nzType="vertical"></nz-divider>
             <a nz-popconfirm nzPopconfirmTitle="Are you sure cancel this request?" (nzOnConfirm)="deleteRequest(data.id)" class="text-red-500">Cancel</a>
           </ng-container>
-          <span *ngIf="data.status !== 'PENDING'" class="text-gray-400">
+          <span *ngIf="data.status !== 'DRAFT'" class="text-gray-400">
             Read Only
           </span>
         </td>
@@ -46,11 +46,12 @@
 </nz-card>
 
 <nz-modal
-  [(nzVisible)]="isVisible"
-  [nzTitle]="isEditMode ? 'Edit Leave Request' : 'New Leave Request'"
+  [nzVisible]="isVisible()"
+  (nzVisibleChange)="isVisible.set($event)"
+  [nzTitle]="isEditMode() ? 'Edit Leave Request' : 'New Leave Request'"
   (nzOnCancel)="handleCancel()"
   (nzOnOk)="handleOk()"
-  [nzOkLoading]="isSubmitting"
+  [nzOkLoading]="isSubmitting()"
 >
   <ng-container *nzModalContent>
     <form nz-form [formGroup]="form" nzLayout="vertical">
@@ -66,7 +67,7 @@
         <nz-form-label [nzSpan]="24" nzRequired>Leave Type</nz-form-label>
         <nz-form-control [nzSpan]="24" nzErrorTip="Please select leave type">
           <nz-select formControlName="leaveType" nzPlaceHolder="Select leave type">
-            <nz-option *ngFor="let type of leaveTypes" [nzValue]="type.id" [nzLabel]="type.name"></nz-option>
+            <nz-option *ngFor="let type of leaveTypes()" [nzValue]="type.id" [nzLabel]="type.name"></nz-option>
           </nz-select>
         </nz-form-control>
       </nz-form-item>

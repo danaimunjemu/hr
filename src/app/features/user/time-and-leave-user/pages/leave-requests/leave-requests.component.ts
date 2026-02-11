@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { LeaveRequestService } from '../../../../time-and-leave/services/leave-request.service';
 import { LeaveService } from '../../../../time-and-leave/services/leave.service';
+import { AuthService } from '../../../../authentication/services/auth';
 import { LeaveRequest } from '../../../../time-and-leave/models/leave-request.model';
 import { LeaveType } from '../../../../time-and-leave/models/leave-type.model';
 
@@ -26,20 +27,21 @@ import { LeaveType } from '../../../../time-and-leave/models/leave-type.model';
   `]
 })
 export class LeaveRequestsComponent implements OnInit {
-  loading = true;
-  requests: LeaveRequest[] = [];
-  leaveTypes: LeaveType[] = [];
+  loading: WritableSignal<boolean> = signal(true);
+  requests: WritableSignal<LeaveRequest[]> = signal([]);
+  leaveTypes: WritableSignal<LeaveType[]> = signal([]);
 
   // Modal
-  isVisible = false;
-  isEditMode = false;
-  isSubmitting = false;
+  isVisible: WritableSignal<boolean> = signal(false);
+  isEditMode: WritableSignal<boolean> = signal(false);
+  isSubmitting: WritableSignal<boolean> = signal(false);
   form: FormGroup;
-  currentRequestId: number | null = null;
+  currentRequestId: WritableSignal<number | null> = signal(null);
 
   constructor(
     private leaveRequestService: LeaveRequestService,
     private leaveService: LeaveService,
+    private authService: AuthService,
     private fb: FormBuilder,
     private message: NzMessageService
   ) {
@@ -56,16 +58,16 @@ export class LeaveRequestsComponent implements OnInit {
   }
 
   loadData(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.leaveRequestService.getAll().subscribe({
       next: (data) => {
-        this.requests = data;
-        this.loading = false;
+        this.requests.set(data);
+        this.loading.set(false);
       },
       error: (err: any) => {
         console.error('Failed to load leave requests', err);
         this.message.error('Failed to load leave requests');
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }
@@ -73,7 +75,7 @@ export class LeaveRequestsComponent implements OnInit {
   loadLeaveTypes(): void {
     this.leaveService.getAllTypes().subscribe({
       next: (data) => {
-        this.leaveTypes = data;
+        this.leaveTypes.set(data);
       },
       error: (err: any) => {
         console.error('Failed to load leave types', err);
@@ -82,20 +84,20 @@ export class LeaveRequestsComponent implements OnInit {
   }
 
   openAddModal(): void {
-    this.isEditMode = false;
-    this.currentRequestId = null;
+    this.isEditMode.set(false);
+    this.currentRequestId.set(null);
     this.form.reset();
-    this.isVisible = true;
+    this.isVisible.set(true);
   }
 
   openEditModal(request: LeaveRequest): void {
-    if (request.status !== 'PENDING') {
+    if (request.status !== 'DRAFT') {
       this.message.warning('Only Pending requests can be edited.');
       return;
     }
 
-    this.isEditMode = true;
-    this.currentRequestId = request.id;
+    this.isEditMode.set(true);
+    this.currentRequestId.set(request.id);
 
     const startDate = new Date(request.startDate);
     const endDate = new Date(request.endDate);
@@ -105,11 +107,11 @@ export class LeaveRequestsComponent implements OnInit {
       leaveType: request.leaveType.id,
       reason: request.reason
     });
-    this.isVisible = true;
+    this.isVisible.set(true);
   }
 
   handleCancel(): void {
-    this.isVisible = false;
+    this.isVisible.set(false);
   }
 
   handleOk(): void {
@@ -123,43 +125,51 @@ export class LeaveRequestsComponent implements OnInit {
       return;
     }
 
-    this.isSubmitting = true;
+    this.isSubmitting.set(true);
     const formValue = this.form.value;
     const [startDate, endDate] = formValue.dates;
+    const employeeId = this.resolveCurrentEmployeeId();
+    if (!employeeId) {
+      this.message.error('Unable to resolve current user employee id');
+      this.isSubmitting.set(false);
+      return;
+    }
 
     const payload: any = {
+      employee: { id: employeeId },
       startDate: this.dateToString(startDate),
       endDate: this.dateToString(endDate),
       leaveType: { id: formValue.leaveType },
       reason: formValue.reason,
-      status: 'PENDING'
+      status: 'DRAFT'
     };
 
-    if (this.isEditMode && this.currentRequestId) {
-      payload.id = this.currentRequestId;
-      this.leaveRequestService.update(this.currentRequestId, payload).subscribe({
+    const currentRequestId = this.currentRequestId();
+    if (this.isEditMode() && currentRequestId !== null) {
+      payload.id = currentRequestId;
+      this.leaveRequestService.update(currentRequestId, payload).subscribe({
         next: () => {
           this.message.success('Leave request updated');
-          this.isVisible = false;
-          this.isSubmitting = false;
+          this.isVisible.set(false);
+          this.isSubmitting.set(false);
           this.loadData();
         },
         error: (err: any) => {
           this.message.error('Failed to update request');
-          this.isSubmitting = false;
+          this.isSubmitting.set(false);
         }
       });
     } else {
       this.leaveRequestService.create(payload).subscribe({
         next: () => {
           this.message.success('Leave request submitted');
-          this.isVisible = false;
-          this.isSubmitting = false;
+          this.isVisible.set(false);
+          this.isSubmitting.set(false);
           this.loadData();
         },
         error: (err: any) => {
           this.message.error('Failed to submit request');
-          this.isSubmitting = false;
+          this.isSubmitting.set(false);
         }
       });
     }
@@ -179,6 +189,12 @@ export class LeaveRequestsComponent implements OnInit {
 
   private dateToString(date: Date): string {
     return date.toISOString().split('T')[0];
+  }
+
+  private resolveCurrentEmployeeId(): number | null {
+    const currentUser = this.authService.currentUser();
+    const id = currentUser.employee.id;
+    return typeof id === 'number' ? id : null;
   }
 
   getStatusColor(status: string): string {

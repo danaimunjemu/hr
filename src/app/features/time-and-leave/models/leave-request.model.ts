@@ -1,7 +1,7 @@
 import { LeaveType } from './leave-type.model';
 import { Employee } from '../../employees/models/employee.model';
 
-export type LeaveRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
+export type LeaveRequestStatus = 'CANCELLED' | 'WITHDRAWN' | 'APPROVED' | 'PENDING_APPROVAL' | 'REJECTED' | 'DRAFT' | 'SUBMITTED';
 
 export interface LeaveRequest {
   id: number;
