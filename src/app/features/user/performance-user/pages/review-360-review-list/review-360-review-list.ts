@@ -6,6 +6,7 @@ import { Review360ReviewService } from '../../services/review-360-review.service
 import { Review360FeedbackService } from '../../services/review-360-feedback.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+
 @Component({
   selector: 'app-review-360-review-list',
   standalone: false,
@@ -28,7 +29,7 @@ export class Review360ReviewListComponent implements OnInit {
     private fb: FormBuilder,
     private review360ReviewService: Review360ReviewService,
     private review360FeedbackService: Review360FeedbackService,
-    private message: NzMessageService
+    private message: NzMessageService,
   ) {
     this.form = this.fb.group({
       startDoing: ['', [Validators.required]],
@@ -101,7 +102,13 @@ export class Review360ReviewListComponent implements OnInit {
     }
 
     const formValue = this.form.value;
+    const employeeId = this.getLoggedInEmployeeId();
+    if (!employeeId) {
+      this.message.error('Failed to determine logged in employee');
+      return;
+    }
     const payload = {
+      employeeId: employeeId,
       reviewerAssignmentId: review.id,
       startDoing: formValue.startDoing,
       stopDoing: formValue.stopDoing,
@@ -121,5 +128,22 @@ export class Review360ReviewListComponent implements OnInit {
         },
         error: () => this.message.error('Failed to submit feedback')
       });
+  }
+
+  getLoggedInEmployeeId(): number | null {
+    const user =this.getStoredUser();
+    return user?.employee?.id;
+  }
+
+  private getStoredUser(): any | null {
+    const stored = localStorage.getItem('user');
+    if (!stored) {
+      return null;
+    }
+    try {
+      return JSON.parse(stored);
+    } catch {
+      return null;
+    }
   }
 }

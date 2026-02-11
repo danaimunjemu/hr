@@ -1,4 +1,5 @@
 import { PerformanceCycle } from './performance-cycle.model';
+import { PerformanceGoalTemplateItem } from './performance-goal-template-item.model';
 
 export interface PerformanceGoalTemplate {
   id?: number;
@@ -8,4 +9,5 @@ export interface PerformanceGoalTemplate {
   name: string;
   cycle: PerformanceCycle;
   locked: boolean;
+  items?: PerformanceGoalTemplateItem[];
 }

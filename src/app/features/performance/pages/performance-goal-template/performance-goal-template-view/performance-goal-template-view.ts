@@ -41,10 +41,18 @@ export class PerformanceGoalTemplateViewComponent implements OnInit {
 
   loadTemplate(id: number): void {
     this.loading.set(true);
-    this.performanceGoalTemplateService.getById(id)
+    this.performanceGoalTemplateService.getAll()
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (data) => this.template.set(data),
+        next: (data) => {
+          const found = data.find(t => t.id === id) || null;
+          if (!found) {
+            this.message.error('Goal template not found');
+            this.router.navigate(['/app/performance/goal-template']);
+            return;
+          }
+          this.template.set(found);
+        },
         error: (err: any) => {
           this.message.error('Failed to load performance goal template details');
           this.router.navigate(['/app/performance/goal-template']);

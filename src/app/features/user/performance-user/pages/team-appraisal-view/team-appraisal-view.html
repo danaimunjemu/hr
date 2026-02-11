@@ -1,0 +1,134 @@
+<nz-page-header
+  [nzGhost]="false"
+  [nzBackIcon]="'arrow-left'"
+  (nzBack)="onBack()"
+  [nzTitle]="'Appraisal Details'"
+  [nzSubtitle]="appraisal()?.cycle?.name"
+>
+</nz-page-header>
+
+<nz-card [nzLoading]="loading()">
+  <ng-container *ngIf="appraisal() as appraisalData">
+    <nz-descriptions [nzColumn]="2" nzTitle="Appraisal Information" nzBordered class="mb-6">
+      <nz-descriptions-item nzTitle="Employee">{{ getEmployeeName() }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Manager">{{ getManagerName() }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Cycle">{{ appraisalData.cycle.name }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Status">
+        <nz-tag [nzColor]="getStatusColor(appraisalData.status)">
+          {{ appraisalData.status }}
+        </nz-tag>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Start Date">{{ appraisalData.cycle.startDate }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="End Date">{{ appraisalData.cycle.endDate }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Final Score" [nzSpan]="2">
+        <strong class="text-xl">{{ appraisalData.finalScore || 'Not calculated' }}</strong>
+      </nz-descriptions-item>
+    </nz-descriptions>
+
+    <nz-divider></nz-divider>
+
+    <h3 class="text-lg font-semibold mb-4">Appraisal Items</h3>
+
+    <div *ngFor="let item of appraisalData.appraisalItems; let i = index" class="mb-6">
+      <nz-card [nzTitle]="'Goal ' + (i + 1)" class="appraisal-item-card">
+        <nz-descriptions [nzColumn]="2" nzBordered>
+          <nz-descriptions-item nzTitle="Description" [nzSpan]="2">{{ item.goalItem.description }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Weight">{{ item.goalItem.weight }}%</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Due Date">{{ item.goalItem.dueDate }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Measurement" [nzSpan]="2">{{ item.goalItem.measurement }}</nz-descriptions-item>
+        </nz-descriptions>
+
+        <nz-divider></nz-divider>
+
+        <div *ngIf="!isEditing(item.id)" class="ratings-section">
+          <nz-descriptions [nzColumn]="2" nzBordered>
+            <nz-descriptions-item nzTitle="Self Rating" [nzSpan]="2">
+              <nz-rate [ngModel]="item.selfRating || 0" nzDisabled></nz-rate>
+              <span class="ml-2">{{ item.selfRating || '-' }}</span>
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Self Comment" [nzSpan]="2">
+              {{ item.selfComment || '-' }}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Manager Rating" [nzSpan]="2">
+              <nz-rate [ngModel]="item.managerRating || 0" nzDisabled></nz-rate>
+              <span class="ml-2">{{ item.managerRating || '-' }}</span>
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Manager Comment" [nzSpan]="2">
+              {{ item.managerComment || '-' }}
+            </nz-descriptions-item>
+          </nz-descriptions>
+
+          <div class="mt-4" *ngIf="appraisalData.status === 'SUBMITTED'">
+            <button nz-button nzType="primary" (click)="startEdit(item)">
+              <span nz-icon nzType="edit"></span>
+              {{ item.managerRating ? 'Edit Rating' : 'Add Rating' }}
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="isEditing(item.id)" class="edit-section">
+          <div nz-row [nzGutter]="16">
+            <div nz-col [nzSpan]="24">
+              <div class="form-item">
+                <label class="form-label">Manager Rating <span class="text-red-500">*</span></label>
+                <nz-rate
+                  [ngModel]="editData()[item.id]?.rating || 0"
+                  (ngModelChange)="updateEditData(item.id, 'rating', $event)"
+                  [nzCount]="5"
+                ></nz-rate>
+                <span class="ml-2">{{ editData()[item.id]?.rating || 0 }} / 5</span>
+              </div>
+            </div>
+          </div>
+
+          <div nz-row [nzGutter]="16" class="mt-4">
+            <div nz-col [nzSpan]="24">
+              <div class="form-item">
+                <label class="form-label">Manager Comment <span class="text-red-500">*</span></label>
+                <textarea
+                  nz-input
+                  [ngModel]="editData()[item.id]?.comment || ''"
+                  (ngModelChange)="updateEditData(item.id, 'comment', $event)"
+                  rows="4"
+                  placeholder="Enter your manager assessment comment"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex gap-2 mt-4">
+            <button nz-button nzType="primary" (click)="saveItem(item)" [nzLoading]="isSaving(item.id)">
+              <span nz-icon nzType="save"></span>
+              Save
+            </button>
+            <button nz-button (click)="cancelEdit()">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+
+    <div class="flex justify-end gap-4 mt-6" *ngIf="appraisalData.status === 'SUBMITTED'">
+      <button
+        nz-button
+        nzType="primary"
+        nzSize="large"
+        (click)="submitAppraisal()"
+        [nzLoading]="submitting()"
+        [disabled]="!canSubmitAppraisal()"
+      >
+        <span nz-icon nzType="check-circle"></span>
+        Submit Appraisal
+      </button>
+    </div>
+
+    <nz-alert
+      *ngIf="appraisalData.status === 'SUBMITTED' && !canSubmitAppraisal()"
+      nzType="info"
+      nzMessage="Please rate all appraisal items before submitting."
+      nzShowIcon
+      class="mt-4"
+    ></nz-alert>
+  </ng-container>
+</nz-card>

@@ -17,6 +17,8 @@ export class PerformanceUserPageComponent {
 
   menuItems: MenuItem[] = [
     { title: 'My Appraisals', icon: 'star', route: '/app/performance-user/appraisals' },
-    { title: 'Give Feedback', icon: 'message', route: '/app/performance-user/reviews' }
+    { title: 'Give Feedback', icon: 'message', route: '/app/performance-user/reviews' },
+    { title: '360 Feedback', icon: 'comment', route: '/app/performance-user/reviews-feedback' },
+    { title: 'My Team Appraisal', icon: 'team', route: '/app/performance-user/team-appraisals' }
   ];
 }

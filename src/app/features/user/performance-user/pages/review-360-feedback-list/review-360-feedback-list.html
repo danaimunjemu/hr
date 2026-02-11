@@ -1,0 +1,33 @@
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-2xl font-bold">360 Feedback</h1>
+    <p class="text-gray-500">View feedback received from reviewers.</p>
+  </div>
+</div>
+
+<nz-card>
+  <nz-table #basicTable [nzData]="feedbacks()" [nzLoading]="loading()">
+    <thead>
+      <tr>
+        <th>Anonymous</th>
+        <th>Reviewer</th>
+        <th>Start Doing</th>
+        <th>Stop Doing</th>
+        <th>Continue Doing</th>
+        <th>Maximise Impact</th>
+        <th>Rating</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{ isAnonymous(data) ? 'Yes' : 'No' }}</td>
+        <td>{{ getReviewerName(data) }}</td>
+        <td>{{ data.startDoing || '-' }}</td>
+        <td>{{ data.stopDoing || '-' }}</td>
+        <td>{{ data.continueDoing || '-' }}</td>
+        <td>{{ data.maximiseImpact || '-' }}</td>
+        <td>{{ data.rating ?? '-' }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>

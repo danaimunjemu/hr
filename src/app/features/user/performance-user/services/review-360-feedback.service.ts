@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 export interface Review360FeedbackRequest {
   reviewerAssignmentId: number;
+  employeeId?: number;
   startDoing: string;
   stopDoing: string;
   continueDoing: string;

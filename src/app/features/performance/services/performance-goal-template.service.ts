@@ -12,7 +12,7 @@ export class PerformanceGoalTemplateService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<PerformanceGoalTemplate[]> {
-    return this.http.get<PerformanceGoalTemplate[]>(this.apiUrl);
+    return this.http.get<PerformanceGoalTemplate[]>(`${this.apiUrl}/with-items`);
   }
 
   getById(id: number): Observable<PerformanceGoalTemplate> {

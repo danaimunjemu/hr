@@ -33,7 +33,7 @@
           <nz-divider nzType="vertical"></nz-divider>
           <a [routerLink]="['edit', data.id]">Edit</a>
           <nz-divider nzType="vertical"></nz-divider>
-          <a [routerLink]="['../goal-template-items', data.id]">Items</a>
+          <a (click)="goToItems(data)">Items</a>
         </td>
       </tr>
     </tbody>

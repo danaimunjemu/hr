@@ -37,7 +37,7 @@ export class GoalSettingAssignmentFormComponent implements OnInit {
 
   assignmentTypeOptions = [
     { label: 'All Employees', value: AssignmentType.ALL_EMPLOYEES },
-    { label: 'Department', value: AssignmentType.DEPARTMENT }
+    // { label: 'Department', value: AssignmentType.DEPARTMENT }
   ];
 
   constructor(
@@ -147,6 +147,7 @@ export class GoalSettingAssignmentFormComponent implements OnInit {
           this.message.success('Goal settings assigned successfully');
           this.assignedGoals.set(goals);
           this.showResults.set(true);
+          this.router.navigate(['/app/performance/goal-settings']);
         },
         error: () => this.message.error('Failed to assign goal settings')
       });

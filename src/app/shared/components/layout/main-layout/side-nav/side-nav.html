@@ -137,10 +137,10 @@
         <div class="flex flex-row">
           <nz-icon>
             <span class="nerd-sider-menu-icon" [ngClass]="{ 'active-collapsed': isCollapsed }">
-              <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24"><path fill="currentColor" d="m12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72l3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41l-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.63l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18l-1.1 4.72c-.2.86.73 1.54 1.49 1.08z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor"  d="m12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72l3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41l-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.63l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18l-1.1 4.72c-.2.86.73 1.54 1.49 1.08z"/></svg>
             </span>
           </nz-icon>
-          <span class="nerd-sider-menu-text">My Performance</span>
+          <span class="nerd-sider-menu-text">Performance</span>
         </div>
       </li>
 
@@ -174,7 +174,21 @@
           <span class="nerd-sider-menu-text">Employee Relations</span>
         </div>
       </li>
-
+    <li
+      nz-menu-item
+      routerLink="/app/performance"
+      routerLinkActive="ant-menu-item-selected"
+      [ngClass]="{ 'collapsed-side-li': isCollapsed }"
+    >
+      <div class="flex flex-row">
+        <nz-icon>
+            <span class="nerd-sider-menu-icon" [ngClass]="{ 'active-collapsed': isCollapsed }">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M12 22a10 10 0 0 1-10-9.94a10 10 0 0 1 10-10a10 10 0 0 1 10 10a10 10 0 0 1-10 10"/><path d="M12 7v5l3 3"/><path d="m8 2l2 3m4-3l-2 3"/></g></svg>
+            </span>
+        </nz-icon>
+        <span class="nerd-sider-menu-text">Performance Setting</span>
+      </div>
+    </li>
 
       <!-- <li
         nz-menu-item
