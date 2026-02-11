@@ -11,7 +11,7 @@
           <nz-form-label nzRequired>Linked Case</nz-form-label>
           <nz-form-control nzErrorTip="Select a case">
             <nz-select formControlName="erCase" nzShowSearch nzAllowClear nzPlaceHolder="Select case">
-              <nz-option *ngFor="let c of cases" [nzValue]="c.id" [nzLabel]="(c.caseNumber || 'ID ' + c.id) + ': ' + c.title"></nz-option>
+              <nz-option *ngFor="let c of cases()" [nzValue]="c.id" [nzLabel]="(c.caseNumber || 'ID ' + c.id) + ': ' + c.title"></nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>
@@ -50,7 +50,7 @@
           <nz-form-label nzRequired>Employee</nz-form-label>
           <nz-form-control nzErrorTip="Select employee">
             <nz-select formControlName="employee" nzShowSearch nzAllowClear nzPlaceHolder="Select employee">
-              <nz-option *ngFor="let emp of employees" [nzValue]="emp.id" [nzLabel]="emp.firstName + ' ' + emp.lastName"></nz-option>
+              <nz-option *ngFor="let emp of employees()" [nzValue]="emp.id" [nzLabel]="emp.firstName + ' ' + emp.lastName"></nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>
@@ -73,7 +73,7 @@
 
     <div class="flex justify-end gap-2">
       <button nz-button type="button" (click)="cancel()">Cancel</button>
-      <button nz-button nzType="primary" type="submit" [nzLoading]="loading">Add Party</button>
+      <button nz-button nzType="primary" type="submit" [nzLoading]="loading()">Add Party</button>
     </div>
   </form>
 </nz-card>

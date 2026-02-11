@@ -2,11 +2,11 @@
   [nzGhost]="false"
   [nzBackIcon]="'arrow-left'"
   (nzBack)="onCancel()"
-  [nzTitle]="isEditMode ? 'Edit Employee Group' : 'New Employee Group'"
+  [nzTitle]="isEditMode() ? 'Edit Employee Group' : 'New Employee Group'"
 >
 </nz-page-header>
 
-<nz-card [nzLoading]="loading">
+<nz-card [nzLoading]="loading()">
   <form nz-form [formGroup]="form" (ngSubmit)="onSubmit()" nzLayout="vertical">
     
     <nz-form-item>
@@ -18,8 +18,8 @@
 
     <div class="flex justify-end gap-4 mt-6">
       <button nz-button type="button" (click)="onCancel()">Cancel</button>
-      <button nz-button nzType="primary" [nzLoading]="submitting">
-        {{ isEditMode ? 'Update' : 'Create' }}
+      <button nz-button nzType="primary" [nzLoading]="submitting()">
+        {{ isEditMode() ? 'Update' : 'Create' }}
       </button>
     </div>
   </form>

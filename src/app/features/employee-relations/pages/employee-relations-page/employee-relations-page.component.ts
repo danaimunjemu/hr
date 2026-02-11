@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 
 @Component({
   selector: 'app-employee-relations-page',
@@ -7,11 +7,17 @@ import { Component, OnInit } from '@angular/core';
   styleUrl: './employee-relations-page.component.scss'
 })
 export class EmployeeRelationsPageComponent implements OnInit {
-  loading = false;
-  error: string | null = null;
+  loading: WritableSignal<boolean> = signal(false);
+  error: WritableSignal<string | null> = signal(null);
   
   // Sample Data - Replace with API call
-  listOfData = [
+  listOfData: WritableSignal<Array<{
+    id: string;
+    employee: string;
+    issue: string;
+    status: string;
+    date: string;
+  }>> = signal([
     {
       id: 'ER-2026-001',
       employee: 'John Doe',
@@ -33,13 +39,13 @@ export class EmployeeRelationsPageComponent implements OnInit {
       status: 'Pending',
       date: '2026-02-05'
     }
-  ];
+  ]);
 
   ngOnInit(): void {
     // Simulate API call
-    this.loading = true;
+    this.loading.set(true);
     setTimeout(() => {
-      this.loading = false;
+      this.loading.set(false);
     }, 1000);
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ErOutcomeService } from '../../services/er-outcome.service';
@@ -31,7 +31,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
         <div class="flex justify-end gap-2">
           <button nz-button type="button" (click)="cancel()">Cancel</button>
-          <button nz-button nzType="primary" type="submit" [nzLoading]="loading">Update Status</button>
+          <button nz-button nzType="primary" type="submit" [nzLoading]="loading()">Update Status</button>
         </div>
       </form>
     </nz-card>
@@ -39,7 +39,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 })
 export class OutcomeEditComponent implements OnInit {
   form: FormGroup;
-  loading = false;
+  loading: WritableSignal<boolean> = signal(false);
   outcomeId!: number;
 
   constructor(
@@ -61,25 +61,25 @@ export class OutcomeEditComponent implements OnInit {
   }
 
   loadOutcome(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.outcomeService.getOutcome(this.outcomeId).subscribe({
       next: (data) => {
         this.form.patchValue({
           communicatedAt: data.communicatedAt ? new Date(data.communicatedAt) : null,
           communicationNotes: data.communicationNotes
         });
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
         this.message.error('Failed to load outcome');
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }
 
   submit(): void {
     if (this.form.valid) {
-      this.loading = true;
+      this.loading.set(true);
       const val = this.form.value;
       const payload = {
         id: this.outcomeId,
@@ -94,7 +94,7 @@ export class OutcomeEditComponent implements OnInit {
         },
         error: () => {
           this.message.error('Failed to update outcome');
-          this.loading = false;
+          this.loading.set(false);
         }
       });
     } else {

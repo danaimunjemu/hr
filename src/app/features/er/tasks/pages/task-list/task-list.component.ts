@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { ErTaskService } from '../../services/er-task.service';
 import { ErTask } from '../../models/er-task.model';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -13,7 +14,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
       <button nz-button nzType="primary" routerLink="create">Add Task</button>
     </div>
 
-    <nz-table #basicTable [nzData]="tasks" [nzLoading]="loading">
+    <nz-table #basicTable [nzData]="tasks()" [nzLoading]="loading()">
       <thead>
         <tr>
           <th>Title</th>
@@ -51,12 +52,13 @@ import { NzModalService } from 'ng-zorro-antd/modal';
   `
 })
 export class TaskListComponent implements OnInit {
-  tasks: ErTask[] = [];
-  loading = false;
+  tasks: WritableSignal<ErTask[]> = signal([]);
+  loading: WritableSignal<boolean> = signal(false);
 
   constructor(
     private taskService: ErTaskService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -64,17 +66,24 @@ export class TaskListComponent implements OnInit {
   }
 
   loadData(): void {
-    this.loading = true;
+    this.loading.set(true);
+    const caseId = this.getCaseId();
     this.taskService.getTasks().subscribe({
       next: (data) => {
-        this.tasks = data;
-        this.loading = false;
+        const filtered = caseId ? data.filter((item) => item.erCase?.id === caseId) : data;
+        this.tasks.set(filtered);
+        this.loading.set(false);
       },
       error: () => {
         this.message.error('Failed to load tasks');
-        this.loading = false;
+        this.loading.set(false);
       }
     });
+  }
+
+  private getCaseId(): number | null {
+    const id = this.route.parent?.parent?.snapshot.params['id'];
+    return id ? Number(id) : null;
   }
 
   deleteTask(id: number): void {

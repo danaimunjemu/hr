@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { ErCaseService } from '../../services/er-case.service';
 import { ErCase } from '../../models/er-case.model';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -15,7 +15,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
     </div>
 
     <nz-card>
-      <nz-table #basicTable [nzData]="cases" [nzLoading]="loading">
+      <nz-table #basicTable [nzData]="cases()" [nzLoading]="loading()">
         <thead>
           <tr>
             <th>Case Number</th>
@@ -57,8 +57,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `]
 })
 export class CaseListComponent implements OnInit {
-  cases: ErCase[] = [];
-  loading = true;
+  cases: WritableSignal<ErCase[]> = signal([]);
+  loading: WritableSignal<boolean> = signal(true);
 
   constructor(
     private caseService: ErCaseService,
@@ -70,15 +70,15 @@ export class CaseListComponent implements OnInit {
   }
 
   loadCases(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.caseService.getCases().subscribe({
       next: (data) => {
-        this.cases = data;
-        this.loading = false;
+        this.cases.set(data);
+        this.loading.set(false);
       },
       error: () => {
         this.message.error('Failed to load cases');
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

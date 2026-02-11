@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TimesheetService } from '../../services/timesheet.service';
 import { TimesheetEntry } from '../../models/timesheet-entry.model';
@@ -18,14 +18,14 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `]
 })
 export class TimesheetComponent implements OnInit {
-  loading = true;
-  entries: TimesheetEntry[] = [];
+  loading: WritableSignal<boolean> = signal(true);
+  entries: WritableSignal<TimesheetEntry[]> = signal([]);
   
   // Modal & Form
-  isVisible = false;
-  isSubmitting = false;
-  isEditMode = false;
-  currentEntryId: number | null = null;
+  isVisible: WritableSignal<boolean> = signal(false);
+  isSubmitting: WritableSignal<boolean> = signal(false);
+  isEditMode: WritableSignal<boolean> = signal(false);
+  currentEntryId: WritableSignal<number | null> = signal(null);
   form: FormGroup;
 
   constructor(
@@ -47,16 +47,16 @@ export class TimesheetComponent implements OnInit {
   }
 
   loadData(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.timesheetService.getAll().subscribe({
       next: (data: TimesheetEntry[]) => {
-        this.entries = data;
-        this.loading = false;
+        this.entries.set(data);
+        this.loading.set(false);
       },
       error: (err: any) => {
         console.error('Failed to load timesheets', err);
         this.message.error('Failed to load timesheets');
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }
@@ -64,15 +64,15 @@ export class TimesheetComponent implements OnInit {
   // --- Actions ---
 
   openAddModal(): void {
-    this.isEditMode = false;
-    this.currentEntryId = null;
+    this.isEditMode.set(false);
+    this.currentEntryId.set(null);
     this.form.reset({ breakMinutes: 0 });
-    this.isVisible = true;
+    this.isVisible.set(true);
   }
 
   openEditModal(entry: TimesheetEntry): void {
-    this.isEditMode = true;
-    this.currentEntryId = entry.id;
+    this.isEditMode.set(true);
+    this.currentEntryId.set(entry.id);
     
     // Convert strings to Date objects for UI components
     const workDate = new Date(entry.workDate);
@@ -86,11 +86,11 @@ export class TimesheetComponent implements OnInit {
       breakMinutes: entry.breakMinutes,
       notes: entry.notes
     });
-    this.isVisible = true;
+    this.isVisible.set(true);
   }
 
   handleCancel(): void {
-    this.isVisible = false;
+    this.isVisible.set(false);
   }
 
   handleOk(): void {
@@ -104,7 +104,7 @@ export class TimesheetComponent implements OnInit {
       return;
     }
 
-    this.isSubmitting = true;
+    this.isSubmitting.set(true);
     const formValue = this.form.value;
     
     // Convert Date objects back to strings
@@ -116,22 +116,23 @@ export class TimesheetComponent implements OnInit {
       notes: formValue.notes
     };
 
-    if (this.isEditMode && this.currentEntryId) {
+    const currentEntryId = this.currentEntryId();
+    if (this.isEditMode() && currentEntryId !== null) {
       // Preserve other fields? The backend usually handles partial updates or full replacements.
       // We'll send what we have.
-      payload.id = this.currentEntryId;
+      payload.id = currentEntryId;
       // Status isn't changed here usually, or stays as is.
 
-      this.timesheetService.update(this.currentEntryId, payload).subscribe({
+      this.timesheetService.update(currentEntryId, payload).subscribe({
         next: () => {
           this.message.success('Entry updated');
-          this.isVisible = false;
-          this.isSubmitting = false;
+          this.isVisible.set(false);
+          this.isSubmitting.set(false);
           this.loadData();
         },
         error: () => {
           this.message.error('Failed to update entry');
-          this.isSubmitting = false;
+          this.isSubmitting.set(false);
         }
       });
     } else {
@@ -139,13 +140,13 @@ export class TimesheetComponent implements OnInit {
       this.timesheetService.create(payload).subscribe({
         next: () => {
           this.message.success('Entry created');
-          this.isVisible = false;
-          this.isSubmitting = false;
+          this.isVisible.set(false);
+          this.isSubmitting.set(false);
           this.loadData();
         },
         error: () => {
           this.message.error('Failed to create entry');
-          this.isSubmitting = false;
+          this.isSubmitting.set(false);
         }
       });
     }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { ScheduleException } from '../../../models/schedule-exception.model';
 import { ScheduleExceptionService } from '../../../services/schedule-exception.service';
 
@@ -16,8 +16,8 @@ import { ScheduleExceptionService } from '../../../services/schedule-exception.s
   `]
 })
 export class ScheduleExceptionListComponent implements OnInit {
-  loading = true;
-  exceptions: ScheduleException[] = [];
+  loading: WritableSignal<boolean> = signal(true);
+  exceptions: WritableSignal<ScheduleException[]> = signal([]);
 
   constructor(private exceptionService: ScheduleExceptionService) {}
 
@@ -26,15 +26,15 @@ export class ScheduleExceptionListComponent implements OnInit {
   }
 
   loadData(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.exceptionService.getAll().subscribe({
       next: (data) => {
-        this.exceptions = data;
-        this.loading = false;
+        this.exceptions.set(data);
+        this.loading.set(false);
       },
       error: (err: any) => {
         console.error('Failed to load schedule exceptions', err);
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ErProcessService } from '../../services/er-process.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -30,7 +30,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
           <textarea nz-input formControlName="notes" rows="2"></textarea>
         </nz-form-control>
       </nz-form-item>
-      <button nz-button nzType="primary" [nzLoading]="loading">Link Document</button>
+      <button nz-button nzType="primary" [nzLoading]="loading()">Link Document</button>
     </form>
   `
 })
@@ -38,7 +38,7 @@ export class TaskDocumentsComponent {
   @Input() taskId!: number;
   @Output() completed = new EventEmitter<void>();
   form: FormGroup;
-  loading = false;
+  loading: WritableSignal<boolean> = signal(false);
 
   constructor(
     private fb: FormBuilder,
@@ -54,7 +54,7 @@ export class TaskDocumentsComponent {
 
   submit() {
     if (this.form.valid) {
-      this.loading = true;
+      this.loading.set(true);
       const val = this.form.value;
       const payload = {
         document: { id: val.documentId },
@@ -64,12 +64,12 @@ export class TaskDocumentsComponent {
       this.processService.addTaskDocument(this.taskId, payload).subscribe({
         next: () => {
           this.message.success('Document linked');
-          this.loading = false;
+          this.loading.set(false);
           this.completed.emit();
         },
         error: () => {
           this.message.error('Failed to link document');
-          this.loading = false;
+          this.loading.set(false);
         }
       });
     }

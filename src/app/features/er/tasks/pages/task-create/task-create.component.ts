@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ErTaskService } from '../../services/er-task.service';
@@ -14,9 +14,9 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 })
 export class TaskCreateComponent implements OnInit {
   form: FormGroup;
-  loading = false;
-  cases: any[] = [];
-  employees: any[] = [];
+  loading: WritableSignal<boolean> = signal(false);
+  cases: WritableSignal<any[]> = signal([]);
+  employees: WritableSignal<any[]> = signal([]);
 
   constructor(
     private fb: FormBuilder,
@@ -39,16 +39,24 @@ export class TaskCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDependencies();
+    this.setCaseFromRoute();
   }
 
   loadDependencies(): void {
-    this.caseService.getCases().subscribe(data => this.cases = data);
-    this.employeeService.getAll().subscribe(data => this.employees = data);
+    this.caseService.getCases().subscribe(data => this.cases.set(data));
+    this.employeeService.getAll().subscribe(data => this.employees.set(data));
+  }
+
+  private setCaseFromRoute(): void {
+    const caseId = this.route.parent?.parent?.snapshot.params['id'];
+    if (caseId) {
+      this.form.get('erCase')?.setValue(Number(caseId));
+    }
   }
 
   submit(): void {
     if (this.form.valid) {
-      this.loading = true;
+      this.loading.set(true);
       const val = this.form.value;
       const payload = {
         erCase: { id: val.erCase },
@@ -67,7 +75,7 @@ export class TaskCreateComponent implements OnInit {
         },
         error: () => {
           this.message.error('Failed to create task');
-          this.loading = false;
+          this.loading.set(false);
         }
       });
     } else {

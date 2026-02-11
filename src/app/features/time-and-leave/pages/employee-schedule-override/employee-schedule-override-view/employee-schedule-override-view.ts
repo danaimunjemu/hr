@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EmployeeScheduleOverrideService } from '../../../services/employee-schedule-override.service';
 import { EmployeeScheduleOverride } from '../../../models/employee-schedule-override.model';
@@ -17,8 +17,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `]
 })
 export class EmployeeScheduleOverrideViewComponent implements OnInit {
-  override: EmployeeScheduleOverride | null = null;
-  loading = true;
+  override: WritableSignal<EmployeeScheduleOverride | null> = signal(null);
+  loading: WritableSignal<boolean> = signal(true);
 
   constructor(
     private route: ActivatedRoute,
@@ -39,11 +39,11 @@ export class EmployeeScheduleOverrideViewComponent implements OnInit {
   }
 
   loadOverride(id: number): void {
-    this.loading = true;
+    this.loading.set(true);
     this.overrideService.getById(id).subscribe({
       next: (data) => {
-        this.override = data;
-        this.loading = false;
+        this.override.set(data);
+        this.loading.set(false);
       },
       error: (err: any) => {
         this.message.error('Failed to load override details');

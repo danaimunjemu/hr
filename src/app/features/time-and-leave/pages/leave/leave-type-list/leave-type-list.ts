@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { LeaveType } from '../../../models/leave-type.model';
 import { LeaveService } from '../../../services/leave.service';
 
@@ -16,8 +16,8 @@ import { LeaveService } from '../../../services/leave.service';
   `]
 })
 export class LeaveTypeListComponent implements OnInit {
-  loading = true;
-  types: LeaveType[] = [];
+  loading: WritableSignal<boolean> = signal(true);
+  types: WritableSignal<LeaveType[]> = signal([]);
 
   constructor(private leaveService: LeaveService) {}
 
@@ -26,15 +26,15 @@ export class LeaveTypeListComponent implements OnInit {
   }
 
   loadData(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.leaveService.getAllTypes().subscribe({
       next: (data) => {
-        this.types = data;
-        this.loading = false;
+        this.types.set(data);
+        this.loading.set(false);
       },
       error: (err: any) => {
         console.error('Failed to load leave types', err);
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

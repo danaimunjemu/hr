@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ErTemplateService } from '../../services/er-template.service';
@@ -78,7 +78,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
         <div class="flex justify-end gap-2">
           <button nz-button type="button" (click)="onCancel()">Cancel</button>
-          <button nz-button nzType="primary" [nzLoading]="loading">Create</button>
+          <button nz-button nzType="primary" [nzLoading]="loading()">Create</button>
         </div>
       </form>
     </nz-card>
@@ -86,7 +86,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 })
 export class TemplateCreateComponent {
   form: FormGroup;
-  loading = false;
+  loading: WritableSignal<boolean> = signal(false);
 
   constructor(
     private fb: FormBuilder,
@@ -107,7 +107,7 @@ export class TemplateCreateComponent {
 
   submit(): void {
     if (this.form.valid) {
-      this.loading = true;
+      this.loading.set(true);
       this.templateService.createTemplate(this.form.value).subscribe({
         next: () => {
           this.message.success('Template created successfully');
@@ -115,7 +115,7 @@ export class TemplateCreateComponent {
         },
         error: () => {
           this.message.error('Failed to create template');
-          this.loading = false;
+          this.loading.set(false);
         }
       });
     } else {

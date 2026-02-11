@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OvertimeRuleService } from '../../../services/overtime-rule.service';
 import { OvertimeRule } from '../../../models/overtime-rule.model';
@@ -17,8 +17,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `]
 })
 export class OvertimeRuleViewComponent implements OnInit {
-  rule: OvertimeRule | null = null;
-  loading = true;
+  rule: WritableSignal<OvertimeRule | null> = signal(null);
+  loading: WritableSignal<boolean> = signal(true);
 
   constructor(
     private route: ActivatedRoute,
@@ -39,11 +39,11 @@ export class OvertimeRuleViewComponent implements OnInit {
   }
 
   loadRule(id: number): void {
-    this.loading = true;
+    this.loading.set(true);
     this.ruleService.getById(id).subscribe({
       next: (data) => {
-        this.rule = data;
-        this.loading = false;
+        this.rule.set(data);
+        this.loading.set(false);
       },
       error: (err: any) => {
         this.message.error('Failed to load rule details');

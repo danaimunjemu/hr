@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HolidayCalendarService } from '../../../services/holiday-calendar.service';
@@ -22,10 +22,10 @@ import { HolidayCalendar, HolidayDate } from '../../../models/holiday-calendar.m
   `]
 })
 export class HolidayCalendarViewComponent implements OnInit {
-  calendar: HolidayCalendar | null = null;
-  loading = true;
-  isDateModalVisible = false;
-  isSubmittingDate = false;
+  calendar: WritableSignal<HolidayCalendar | null> = signal(null);
+  loading: WritableSignal<boolean> = signal(true);
+  isDateModalVisible: WritableSignal<boolean> = signal(false);
+  isSubmittingDate: WritableSignal<boolean> = signal(false);
   dateForm: FormGroup;
 
   constructor(
@@ -50,11 +50,11 @@ export class HolidayCalendarViewComponent implements OnInit {
   }
 
   loadCalendar(id: number): void {
-    this.loading = true;
+    this.loading.set(true);
     this.calendarService.getById(id).subscribe({
       next: (data) => {
-        this.calendar = data;
-        this.loading = false;
+        this.calendar.set(data);
+        this.loading.set(false);
       },
       error: (err: any) => {
         this.message.error('Failed to load calendar');
@@ -65,15 +65,16 @@ export class HolidayCalendarViewComponent implements OnInit {
 
   showAddDateModal(): void {
     this.dateForm.reset();
-    this.isDateModalVisible = true;
+    this.isDateModalVisible.set(true);
   }
 
   handleDateCancel(): void {
-    this.isDateModalVisible = false;
+    this.isDateModalVisible.set(false);
   }
 
   handleDateSubmit(): void {
-    if (this.dateForm.invalid || !this.calendar) {
+    const calendar = this.calendar();
+    if (this.dateForm.invalid || !calendar) {
       Object.values(this.dateForm.controls).forEach(control => {
         if (control.invalid) {
           control.markAsDirty();
@@ -83,7 +84,7 @@ export class HolidayCalendarViewComponent implements OnInit {
       return;
     }
 
-    this.isSubmittingDate = true;
+    this.isSubmittingDate.set(true);
     const formValue = this.dateForm.value;
     
     const formatDate = (date: Date): string => {
@@ -94,21 +95,22 @@ export class HolidayCalendarViewComponent implements OnInit {
       id: 0,
       name: formValue.name,
       date: formatDate(formValue.date),
-      holidayCalendar: { id: this.calendar.id } as any
+      holidayCalendar: { id: calendar.id } as any
     };
 
     this.calendarService.addDate(newDate).subscribe({
       next: () => {
         this.message.success('Holiday date added');
-        this.isDateModalVisible = false;
-        this.isSubmittingDate = false;
-        if (this.calendar) {
-            this.loadCalendar(this.calendar.id); // Refresh to show new date
+        this.isDateModalVisible.set(false);
+        this.isSubmittingDate.set(false);
+        const currentCalendar = this.calendar();
+        if (currentCalendar) {
+            this.loadCalendar(currentCalendar.id); // Refresh to show new date
         }
       },
       error: () => {
         this.message.error('Failed to add holiday date');
-        this.isSubmittingDate = false;
+        this.isSubmittingDate.set(false);
       }
     });
   }

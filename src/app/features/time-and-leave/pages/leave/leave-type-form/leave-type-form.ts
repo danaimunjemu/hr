@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LeaveService } from '../../../services/leave.service';
@@ -19,10 +19,10 @@ import { LeaveType } from '../../../models/leave-type.model';
 })
 export class LeaveTypeFormComponent implements OnInit {
   form: FormGroup;
-  isEditMode = false;
-  typeId: number | null = null;
-  loading = false;
-  submitting = false;
+  isEditMode: WritableSignal<boolean> = signal(false);
+  typeId: WritableSignal<number | null> = signal(null);
+  loading: WritableSignal<boolean> = signal(false);
+  submitting: WritableSignal<boolean> = signal(false);
 
   constructor(
     private fb: FormBuilder,
@@ -44,9 +44,10 @@ export class LeaveTypeFormComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       if (params['id']) {
-        this.isEditMode = true;
-        this.typeId = +params['id'];
-        this.loadType(this.typeId);
+        const id = +params['id'];
+        this.isEditMode.set(true);
+        this.typeId.set(id);
+        this.loadType(id);
       }
     });
 
@@ -61,11 +62,11 @@ export class LeaveTypeFormComponent implements OnInit {
   }
 
   loadType(id: number): void {
-    this.loading = true;
+    this.loading.set(true);
     this.leaveService.getTypeById(id).subscribe({
       next: (type) => {
         this.form.patchValue(type);
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
         this.message.error('Failed to load leave type');
@@ -85,20 +86,21 @@ export class LeaveTypeFormComponent implements OnInit {
       return;
     }
 
-    this.submitting = true;
+    this.submitting.set(true);
     const typeData: LeaveType = {
       ...this.form.value
     };
 
-    if (this.isEditMode && this.typeId) {
-      this.leaveService.updateType(this.typeId, typeData).subscribe({
+    const typeId = this.typeId();
+    if (this.isEditMode() && typeId !== null) {
+      this.leaveService.updateType(typeId, typeData).subscribe({
         next: () => {
           this.message.success('Leave type updated successfully');
           this.router.navigate(['../'], { relativeTo: this.route });
         },
         error: () => {
           this.message.error('Failed to update leave type');
-          this.submitting = false;
+          this.submitting.set(false);
         }
       });
     } else {
@@ -109,7 +111,7 @@ export class LeaveTypeFormComponent implements OnInit {
         },
         error: () => {
           this.message.error('Failed to create leave type');
-          this.submitting = false;
+          this.submitting.set(false);
         }
       });
     }

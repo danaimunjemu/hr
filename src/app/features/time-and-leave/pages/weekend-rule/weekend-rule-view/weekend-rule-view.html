@@ -3,12 +3,12 @@
   [nzBackIcon]="'arrow-left'"
   (nzBack)="onBack()"
   [nzTitle]="'Weekend Rule Details'"
-  [nzSubtitle]="rule?.name"
+  [nzSubtitle]="rule()?.name"
 >
 </nz-page-header>
 
-<nz-card [nzLoading]="loading">
-  <div *ngIf="rule">
+<nz-card [nzLoading]="loading()">
+  <div *ngIf="rule() as rule">
     <nz-descriptions [nzColumn]="1" nzTitle="Rule Information" nzBordered>
       <nz-descriptions-item nzTitle="Name">{{ rule.name }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Saturday">

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ErProcessService } from '../../services/er-process.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -29,7 +29,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
           <textarea nz-input formControlName="notes" rows="2"></textarea>
         </nz-form-control>
       </nz-form-item>
-      <button nz-button nzType="primary" [nzLoading]="loading">Attach Report</button>
+      <button nz-button nzType="primary" [nzLoading]="loading()">Attach Report</button>
     </form>
   `
 })
@@ -37,7 +37,7 @@ export class OutcomeDocumentsComponent {
   @Input() outcomeId!: number;
   @Output() completed = new EventEmitter<void>();
   form: FormGroup;
-  loading = false;
+  loading: WritableSignal<boolean> = signal(false);
 
   constructor(
     private fb: FormBuilder,
@@ -53,7 +53,7 @@ export class OutcomeDocumentsComponent {
 
   submit() {
     if (this.form.valid) {
-      this.loading = true;
+      this.loading.set(true);
       const val = this.form.value;
       const payload = {
         document: { id: val.documentId },
@@ -63,12 +63,12 @@ export class OutcomeDocumentsComponent {
       this.processService.addOutcomeDocument(this.outcomeId, payload).subscribe({
         next: () => {
           this.message.success('Report attached');
-          this.loading = false;
+          this.loading.set(false);
           this.completed.emit();
         },
         error: () => {
           this.message.error('Failed to attach report');
-          this.loading = false;
+          this.loading.set(false);
         }
       });
     }

@@ -10,7 +10,7 @@
 </div>
 
 <nz-card>
-  <nz-table #basicTable [nzData]="overrides" [nzLoading]="loading">
+  <nz-table #basicTable [nzData]="overrides()" [nzLoading]="loading()">
     <thead>
       <tr>
         <th>Employee</th>

@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ErProcessComponent } from './er-process.component';
-import { CaseCreateProcessComponent } from './components/case-create-process/case-create-process.component';
 import { CaseAssignComponent } from './components/case-assign/case-assign.component';
 import { CaseIntakeComponent } from './components/case-intake/case-intake.component';
 import { CaseOutcomeComponent } from './components/case-outcome/case-outcome.component';
@@ -18,8 +17,7 @@ const routes: Routes = [
     path: '',
     component: ErProcessComponent,
     children: [
-      { path: '', redirectTo: 'create', pathMatch: 'full' },
-      { path: 'create', component: CaseCreateProcessComponent },
+      { path: '', redirectTo: 'assign', pathMatch: 'full' },
       { path: 'assign', component: CaseAssignComponent },
       { path: 'intake', component: CaseIntakeComponent },
       { path: 'outcome', component: CaseOutcomeComponent },

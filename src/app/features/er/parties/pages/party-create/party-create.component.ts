@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ErPartyService } from '../../services/er-party.service';
@@ -14,9 +14,9 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 })
 export class PartyCreateComponent implements OnInit {
   form: FormGroup;
-  loading = false;
-  employees: Employee[] = [];
-  cases: ErCase[] = [];
+  loading: WritableSignal<boolean> = signal(false);
+  employees: WritableSignal<Employee[]> = signal([]);
+  cases: WritableSignal<ErCase[]> = signal([]);
 
   constructor(
     private fb: FormBuilder,
@@ -55,13 +55,13 @@ export class PartyCreateComponent implements OnInit {
   }
 
   loadMetadata(): void {
-    this.employeeService.getAll().subscribe(data => this.employees = data);
-    this.caseService.getCases().subscribe(data => this.cases = data);
+    this.employeeService.getAll().subscribe(data => this.employees.set(data));
+    this.caseService.getCases().subscribe(data => this.cases.set(data));
   }
 
   submit(): void {
     if (this.form.valid) {
-      this.loading = true;
+      this.loading.set(true);
       const val = this.form.value;
       
       const payload = {
@@ -80,7 +80,7 @@ export class PartyCreateComponent implements OnInit {
         },
         error: () => {
           this.message.error('Failed to add party');
-          this.loading = false;
+          this.loading.set(false);
         }
       });
     } else {

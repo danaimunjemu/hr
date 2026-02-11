@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EmployeeScheduleOverrideService } from '../../../services/employee-schedule-override.service';
@@ -29,12 +29,12 @@ import { ShiftDefinition } from '../../../models/shift-definition.model';
 })
 export class EmployeeScheduleOverrideFormComponent implements OnInit {
   form: FormGroup;
-  isEditMode = false;
-  overrideId: number | null = null;
-  loading = false;
-  submitting = false;
-  employees: Employee[] = [];
-  shiftDefinitions: ShiftDefinition[] = [];
+  isEditMode: WritableSignal<boolean> = signal(false);
+  overrideId: WritableSignal<number | null> = signal(null);
+  loading: WritableSignal<boolean> = signal(false);
+  submitting: WritableSignal<boolean> = signal(false);
+  employees: WritableSignal<Employee[]> = signal([]);
+  shiftDefinitions: WritableSignal<ShiftDefinition[]> = signal([]);
 
   constructor(
     private fb: FormBuilder,
@@ -65,9 +65,10 @@ export class EmployeeScheduleOverrideFormComponent implements OnInit {
     this.loadDependencies();
     this.route.params.subscribe(params => {
       if (params['id']) {
-        this.isEditMode = true;
-        this.overrideId = +params['id'];
-        this.loadOverride(this.overrideId);
+        const id = +params['id'];
+        this.isEditMode.set(true);
+        this.overrideId.set(id);
+        this.loadOverride(id);
       }
     });
 
@@ -88,12 +89,12 @@ export class EmployeeScheduleOverrideFormComponent implements OnInit {
   }
 
   loadDependencies(): void {
-    this.employeesService.getEmployees().subscribe(data => this.employees = data);
-    this.shiftDefinitionService.getAll().subscribe(data => this.shiftDefinitions = data);
+    this.employeesService.getEmployees().subscribe(data => this.employees.set(data));
+    this.shiftDefinitionService.getAll().subscribe(data => this.shiftDefinitions.set(data));
   }
 
   loadOverride(id: number): void {
-    this.loading = true;
+    this.loading.set(true);
     this.overrideService.getById(id).subscribe({
       next: (override) => {
         this.form.patchValue({
@@ -110,11 +111,11 @@ export class EmployeeScheduleOverrideFormComponent implements OnInit {
           });
         }
 
-        this.loading = false;
+        this.loading.set(false);
       },
       error: (err: any) => {
         this.message.error('Failed to load override details');
-        this.loading = false;
+        this.loading.set(false);
         this.router.navigate(['../'], { relativeTo: this.route });
       }
     });
@@ -149,7 +150,7 @@ export class EmployeeScheduleOverrideFormComponent implements OnInit {
       return;
     }
 
-    this.submitting = true;
+    this.submitting.set(true);
     const formValue = this.form.value;
 
     const formatDate = (date: Date): string => {
@@ -162,15 +163,16 @@ export class EmployeeScheduleOverrideFormComponent implements OnInit {
       cycleStartDate: formatDate(formValue.cycleStartDate),
     };
 
-    if (this.isEditMode && this.overrideId) {
-      this.overrideService.update(this.overrideId, overrideData).subscribe({
+    const overrideId = this.overrideId();
+    if (this.isEditMode() && overrideId !== null) {
+      this.overrideService.update(overrideId, overrideData).subscribe({
         next: () => {
           this.message.success('Override updated successfully');
           this.router.navigate(['../'], { relativeTo: this.route });
         },
         error: () => {
           this.message.error('Failed to update override');
-          this.submitting = false;
+          this.submitting.set(false);
         }
       });
     } else {
@@ -181,7 +183,7 @@ export class EmployeeScheduleOverrideFormComponent implements OnInit {
         },
         error: () => {
           this.message.error('Failed to create override');
-          this.submitting = false;
+          this.submitting.set(false);
         }
       });
     }

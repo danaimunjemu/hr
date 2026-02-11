@@ -3,12 +3,12 @@
   [nzBackIcon]="'arrow-left'"
   (nzBack)="onBack()"
   [nzTitle]="'Group Schedule Rule Details'"
-  [nzSubtitle]="rule?.employeeGroup?.name"
+  [nzSubtitle]="rule()?.employeeGroup?.name"
 >
 </nz-page-header>
 
-<nz-card [nzLoading]="loading">
-  <div *ngIf="rule">
+<nz-card [nzLoading]="loading()">
+  <div *ngIf="rule() as rule">
     <nz-descriptions [nzColumn]="1" nzTitle="Rule Information" nzBordered>
       <nz-descriptions-item nzTitle="Employee Group">{{ rule.employeeGroup.name }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Rotation Type">

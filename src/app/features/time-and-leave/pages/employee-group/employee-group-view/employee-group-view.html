@@ -3,12 +3,12 @@
   [nzBackIcon]="'arrow-left'"
   (nzBack)="onBack()"
   [nzTitle]="'Employee Group Details'"
-  [nzSubtitle]="group?.name"
+  [nzSubtitle]="group()?.name"
 >
 </nz-page-header>
 
-<nz-card [nzLoading]="loading">
-  <div *ngIf="group">
+<nz-card [nzLoading]="loading()">
+  <div *ngIf="group() as group">
     <nz-descriptions [nzColumn]="1" nzTitle="Group Information" nzBordered>
       <nz-descriptions-item nzTitle="Name">{{ group.name }}</nz-descriptions-item>
     </nz-descriptions>

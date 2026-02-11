@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupScheduleRuleService } from '../../../services/group-schedule-rule.service';
@@ -29,12 +29,12 @@ import { ShiftDefinition } from '../../../models/shift-definition.model';
 })
 export class GroupScheduleRuleFormComponent implements OnInit {
   form: FormGroup;
-  isEditMode = false;
-  ruleId: number | null = null;
-  loading = false;
-  submitting = false;
-  employeeGroups: EmployeeGroup[] = [];
-  shiftDefinitions: ShiftDefinition[] = [];
+  isEditMode: WritableSignal<boolean> = signal(false);
+  ruleId: WritableSignal<number | null> = signal(null);
+  loading: WritableSignal<boolean> = signal(false);
+  submitting: WritableSignal<boolean> = signal(false);
+  employeeGroups: WritableSignal<EmployeeGroup[]> = signal([]);
+  shiftDefinitions: WritableSignal<ShiftDefinition[]> = signal([]);
 
   constructor(
     private fb: FormBuilder,
@@ -65,9 +65,10 @@ export class GroupScheduleRuleFormComponent implements OnInit {
     this.loadDependencies();
     this.route.params.subscribe(params => {
       if (params['id']) {
-        this.isEditMode = true;
-        this.ruleId = +params['id'];
-        this.loadRule(this.ruleId);
+        const id = +params['id'];
+        this.isEditMode.set(true);
+        this.ruleId.set(id);
+        this.loadRule(id);
       }
     });
 
@@ -88,12 +89,12 @@ export class GroupScheduleRuleFormComponent implements OnInit {
   }
 
   loadDependencies(): void {
-    this.employeeGroupService.getAll().subscribe(data => this.employeeGroups = data);
-    this.shiftDefinitionService.getAll().subscribe(data => this.shiftDefinitions = data);
+    this.employeeGroupService.getAll().subscribe(data => this.employeeGroups.set(data));
+    this.shiftDefinitionService.getAll().subscribe(data => this.shiftDefinitions.set(data));
   }
 
   loadRule(id: number): void {
-    this.loading = true;
+    this.loading.set(true);
     this.groupScheduleRuleService.getById(id).subscribe({
       next: (rule) => {
         this.form.patchValue({
@@ -110,11 +111,11 @@ export class GroupScheduleRuleFormComponent implements OnInit {
           });
         }
 
-        this.loading = false;
+        this.loading.set(false);
       },
       error: (err: any) => {
         this.message.error('Failed to load rule details');
-        this.loading = false;
+        this.loading.set(false);
         this.router.navigate(['../'], { relativeTo: this.route });
       }
     });
@@ -149,7 +150,7 @@ export class GroupScheduleRuleFormComponent implements OnInit {
       return;
     }
 
-    this.submitting = true;
+    this.submitting.set(true);
     const formValue = this.form.value;
 
     const formatDate = (date: Date): string => {
@@ -162,15 +163,16 @@ export class GroupScheduleRuleFormComponent implements OnInit {
       cycleStartDate: formatDate(formValue.cycleStartDate),
     };
 
-    if (this.isEditMode && this.ruleId) {
-      this.groupScheduleRuleService.update(this.ruleId, ruleData).subscribe({
+    const ruleId = this.ruleId();
+    if (this.isEditMode() && ruleId !== null) {
+      this.groupScheduleRuleService.update(ruleId, ruleData).subscribe({
         next: () => {
           this.message.success('Rule updated successfully');
           this.router.navigate(['../'], { relativeTo: this.route });
         },
         error: () => {
           this.message.error('Failed to update rule');
-          this.submitting = false;
+          this.submitting.set(false);
         }
       });
     } else {
@@ -181,7 +183,7 @@ export class GroupScheduleRuleFormComponent implements OnInit {
         },
         error: () => {
           this.message.error('Failed to create rule');
-          this.submitting = false;
+          this.submitting.set(false);
         }
       });
     }

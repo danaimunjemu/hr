@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ErProcessService } from '../../services/er-process.service';
 import { EmployeesService, Employee } from '../../../../employees/services/employees.service';
@@ -28,7 +28,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
             <nz-form-label nzRequired>Decided By</nz-form-label>
             <nz-form-control nzErrorTip="Required">
               <nz-select formControlName="decidedBy" nzShowSearch nzAllowClear>
-                <nz-option *ngFor="let emp of employees" [nzValue]="emp.id" [nzLabel]="emp.firstName + ' ' + emp.lastName"></nz-option>
+                <nz-option *ngFor="let emp of employees()" [nzValue]="emp.id" [nzLabel]="emp.firstName + ' ' + emp.lastName"></nz-option>
               </nz-select>
             </nz-form-control>
           </nz-form-item>
@@ -46,7 +46,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
           <textarea nz-input formControlName="decisionSummary" rows="3"></textarea>
         </nz-form-control>
       </nz-form-item>
-      <button nz-button nzType="primary" [nzLoading]="loading">Record Outcome</button>
+      <button nz-button nzType="primary" [nzLoading]="loading()">Record Outcome</button>
     </form>
   `
 })
@@ -54,8 +54,8 @@ export class CaseOutcomeComponent implements OnInit {
   @Input() caseId!: number;
   @Output() completed = new EventEmitter<void>();
   form: FormGroup;
-  loading = false;
-  employees: Employee[] = [];
+  loading: WritableSignal<boolean> = signal(false);
+  employees: WritableSignal<Employee[]> = signal([]);
 
   constructor(
     private fb: FormBuilder,
@@ -72,12 +72,12 @@ export class CaseOutcomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.employeeService.getAll().subscribe(data => this.employees = data);
+    this.employeeService.getAll().subscribe(data => this.employees.set(data));
   }
 
   submit() {
     if (this.form.valid) {
-      this.loading = true;
+      this.loading.set(true);
       const val = this.form.value;
       const payload = {
         outcomeType: val.outcomeType,
@@ -88,12 +88,12 @@ export class CaseOutcomeComponent implements OnInit {
       this.processService.addOutcome(this.caseId, payload).subscribe({
         next: () => {
           this.message.success('Outcome recorded successfully');
-          this.loading = false;
+          this.loading.set(false);
           this.completed.emit();
         },
         error: () => {
           this.message.error('Failed to record outcome');
-          this.loading = false;
+          this.loading.set(false);
         }
       });
     }

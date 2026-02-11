@@ -8,6 +8,7 @@ import { TemplateListComponent } from './pages/template-list/template-list.compo
 import { TemplateCreateComponent } from './pages/template-create/template-create.component';
 import { TemplateEditComponent } from './pages/template-edit/template-edit.component';
 import { TemplateViewComponent } from './pages/template-view/template-view.component';
+import { NzCardModule } from 'ng-zorro-antd/card';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { TemplateViewComponent } from './pages/template-view/template-view.compo
     ErTemplatesRoutingModule,
     ReactiveFormsModule,
     FormsModule,
-    AntDesignModules
+    AntDesignModules,
+    NzCardModule
   ]
 })
 export class ErTemplatesModule { }

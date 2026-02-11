@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OvertimeRuleService } from '../../../services/overtime-rule.service';
@@ -21,10 +21,10 @@ import { Observable } from 'rxjs';
 })
 export class OvertimeRuleFormComponent implements OnInit {
   form: FormGroup;
-  isEditMode = false;
-  ruleId: number | null = null;
-  loading = false;
-  submitting = false;
+  isEditMode: WritableSignal<boolean> = signal(false);
+  ruleId: WritableSignal<number | null> = signal(null);
+  loading: WritableSignal<boolean> = signal(false);
+  submitting: WritableSignal<boolean> = signal(false);
 
   orgUnits$: Observable<any[]>;
 
@@ -71,15 +71,16 @@ export class OvertimeRuleFormComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       if (params['id']) {
-        this.isEditMode = true;
-        this.ruleId = +params['id'];
-        this.loadRule(this.ruleId);
+        const id = +params['id'];
+        this.isEditMode.set(true);
+        this.ruleId.set(id);
+        this.loadRule(id);
       }
     });
   }
 
   loadRule(id: number): void {
-    this.loading = true;
+    this.loading.set(true);
     this.ruleService.getById(id).subscribe({
       next: (rule: any) => {
         // Transform backend time objects {hour, minute...} to Date objects for nz-time-picker
@@ -94,7 +95,7 @@ export class OvertimeRuleFormComponent implements OnInit {
           effectiveFrom: rule.effectiveFrom ? new Date(rule.effectiveFrom) : null,
           effectiveTo: rule.effectiveTo ? new Date(rule.effectiveTo) : null
         });
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
         this.message.error('Failed to load overtime rule');
@@ -142,7 +143,7 @@ export class OvertimeRuleFormComponent implements OnInit {
       return;
     }
 
-    this.submitting = true;
+    this.submitting.set(true);
     const formVal = this.form.value;
 
     const payload = {
@@ -168,19 +169,20 @@ export class OvertimeRuleFormComponent implements OnInit {
       deletedOn: null
     };
 
-    const request$ = (this.isEditMode && this.ruleId)
-      ? this.ruleService.update(this.ruleId, payload as any)
+    const ruleId = this.ruleId();
+    const request$ = (this.isEditMode() && ruleId !== null)
+      ? this.ruleService.update(ruleId, payload as any)
       : this.ruleService.create(payload as any);
 
     request$.subscribe({
       next: () => {
-        this.message.success(this.isEditMode ? 'Rule updated successfully' : 'Rule created successfully');
+        this.message.success(this.isEditMode() ? 'Rule updated successfully' : 'Rule created successfully');
         this.router.navigate(['../'], { relativeTo: this.route });
       },
       error: (err) => {
         console.error(err);
         this.message.error('Failed to save rule');
-        this.submitting = false;
+        this.submitting.set(false);
       }
     });
   }
@@ -189,4 +191,3 @@ export class OvertimeRuleFormComponent implements OnInit {
     this.router.navigate(['../'], { relativeTo: this.route });
   }
 }
-

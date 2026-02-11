@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { ErTemplateService } from '../../services/er-template.service';
 import { ErTemplate } from '../../models/er-template.model';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -12,7 +12,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
       <button nz-button nzType="primary" routerLink="create">Add Template</button>
     </div>
 
-    <nz-table #basicTable [nzData]="templates" [nzLoading]="loading">
+    <nz-table #basicTable [nzData]="templates()" [nzLoading]="loading()">
       <thead>
         <tr>
           <th>Name</th>
@@ -47,8 +47,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `
 })
 export class TemplateListComponent implements OnInit {
-  templates: ErTemplate[] = [];
-  loading = false;
+  templates: WritableSignal<ErTemplate[]> = signal([]);
+  loading: WritableSignal<boolean> = signal(false);
 
   constructor(
     private templateService: ErTemplateService,
@@ -60,15 +60,15 @@ export class TemplateListComponent implements OnInit {
   }
 
   loadData(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.templateService.getTemplates().subscribe({
       next: (data) => {
-        this.templates = data;
-        this.loading = false;
+        this.templates.set(data);
+        this.loading.set(false);
       },
       error: () => {
         this.message.error('Failed to load templates');
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { ErPartyService } from '../../services/er-party.service';
 import { ErParty } from '../../models/er-party.model';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -15,7 +15,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
     </div>
 
     <nz-card>
-      <nz-table #basicTable [nzData]="parties" [nzLoading]="loading">
+      <nz-table #basicTable [nzData]="parties()" [nzLoading]="loading()">
         <thead>
           <tr>
             <th>Case</th>
@@ -64,8 +64,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `]
 })
 export class PartyListComponent implements OnInit {
-  parties: ErParty[] = [];
-  loading = true;
+  parties: WritableSignal<ErParty[]> = signal([]);
+  loading: WritableSignal<boolean> = signal(true);
 
   constructor(
     private partyService: ErPartyService,
@@ -77,15 +77,15 @@ export class PartyListComponent implements OnInit {
   }
 
   loadParties(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.partyService.getParties().subscribe({
       next: (data) => {
-        this.parties = data;
-        this.loading = false;
+        this.parties.set(data);
+        this.loading.set(false);
       },
       error: () => {
         this.message.error('Failed to load parties');
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

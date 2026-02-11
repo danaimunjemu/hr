@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WeekendRuleService } from '../../../services/weekend-rule.service';
 import { WeekendRule } from '../../../models/weekend-rule.model';
@@ -20,8 +20,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `]
 })
 export class WeekendRuleViewComponent implements OnInit {
-  rule: WeekendRule | null = null;
-  loading = true;
+  rule: WritableSignal<WeekendRule | null> = signal(null);
+  loading: WritableSignal<boolean> = signal(true);
 
   constructor(
     private route: ActivatedRoute,
@@ -42,11 +42,11 @@ export class WeekendRuleViewComponent implements OnInit {
   }
 
   loadRule(id: number): void {
-    this.loading = true;
+    this.loading.set(true);
     this.weekendRuleService.getById(id).subscribe({
       next: (data) => {
-        this.rule = data;
-        this.loading = false;
+        this.rule.set(data);
+        this.loading.set(false);
       },
       error: (err: any) => {
         this.message.error('Failed to load weekend rule details');

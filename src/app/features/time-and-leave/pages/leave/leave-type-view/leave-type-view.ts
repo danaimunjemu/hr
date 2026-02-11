@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LeaveService } from '../../../services/leave.service';
 import { LeaveType } from '../../../models/leave-type.model';
@@ -17,8 +17,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `]
 })
 export class LeaveTypeViewComponent implements OnInit {
-  type: LeaveType | null = null;
-  loading = true;
+  type: WritableSignal<LeaveType | null> = signal(null);
+  loading: WritableSignal<boolean> = signal(true);
 
   constructor(
     private route: ActivatedRoute,
@@ -39,11 +39,11 @@ export class LeaveTypeViewComponent implements OnInit {
   }
 
   loadType(id: number): void {
-    this.loading = true;
+    this.loading.set(true);
     this.leaveService.getTypeById(id).subscribe({
       next: (data) => {
-        this.type = data;
-        this.loading = false;
+        this.type.set(data);
+        this.loading.set(false);
       },
       error: (err: any) => {
         this.message.error('Failed to load leave type details');

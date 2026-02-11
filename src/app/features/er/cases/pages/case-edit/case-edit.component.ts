@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ErCaseService } from '../../services/er-case.service';
@@ -11,9 +11,9 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 })
 export class CaseEditComponent implements OnInit {
   form: FormGroup;
-  loading = false;
+  loading: WritableSignal<boolean> = signal(false);
   caseId!: number;
-  caseNumber = '';
+  caseNumber: WritableSignal<string> = signal('');
 
   constructor(
     private fb: FormBuilder,
@@ -35,31 +35,31 @@ export class CaseEditComponent implements OnInit {
   }
 
   loadCase(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.caseService.getCase(this.caseId).subscribe({
       next: (data) => {
-        this.caseNumber = data.caseNumber || '';
+        this.caseNumber.set(data.caseNumber || '');
         this.form.patchValue({
           priority: data.priority,
           status: data.status,
           summary: data.summary
         });
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
         this.message.error('Failed to load case');
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }
 
   submit(): void {
     if (this.form.valid) {
-      this.loading = true;
+      this.loading.set(true);
       const val = this.form.value;
       const payload: any = {
         id: this.caseId,
-        caseNumber: this.caseNumber,
+        caseNumber: this.caseNumber(),
         priority: val.priority,
         status: val.status,
         summary: val.summary
@@ -72,7 +72,7 @@ export class CaseEditComponent implements OnInit {
         },
         error: () => {
           this.message.error('Failed to update case');
-          this.loading = false;
+          this.loading.set(false);
         }
       });
     }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ErTemplateService } from '../../services/er-template.service';
 import { ErTemplate } from '../../models/er-template.model';
@@ -14,8 +14,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
       </nz-page-header-extra>
     </nz-page-header>
 
-    <nz-spin [nzSpinning]="loading">
-      <div *ngIf="template">
+    <nz-spin [nzSpinning]="loading()">
+      <div *ngIf="template() as template">
         <nz-card>
           <nz-descriptions [nzColumn]="1" nzBordered>
             <nz-descriptions-item nzTitle="Name">{{ template.name }}</nz-descriptions-item>
@@ -39,8 +39,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `
 })
 export class TemplateViewComponent implements OnInit {
-  template: ErTemplate | null = null;
-  loading = false;
+  template: WritableSignal<ErTemplate | null> = signal(null);
+  loading: WritableSignal<boolean> = signal(false);
 
   constructor(
     private route: ActivatedRoute,
@@ -57,15 +57,15 @@ export class TemplateViewComponent implements OnInit {
   }
 
   loadData(id: number): void {
-    this.loading = true;
+    this.loading.set(true);
     this.templateService.getTemplate(id).subscribe({
       next: (data) => {
-        this.template = data;
-        this.loading = false;
+        this.template.set(data);
+        this.loading.set(false);
       },
       error: () => {
         this.message.error('Failed to load template details');
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }
@@ -75,8 +75,9 @@ export class TemplateViewComponent implements OnInit {
   }
 
   onEdit(): void {
-    if (this.template) {
-      this.router.navigate(['../../edit', this.template.id], { relativeTo: this.route });
+    const template = this.template();
+    if (template) {
+      this.router.navigate(['../../edit', template.id], { relativeTo: this.route });
     }
   }
 }
