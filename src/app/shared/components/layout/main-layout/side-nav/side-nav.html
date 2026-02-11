@@ -158,21 +158,7 @@
           <span class="nerd-sider-menu-text">Employee Relations</span>
         </div>
       </li>
-    <li
-      nz-menu-item
-      routerLink="/app/performance"
-      routerLinkActive="ant-menu-item-selected"
-      [ngClass]="{ 'collapsed-side-li': isCollapsed }"
-    >
-      <div class="flex flex-row">
-        <nz-icon>
-            <span class="nerd-sider-menu-icon" [ngClass]="{ 'active-collapsed': isCollapsed }">
-              <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M12 22a10 10 0 0 1-10-9.94a10 10 0 0 1 10-10a10 10 0 0 1 10 10a10 10 0 0 1-10 10"/><path d="M12 7v5l3 3"/><path d="m8 2l2 3m4-3l-2 3"/></g></svg>
-            </span>
-        </nz-icon>
-        <span class="nerd-sider-menu-text">Performance Setting</span>
-      </div>
-    </li>
+    
     <li
         nz-menu-item
         routerLink="/app/chatbot"
@@ -303,6 +289,21 @@
           <span class="nerd-sider-menu-text">Time & Leave Setup</span>
         </div>
       </li>
+      <li
+      nz-menu-item
+      routerLink="/app/performance"
+      routerLinkActive="ant-menu-item-selected"
+      [ngClass]="{ 'collapsed-side-li': isCollapsed }"
+    >
+      <div class="flex flex-row">
+        <nz-icon>
+            <span class="nerd-sider-menu-icon" [ngClass]="{ 'active-collapsed': isCollapsed }">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M12 22a10 10 0 0 1-10-9.94a10 10 0 0 1 10-10a10 10 0 0 1 10 10a10 10 0 0 1-10 10"/><path d="M12 7v5l3 3"/><path d="m8 2l2 3m4-3l-2 3"/></g></svg>
+            </span>
+        </nz-icon>
+        <span class="nerd-sider-menu-text">Performance Setting</span>
+      </div>
+    </li>
 
       
   </ul>
