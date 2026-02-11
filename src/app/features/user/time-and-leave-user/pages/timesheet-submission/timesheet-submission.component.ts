@@ -345,7 +345,8 @@ export class TimesheetSubmissionComponent implements OnInit {
 
   private resolveCurrentEmployeeId(): number | null {
     const currentUser = this.authService.currentUser();
-    const id = currentUser?.id ?? currentUser?.employee?.id ?? null;
+    const id = currentUser.employee.id;
+    console.log(id)
     return typeof id === 'number' ? id : null;
   }
 
