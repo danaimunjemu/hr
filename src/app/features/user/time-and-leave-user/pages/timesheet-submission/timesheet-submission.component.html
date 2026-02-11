@@ -1,60 +1,67 @@
 <div class="page-header">
   <div>
     <h1 class="text-2xl font-bold">My Timesheets</h1>
-    <p class="text-gray-500">Submit and track your work hours.</p>
+    <p class="text-gray-500">Create, edit, and submit timesheets by period.</p>
   </div>
-  <div>
-    <button nz-button nzType="default" class="action-btn" (click)="submitAll()" [nzLoading]="isBulkSubmitting">
-      Submit All Drafts
-    </button>
-    <button nz-button nzType="primary" (click)="openAddModal()">
-      <span nz-icon nzType="plus"></span>
-      New Entry
-    </button>
-  </div>
+  <button nz-button nzType="primary" (click)="openCreateTimesheetModal()">
+    <span nz-icon nzType="plus"></span>
+    New Timesheet
+  </button>
 </div>
 
 <nz-card>
-  <nz-table #basicTable [nzData]="entries" [nzLoading]="loading" [nzPageSize]="10">
+  <nz-table #basicTable [nzData]="timesheets()" [nzLoading]="loading()" [nzPageSize]="10">
     <thead>
       <tr>
-        <th>Work Date</th>
-        <th>Start Time</th>
-        <th>End Time</th>
-        <th>Break (min)</th>
+        <th>Timesheet Number</th>
+        <th>Period Start</th>
+        <th>Period End</th>
+        <th>Total Regular Hours</th>
+        <th>Total Overtime Hours</th>
+        <th>Total Hours</th>
         <th>Status</th>
-        <th>Notes</th>
-        <th>Diagnostics</th>
+        <th>Submitted Date</th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let data of basicTable.data">
-        <td>{{ data.workDate | date }}</td>
-        <td>{{ data.startTime }}</td>
-        <td>{{ data.endTime }}</td>
-        <td>{{ data.breakMinutes }}</td>
+        <td>{{ getTimesheetNumber(data) }}</td>
+        <td>{{ data.periodStartDate | date }}</td>
+        <td>{{ data.periodEndDate | date }}</td>
+        <td>{{ data.totalRegularHours }}</td>
+        <td>{{ data.totalOvertimeHours }}</td>
+        <td>{{ data.totalHours }}</td>
         <td>
           <nz-tag [nzColor]="getStatusColor(data.status)">{{ data.status }}</nz-tag>
         </td>
-        <td>{{ data.notes }}</td>
+        <td>{{ data.submittedDate ? (data.submittedDate | date:'medium') : '-' }}</td>
         <td>
-          <app-schedule-checklist 
-            [employeeId]="data.employee?.id || 0" 
-            [date]="data.workDate">
-          </app-schedule-checklist>
-        </td>
-        <td>
-          <ng-container *ngIf="data.status === 'DRAFT' || data.status === 'REJECTED'">
-            <a (click)="openEditModal(data)">Edit</a>
+          <ng-container *ngIf="canEdit(data.status); else readOnlyAction">
+            <a (click)="openTimesheetDetails(data)">View / Edit</a>
             <nz-divider nzType="vertical"></nz-divider>
-            <a nz-popconfirm nzPopconfirmTitle="Are you sure delete this entry?" (nzOnConfirm)="deleteEntry(data.id)" class="text-red-500">Delete</a>
+            <a
+              nz-popconfirm
+              nzPopconfirmTitle="Are you sure you want to submit this timesheet?"
+              (nzOnConfirm)="submitTimesheet(data)"
+              [class.text-gray-400]="!data.entries.length"
+              [style.pointer-events]="data.entries.length ? 'auto' : 'none'"
+            >
+              Submit
+            </a>
             <nz-divider nzType="vertical"></nz-divider>
-            <a (click)="submitEntry(data.id)">Submit</a>
+            <a
+              nz-popconfirm
+              nzPopconfirmTitle="Are you sure you want to delete this timesheet?"
+              (nzOnConfirm)="deleteTimesheet(data.id!)"
+              class="text-red-500"
+            >
+              Delete
+            </a>
           </ng-container>
-          <span *ngIf="data.status === 'SUBMITTED' || data.status === 'APPROVED'" class="text-gray-400">
+          <ng-template #readOnlyAction>
             Read Only
-          </span>
+          </ng-template>
         </td>
       </tr>
     </tbody>
@@ -62,23 +69,143 @@
 </nz-card>
 
 <nz-modal
-  [(nzVisible)]="isVisible"
-  [nzTitle]="isEditMode ? 'Edit Timesheet Entry' : 'New Timesheet Entry'"
-  (nzOnCancel)="handleCancel()"
-  (nzOnOk)="handleOk()"
-  [nzOkLoading]="isFormSubmitting"
+  [nzVisible]="isCreateModalVisible()"
+  nzTitle="Create Timesheet"
+  (nzOnCancel)="closeCreateTimesheetModal()"
+  (nzOnOk)="createTimesheet()"
+  [nzOkLoading]="isSubmittingTimesheet()"
 >
   <ng-container *nzModalContent>
-    <form nz-form [formGroup]="form" nzLayout="vertical">
-      
+    <form nz-form [formGroup]="createTimesheetForm" nzLayout="vertical">
+      <div nz-row [nzGutter]="16">
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="24" nzRequired>Period Start Date</nz-form-label>
+            <nz-form-control [nzSpan]="24" nzErrorTip="Required">
+              <nz-date-picker formControlName="periodStartDate" style="width: 100%"></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="24" nzRequired>Period End Date</nz-form-label>
+            <nz-form-control [nzSpan]="24" nzErrorTip="Required">
+              <nz-date-picker formControlName="periodEndDate" style="width: 100%"></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </form>
+  </ng-container>
+</nz-modal>
+
+<nz-modal
+  [nzVisible]="isDetailsModalVisible()"
+  [nzTitle]="getSelectedTimesheetTitle()"
+  (nzOnCancel)="closeTimesheetDetails()"
+  [nzFooter]="null"
+  [nzWidth]="1100"
+>
+  <ng-container *nzModalContent>
+    <ng-container *ngIf="selectedTimesheet() as timesheet">
+      <nz-descriptions [nzColumn]="3" nzBordered nzSize="small">
+        <nz-descriptions-item nzTitle="Timesheet Number">{{ getTimesheetNumber(timesheet) }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Period Start">{{ timesheet.periodStartDate | date }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Period End">{{ timesheet.periodEndDate | date }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Total Regular">{{ timesheet.totalRegularHours }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Total Overtime">{{ timesheet.totalOvertimeHours }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Total Hours">{{ timesheet.totalHours }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Status">
+          <nz-tag [nzColor]="getStatusColor(timesheet.status)">{{ timesheet.status }}</nz-tag>
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Submitted Date">
+          {{ timesheet.submittedDate ? (timesheet.submittedDate | date:'medium') : '-' }}
+        </nz-descriptions-item>
+      </nz-descriptions>
+
+      <div class="flex justify-between items-center mt-4 mb-3">
+        <h3 class="text-base font-semibold m-0">Entries</h3>
+        <div>
+          <button nz-button nzType="default" class="action-btn" (click)="openEntryModal()" *ngIf="canEdit(timesheet.status)">
+            Add Entry
+          </button>
+          <button
+            nz-button
+            nzType="primary"
+            [disabled]="!timesheet.entries.length || !canSubmit(timesheet)"
+            [nzLoading]="isSubmittingWorkflow()"
+            (click)="submitTimesheet(timesheet)"
+            *ngIf="canSubmit(timesheet)"
+          >
+            Submit Timesheet
+          </button>
+        </div>
+      </div>
+
+      <nz-table #entriesTable [nzData]="timesheet.entries" [nzPageSize]="5" nzSize="small">
+        <thead>
+          <tr>
+            <th>Work Date</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Entry Type</th>
+            <th>Project</th>
+            <th>Task</th>
+            <th>Hours</th>
+            <th>Overtime</th>
+            <th>Billable</th>
+            <th>Notes</th>
+            <th *ngIf="canEdit(timesheet.status)">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entry of entriesTable.data; let i = index">
+            <td>{{ entry.workDate | date }}</td>
+            <td>{{ formatTime(entry.startTime) }}</td>
+            <td>{{ formatTime(entry.endTime) }}</td>
+            <td>{{ entry.entryType }}</td>
+            <td>{{ entry.projectCode || '-' }}</td>
+            <td>{{ entry.taskCode || '-' }}</td>
+            <td>{{ entry.hoursWorked }}</td>
+            <td>{{ entry.overtimeHours }}</td>
+            <td>{{ entry.billable ? 'Yes' : 'No' }}</td>
+            <td>{{ entry.notes || '-' }}</td>
+            <td *ngIf="canEdit(timesheet.status)">
+              <a (click)="openEntryModal(entry, i)">Edit</a>
+              <nz-divider nzType="vertical"></nz-divider>
+              <a
+                nz-popconfirm
+                nzPopconfirmTitle="Delete this entry?"
+                (nzOnConfirm)="deleteEntry(i)"
+                class="text-red-500"
+              >
+                Delete
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </ng-container>
+  </ng-container>
+</nz-modal>
+
+<nz-modal
+  [nzVisible]="isEntryModalVisible()"
+  [nzTitle]="editingEntryIndex() !== null ? 'Edit Entry' : 'Add Entry'"
+  (nzOnCancel)="closeEntryModal()"
+  (nzOnOk)="saveEntry()"
+  [nzOkLoading]="isSubmittingEntry()"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="entryForm" nzLayout="vertical">
       <nz-form-item>
         <nz-form-label [nzSpan]="24" nzRequired>Work Date</nz-form-label>
-        <nz-form-control [nzSpan]="24" nzErrorTip="Please select a date">
+        <nz-form-control [nzSpan]="24" nzErrorTip="Required">
           <nz-date-picker formControlName="workDate" style="width: 100%"></nz-date-picker>
         </nz-form-control>
       </nz-form-item>
 
-      <div nz-row [nzGutter]="24">
+      <div nz-row [nzGutter]="16">
         <div nz-col [nzSpan]="12">
           <nz-form-item>
             <nz-form-label [nzSpan]="24" nzRequired>Start Time</nz-form-label>
@@ -98,19 +225,68 @@
       </div>
 
       <nz-form-item>
-        <nz-form-label [nzSpan]="24">Break (Minutes)</nz-form-label>
+        <nz-form-label [nzSpan]="24" nzRequired>Entry Type</nz-form-label>
         <nz-form-control [nzSpan]="24">
-          <nz-input-number formControlName="breakMinutes" [nzMin]="0" [nzStep]="15" style="width: 100%"></nz-input-number>
+          <nz-select formControlName="entryType" nzPlaceHolder="Select type">
+            <nz-option nzValue="REGULAR" nzLabel="Regular"></nz-option>
+            <nz-option nzValue="OVERTIME" nzLabel="Overtime"></nz-option>
+            <nz-option nzValue="WEEKEND" nzLabel="Weekend"></nz-option>
+            <nz-option nzValue="HOLIDAY" nzLabel="Holiday"></nz-option>
+          </nz-select>
         </nz-form-control>
       </nz-form-item>
+
+      <div nz-row [nzGutter]="16">
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="24">Project Code</nz-form-label>
+            <nz-form-control [nzSpan]="24">
+              <input nz-input formControlName="projectCode" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="24">Task Code</nz-form-label>
+            <nz-form-control [nzSpan]="24">
+              <input nz-input formControlName="taskCode" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24">Work Description</nz-form-label>
+        <nz-form-control [nzSpan]="24">
+          <textarea nz-input formControlName="workDescription" rows="2"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+      <div nz-row [nzGutter]="16">
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="24">Location</nz-form-label>
+            <nz-form-control [nzSpan]="24">
+              <input nz-input formControlName="location" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="24">Billable</nz-form-label>
+            <nz-form-control [nzSpan]="24">
+              <label nz-checkbox formControlName="billable">Billable Entry</label>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
 
       <nz-form-item>
         <nz-form-label [nzSpan]="24">Notes</nz-form-label>
         <nz-form-control [nzSpan]="24">
-          <textarea nz-input formControlName="notes" rows="3" placeholder="Optional notes..."></textarea>
+          <textarea nz-input formControlName="notes" rows="2"></textarea>
         </nz-form-control>
       </nz-form-item>
-
     </form>
   </ng-container>
 </nz-modal>
