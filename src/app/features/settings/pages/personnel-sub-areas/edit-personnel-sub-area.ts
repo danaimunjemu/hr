@@ -29,7 +29,7 @@ export class EditPersonnelSubArea implements OnInit {
     if (this.form.valid) {
       this.loading.set(true);
       this.service.update(this.id, this.form.value).pipe(finalize(() => this.loading.set(false))).subscribe({
-        next: () => { this.msg.success('Updated successfully'); this.router.navigate(['/settings/personnel-sub-areas']); },
+        next: () => { this.msg.success('Updated successfully'); this.router.navigate(['/app/settings/personnel-sub-areas']); },
         error: () => this.msg.error('Failed to update')
       });
     }

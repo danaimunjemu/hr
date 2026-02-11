@@ -23,7 +23,7 @@ export class CreateOrganizationalUnit {
     if (this.form.valid) {
       this.loading.set(true);
       this.service.create(this.form.value).pipe(finalize(() => this.loading.set(false))).subscribe({
-        next: () => { this.msg.success('Created successfully'); this.router.navigate(['/settings/organizational-units']); },
+        next: () => { this.msg.success('Created successfully'); this.router.navigate(['/app/settings/organizational-units']); },
         error: () => this.msg.error('Failed to create')
       });
     }

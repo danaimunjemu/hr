@@ -23,7 +23,7 @@ export class CreateWorkScheduleRule {
     if (this.form.valid) {
       this.loading.set(true);
       this.service.create(this.form.value).pipe(finalize(() => this.loading.set(false))).subscribe({
-        next: () => { this.msg.success('Created successfully'); this.router.navigate(['/settings/work-schedule-rules']); },
+        next: () => { this.msg.success('Created successfully'); this.router.navigate(['/app/settings/work-schedule-rules']); },
         error: () => this.msg.error('Failed to create')
       });
     }

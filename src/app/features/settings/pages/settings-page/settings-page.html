@@ -7,9 +7,37 @@
       </div>
     </div>
     <ul nz-menu nzMode="inline" [nzTheme]="'light'">
-      <li nz-menu-item *ngFor="let item of menuItems" [nzSelected]="false" [routerLink]="item.route" routerLinkActive="ant-menu-item-selected">
-        <span nz-icon [nzType]="item.icon"></span>
-        <span>{{ item.title }}</span>
+      <li nz-submenu nzTitle="Organisational Structure" nzIcon="cluster">
+        <ul>
+          <li nz-menu-item *ngFor="let item of menuItems.organisationalStructure" [nzSelected]="false" [routerLink]="item.route" routerLinkActive="ant-menu-item-selected">
+            <span nz-icon [nzType]="item.icon"></span>
+            <span>{{ item.title }}</span>
+          </li>
+        </ul>
+      </li>
+      <li nz-submenu nzTitle="Employment Structure" nzIcon="team">
+        <ul>
+          <li nz-menu-item *ngFor="let item of menuItems.employmentStructure" [nzSelected]="false" [routerLink]="item.route" routerLinkActive="ant-menu-item-selected">
+            <span nz-icon [nzType]="item.icon"></span>
+            <span>{{ item.title }}</span>
+          </li>
+        </ul>
+      </li>
+      <li nz-submenu nzTitle="Compensation and Classification" nzIcon="bank">
+        <ul>
+          <li nz-menu-item *ngFor="let item of menuItems.compensationAndClassification" [nzSelected]="false" [routerLink]="item.route" routerLinkActive="ant-menu-item-selected">
+            <span nz-icon [nzType]="item.icon"></span>
+            <span>{{ item.title }}</span>
+          </li>
+        </ul>
+      </li>
+      <li nz-submenu nzTitle="Job and Role" nzIcon="book">
+        <ul>
+          <li nz-menu-item *ngFor="let item of menuItems.jobAndRole" [nzSelected]="false" [routerLink]="item.route" routerLinkActive="ant-menu-item-selected">
+            <span nz-icon [nzType]="item.icon"></span>
+            <span>{{ item.title }}</span>
+          </li>
+        </ul>
       </li>
     </ul>
   </nz-sider>

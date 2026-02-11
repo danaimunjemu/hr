@@ -87,6 +87,6 @@ export class EditCompany implements OnInit {
   }
 
   cancel(): void {
-    this.router.navigate(['/settings/companies']);
+    this.router.navigate(['/app/settings/companies']);
   }
 }

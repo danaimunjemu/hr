@@ -51,6 +51,6 @@ export class CreateEmployeeGroup {
   }
 
   cancel(): void {
-    this.router.navigate(['/settings/employee-groups']);
+    this.router.navigate(['/app/settings/employee-groups']);
   }
 }
