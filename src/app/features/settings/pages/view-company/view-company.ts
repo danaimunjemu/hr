@@ -1,5 +1,5 @@
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Company, CompaniesService } from '../../services/companies.service';
 import { finalize } from 'rxjs';
 
@@ -16,6 +16,7 @@ export class ViewCompany implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private companiesService: CompaniesService
   ) {}
 
@@ -38,4 +39,9 @@ export class ViewCompany implements OnInit {
         error: (err) => this.error.set(err.message)
       });
   }
+
+  cancel(): void {
+    this.router.navigate(['/app/settings/companies']);
+  }
+
 }

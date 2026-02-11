@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ErTaskService } from '../../services/er-task.service';
@@ -13,10 +13,10 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 })
 export class TaskEditComponent implements OnInit {
   form: FormGroup;
-  loading = false;
+  loading: WritableSignal<boolean> = signal(false);
   id!: number;
-  cases: any[] = [];
-  employees: any[] = [];
+  cases: WritableSignal<any[]> = signal([]);
+  employees: WritableSignal<any[]> = signal([]);
 
   constructor(
     private fb: FormBuilder,
@@ -46,12 +46,12 @@ export class TaskEditComponent implements OnInit {
   }
 
   loadDependencies(): void {
-    this.caseService.getCases().subscribe(data => this.cases = data);
-    this.employeeService.getAll().subscribe(data => this.employees = data);
+    this.caseService.getCases().subscribe(data => this.cases.set(data));
+    this.employeeService.getAll().subscribe(data => this.employees.set(data));
   }
 
   loadData(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.taskService.getTask(this.id).subscribe({
       next: (data) => {
         this.form.patchValue({
@@ -64,18 +64,18 @@ export class TaskEditComponent implements OnInit {
           status: data.status,
           completionNotes: data.completionNotes
         });
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
         this.message.error('Failed to load task');
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }
 
   submit(): void {
     if (this.form.valid) {
-      this.loading = true;
+      this.loading.set(true);
       const val = this.form.getRawValue(); // getRawValue to include disabled erCase
       const payload = {
         id: this.id,
@@ -96,7 +96,7 @@ export class TaskEditComponent implements OnInit {
         },
         error: () => {
           this.message.error('Failed to update task');
-          this.loading = false;
+          this.loading.set(false);
         }
       });
     } else {

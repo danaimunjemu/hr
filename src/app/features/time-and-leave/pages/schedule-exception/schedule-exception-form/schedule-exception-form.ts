@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ScheduleExceptionService } from '../../../services/schedule-exception.service';
@@ -24,13 +24,13 @@ import { ShiftDefinition } from '../../../models/shift-definition.model';
 })
 export class ScheduleExceptionFormComponent implements OnInit {
   form: FormGroup;
-  isEditMode = false;
-  exceptionId: number | null = null;
-  loading = false;
-  submitting = false;
-  employees: Employee[] = [];
-  employeeGroups: EmployeeGroup[] = [];
-  shiftDefinitions: ShiftDefinition[] = [];
+  isEditMode: WritableSignal<boolean> = signal(false);
+  exceptionId: WritableSignal<number | null> = signal(null);
+  loading: WritableSignal<boolean> = signal(false);
+  submitting: WritableSignal<boolean> = signal(false);
+  employees: WritableSignal<Employee[]> = signal([]);
+  employeeGroups: WritableSignal<EmployeeGroup[]> = signal([]);
+  shiftDefinitions: WritableSignal<ShiftDefinition[]> = signal([]);
 
   constructor(
     private fb: FormBuilder,
@@ -56,9 +56,10 @@ export class ScheduleExceptionFormComponent implements OnInit {
     this.loadDependencies();
     this.route.params.subscribe(params => {
       if (params['id']) {
-        this.isEditMode = true;
-        this.exceptionId = +params['id'];
-        this.loadException(this.exceptionId);
+        const id = +params['id'];
+        this.isEditMode.set(true);
+        this.exceptionId.set(id);
+        this.loadException(id);
       }
     });
 
@@ -90,13 +91,13 @@ export class ScheduleExceptionFormComponent implements OnInit {
   }
 
   loadDependencies(): void {
-    this.employeesService.getEmployees().subscribe(data => this.employees = data);
-    this.employeeGroupService.getAll().subscribe(data => this.employeeGroups = data);
-    this.shiftDefinitionService.getAll().subscribe(data => this.shiftDefinitions = data);
+    this.employeesService.getEmployees().subscribe(data => this.employees.set(data));
+    this.employeeGroupService.getAll().subscribe(data => this.employeeGroups.set(data));
+    this.shiftDefinitionService.getAll().subscribe(data => this.shiftDefinitions.set(data));
   }
 
   loadException(id: number): void {
-    this.loading = true;
+    this.loading.set(true);
     this.exceptionService.getById(id).subscribe({
       next: (exception) => {
         const targetType = exception.employee ? 'EMPLOYEE' : 'GROUP';
@@ -110,11 +111,11 @@ export class ScheduleExceptionFormComponent implements OnInit {
           shiftDefinition: exception.shiftDefinition
         });
 
-        this.loading = false;
+        this.loading.set(false);
       },
       error: (err: any) => {
         this.message.error('Failed to load exception details');
-        this.loading = false;
+        this.loading.set(false);
         this.router.navigate(['../'], { relativeTo: this.route });
       }
     });
@@ -133,7 +134,7 @@ export class ScheduleExceptionFormComponent implements OnInit {
       return;
     }
 
-    this.submitting = true;
+    this.submitting.set(true);
     const formValue = this.form.value;
 
     const formatDate = (date: Date): string => {
@@ -148,15 +149,16 @@ export class ScheduleExceptionFormComponent implements OnInit {
       employeeGroup: formValue.targetType === 'GROUP' ? formValue.employeeGroup : null,
     };
 
-    if (this.isEditMode && this.exceptionId) {
-      this.exceptionService.update(this.exceptionId, exceptionData).subscribe({
+    const exceptionId = this.exceptionId();
+    if (this.isEditMode() && exceptionId !== null) {
+      this.exceptionService.update(exceptionId, exceptionData).subscribe({
         next: () => {
           this.message.success('Exception updated successfully');
           this.router.navigate(['../'], { relativeTo: this.route });
         },
         error: () => {
           this.message.error('Failed to update exception');
-          this.submitting = false;
+          this.submitting.set(false);
         }
       });
     } else {
@@ -167,7 +169,7 @@ export class ScheduleExceptionFormComponent implements OnInit {
         },
         error: () => {
           this.message.error('Failed to create exception');
-          this.submitting = false;
+          this.submitting.set(false);
         }
       });
     }

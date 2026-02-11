@@ -2,11 +2,11 @@
   [nzGhost]="false"
   [nzBackIcon]="'arrow-left'"
   (nzBack)="onCancel()"
-  [nzTitle]="isEditMode ? 'Edit Holiday Calendar' : 'New Holiday Calendar'"
+  [nzTitle]="isEditMode() ? 'Edit Holiday Calendar' : 'New Holiday Calendar'"
 >
 </nz-page-header>
 
-<nz-card [nzLoading]="loading">
+<nz-card [nzLoading]="loading()">
   <form nz-form [formGroup]="form" (ngSubmit)="onSubmit()" nzLayout="vertical">
     <nz-form-item>
       <nz-form-label [nzSpan]="24" nzRequired nzFor="name">Calendar Name</nz-form-label>
@@ -24,8 +24,8 @@
 
     <div class="flex justify-end gap-4 mt-6">
       <button nz-button type="button" (click)="onCancel()">Cancel</button>
-      <button nz-button nzType="primary" [nzLoading]="submitting">
-        {{ isEditMode ? 'Update' : 'Create' }}
+      <button nz-button nzType="primary" [nzLoading]="submitting()">
+        {{ isEditMode() ? 'Update' : 'Create' }}
       </button>
     </div>
   </form>

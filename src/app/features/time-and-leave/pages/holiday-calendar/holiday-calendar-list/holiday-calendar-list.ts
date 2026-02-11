@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { HolidayCalendar } from '../../../models/holiday-calendar.model';
 import { HolidayCalendarService } from '../../../services/holiday-calendar.service';
 
@@ -16,8 +16,8 @@ import { HolidayCalendarService } from '../../../services/holiday-calendar.servi
   `]
 })
 export class HolidayCalendarListComponent implements OnInit {
-  loading = true;
-  calendars: HolidayCalendar[] = [];
+  loading: WritableSignal<boolean> = signal(true);
+  calendars: WritableSignal<HolidayCalendar[]> = signal([]);
 
   constructor(private calendarService: HolidayCalendarService) {}
 
@@ -26,15 +26,15 @@ export class HolidayCalendarListComponent implements OnInit {
   }
 
   loadData(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.calendarService.getAll().subscribe({
       next: (data) => {
-        this.calendars = data;
-        this.loading = false;
+        this.calendars.set(data);
+        this.loading.set(false);
       },
       error: (err: any) => {
         console.error('Failed to load holiday calendars', err);
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { EmployeeScheduleOverride } from '../../../models/employee-schedule-override.model';
 import { EmployeeScheduleOverrideService } from '../../../services/employee-schedule-override.service';
 
@@ -16,8 +16,8 @@ import { EmployeeScheduleOverrideService } from '../../../services/employee-sche
   `]
 })
 export class EmployeeScheduleOverrideListComponent implements OnInit {
-  loading = true;
-  overrides: EmployeeScheduleOverride[] = [];
+  loading: WritableSignal<boolean> = signal(true);
+  overrides: WritableSignal<EmployeeScheduleOverride[]> = signal([]);
 
   constructor(private overrideService: EmployeeScheduleOverrideService) {}
 
@@ -26,15 +26,15 @@ export class EmployeeScheduleOverrideListComponent implements OnInit {
   }
 
   loadData(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.overrideService.getAll().subscribe({
       next: (data) => {
-        this.overrides = data;
-        this.loading = false;
+        this.overrides.set(data);
+        this.loading.set(false);
       },
       error: (err: any) => {
         console.error('Failed to load employee schedule overrides', err);
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

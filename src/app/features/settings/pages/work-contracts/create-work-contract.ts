@@ -23,7 +23,7 @@ export class CreateWorkContract {
     if (this.form.valid) {
       this.loading.set(true);
       this.service.create(this.form.value).pipe(finalize(() => this.loading.set(false))).subscribe({
-        next: () => { this.msg.success('Created successfully'); this.router.navigate(['/settings/work-contracts']); },
+        next: () => { this.msg.success('Created successfully'); this.router.navigate(['/app/settings/work-contracts']); },
         error: () => this.msg.error('Failed to create')
       });
     }

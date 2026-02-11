@@ -2,14 +2,14 @@
   [nzGhost]="false"
   [nzBackIcon]="'arrow-left'"
   (nzBack)="onBack()"
-  [nzTitle]="calendar?.name || 'Loading...'"
-  [nzSubtitle]="calendar?.description"
+  [nzTitle]="calendar()?.name || 'Loading...'"
+  [nzSubtitle]="calendar()?.description"
 >
 </nz-page-header>
 
 <div class="p-6">
   <nz-card nzTitle="Holiday Dates" [nzExtra]="extraTemplate">
-    <nz-table #datesTable [nzData]="calendar?.holidayDates || []" [nzLoading]="loading">
+    <nz-table #datesTable [nzData]="calendar()?.holidayDates || []" [nzLoading]="loading()">
       <thead>
         <tr>
           <th>Name</th>
@@ -21,7 +21,7 @@
           <td>{{ date.name }}</td>
           <td>{{ date.date | date }}</td>
         </tr>
-        <tr *ngIf="!calendar?.holidayDates?.length">
+        <tr *ngIf="!calendar()?.holidayDates?.length">
             <td colspan="2" class="text-center text-gray-400">No dates added yet.</td>
         </tr>
       </tbody>
@@ -36,11 +36,12 @@
 </div>
 
 <nz-modal
-  [(nzVisible)]="isDateModalVisible"
+  [nzVisible]="isDateModalVisible()"
+  (nzVisibleChange)="isDateModalVisible.set($event)"
   nzTitle="Add Holiday Date"
   (nzOnCancel)="handleDateCancel()"
   (nzOnOk)="handleDateSubmit()"
-  [nzOkLoading]="isSubmittingDate"
+  [nzOkLoading]="isSubmittingDate()"
 >
   <ng-container *nzModalContent>
     <form nz-form [formGroup]="dateForm" nzLayout="vertical">

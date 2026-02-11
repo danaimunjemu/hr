@@ -23,7 +23,7 @@ export class CreatePsGroup {
     if (this.form.valid) {
       this.loading.set(true);
       this.service.create(this.form.value).pipe(finalize(() => this.loading.set(false))).subscribe({
-        next: () => { this.msg.success('Created successfully'); this.router.navigate(['/settings/ps-groups']); },
+        next: () => { this.msg.success('Created successfully'); this.router.navigate(['/app/settings/ps-groups']); },
         error: () => this.msg.error('Failed to create')
       });
     }

@@ -9,7 +9,7 @@
           <nz-form-label nzRequired>Case</nz-form-label>
           <nz-form-control nzErrorTip="Please select a case">
             <nz-select formControlName="erCase" nzShowSearch nzPlaceHolder="Select case">
-              <nz-option *ngFor="let c of cases" [nzValue]="c.id" [nzLabel]="c.caseNumber + ' - ' + c.title"></nz-option>
+              <nz-option *ngFor="let c of cases()" [nzValue]="c.id" [nzLabel]="c.caseNumber + ' - ' + c.title"></nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>
@@ -29,12 +29,28 @@
         <nz-form-item>
           <nz-form-label nzRequired>Type</nz-form-label>
           <nz-form-control nzErrorTip="Please select type">
-            <nz-select formControlName="taskType">
-              <nz-option nzValue="INVESTIGATION" nzLabel="Investigation"></nz-option>
-              <nz-option nzValue="REVIEW" nzLabel="Review"></nz-option>
-              <nz-option nzValue="MEETING" nzLabel="Meeting"></nz-option>
-              <nz-option nzValue="DOCUMENTATION" nzLabel="Documentation"></nz-option>
-              <nz-option nzValue="OTHER" nzLabel="Other"></nz-option>
+            <nz-select formControlName="taskType" nzPlaceHolder="Select task type">
+              <nz-option nzValue="INTERVIEW_COMPLAINANT" nzLabel="Interview Complainant"></nz-option>
+              <nz-option nzValue="ISSUE_DECISION_LETTER" nzLabel="Issue Decision Letter"></nz-option>
+              <nz-option nzValue="COMMUNICATE_OUTCOME" nzLabel="Communicate Outcome"></nz-option>
+              <nz-option nzValue="INVESTIGATION_SUMMARY" nzLabel="Investigation Summary"></nz-option>
+              <nz-option nzValue="REVIEW_OUTCOME" nzLabel="Review Outcome"></nz-option>
+              <nz-option nzValue="COLLECT_EVIDENCE" nzLabel="Collect Evidence"></nz-option>
+              <nz-option nzValue="TRIAGE_ASSESSMENT" nzLabel="Triage Assessment"></nz-option>
+              <nz-option nzValue="INTERVIEW_SUBJECT" nzLabel="Interview Subject"></nz-option>
+              <nz-option nzValue="RECORD_MINUTES" nzLabel="Record Minutes"></nz-option>
+              <nz-option nzValue="COMPLETE_INTAKE" nzLabel="Complete Intake"></nz-option>
+              <nz-option nzValue="ACKNOWLEDGE_CASE" nzLabel="Acknowledge Case"></nz-option>
+              <nz-option nzValue="DRAFT_OUTCOME" nzLabel="Draft Outcome"></nz-option>
+              <nz-option nzValue="CLOSE_CASE" nzLabel="Close Case"></nz-option>
+              <nz-option nzValue="CONDUCT_HEARING" nzLabel="Conduct Hearing"></nz-option>
+              <nz-option nzValue="INTERVIEW_WITNESS" nzLabel="Interview Witness"></nz-option>
+              <nz-option nzValue="REVIEW_EVIDENCE" nzLabel="Review Evidence"></nz-option>
+              <nz-option nzValue="APPROVE_OUTCOME" nzLabel="Approve Outcome"></nz-option>
+              <nz-option nzValue="FOLLOW_UP" nzLabel="Follow Up"></nz-option>
+              <nz-option nzValue="SCHEDULE_HEARING" nzLabel="Schedule Hearing"></nz-option>
+              <nz-option nzValue="SCHEDULE_MEETING" nzLabel="Schedule Meeting"></nz-option>
+              <nz-option nzValue="CONDUCT_MEETING" nzLabel="Conduct Meeting"></nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>
@@ -44,7 +60,7 @@
           <nz-form-label nzRequired>Assigned To</nz-form-label>
           <nz-form-control nzErrorTip="Please select assignee">
             <nz-select formControlName="assignedTo" nzShowSearch nzPlaceHolder="Select employee">
-              <nz-option *ngFor="let emp of employees" [nzValue]="emp.id" [nzLabel]="emp.firstName + ' ' + emp.lastName"></nz-option>
+              <nz-option *ngFor="let emp of employees()" [nzValue]="emp.id" [nzLabel]="emp.firstName + ' ' + emp.lastName"></nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>
@@ -71,7 +87,7 @@
 
     <div class="flex justify-end gap-2">
       <button nz-button type="button" (click)="onCancel()">Cancel</button>
-      <button nz-button nzType="primary" [nzLoading]="loading">Create</button>
+      <button nz-button nzType="primary" [nzLoading]="loading()">Create</button>
     </div>
   </form>
 </nz-card>

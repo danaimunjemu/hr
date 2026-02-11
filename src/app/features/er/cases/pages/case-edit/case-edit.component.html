@@ -1,5 +1,5 @@
 <div class="page-header">
-  <h1 class="text-2xl font-bold mb-4">Edit Case {{ caseNumber }}</h1>
+  <h1 class="text-2xl font-bold mb-4">Edit Case {{ caseNumber() }}</h1>
 </div>
 
 <nz-card>
@@ -37,7 +37,7 @@
 
     <div class="flex justify-end gap-2">
       <button nz-button type="button" (click)="cancel()">Cancel</button>
-      <button nz-button nzType="primary" type="submit" [nzLoading]="loading">Update</button>
+      <button nz-button nzType="primary" type="submit" [nzLoading]="loading()">Update</button>
     </div>
   </form>
 </nz-card>

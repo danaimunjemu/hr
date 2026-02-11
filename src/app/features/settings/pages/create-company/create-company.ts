@@ -52,6 +52,6 @@ export class CreateCompany {
   }
 
   cancel(): void {
-    this.router.navigate(['/settings/companies']);
+    this.router.navigate(['/app/settings/companies']);
   }
 }

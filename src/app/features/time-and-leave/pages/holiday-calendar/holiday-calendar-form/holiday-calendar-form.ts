@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HolidayCalendarService } from '../../../services/holiday-calendar.service';
@@ -19,10 +19,10 @@ import { HolidayCalendar } from '../../../models/holiday-calendar.model';
 })
 export class HolidayCalendarFormComponent implements OnInit {
   form: FormGroup;
-  isEditMode = false;
-  calendarId: number | null = null;
-  loading = false;
-  submitting = false;
+  isEditMode: WritableSignal<boolean> = signal(false);
+  calendarId: WritableSignal<number | null> = signal(null);
+  loading: WritableSignal<boolean> = signal(false);
+  submitting: WritableSignal<boolean> = signal(false);
 
   constructor(
     private fb: FormBuilder,
@@ -40,19 +40,20 @@ export class HolidayCalendarFormComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       if (params['id']) {
-        this.isEditMode = true;
-        this.calendarId = +params['id'];
-        this.loadCalendar(this.calendarId);
+        const id = +params['id'];
+        this.isEditMode.set(true);
+        this.calendarId.set(id);
+        this.loadCalendar(id);
       }
     });
   }
 
   loadCalendar(id: number): void {
-    this.loading = true;
+    this.loading.set(true);
     this.calendarService.getById(id).subscribe({
       next: (calendar) => {
         this.form.patchValue(calendar);
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
         this.message.error('Failed to load calendar');
@@ -72,21 +73,22 @@ export class HolidayCalendarFormComponent implements OnInit {
       return;
     }
 
-    this.submitting = true;
+    this.submitting.set(true);
     const calendarData: HolidayCalendar = {
       ...this.form.value,
-      id: this.calendarId || 0
+      id: this.calendarId() || 0
     };
 
-    if (this.isEditMode && this.calendarId) {
-      this.calendarService.update(this.calendarId, calendarData).subscribe({
+    const calendarId = this.calendarId();
+    if (this.isEditMode() && calendarId !== null) {
+      this.calendarService.update(calendarId, calendarData).subscribe({
         next: () => {
           this.message.success('Calendar updated successfully');
           this.router.navigate(['../'], { relativeTo: this.route });
         },
         error: () => {
           this.message.error('Failed to update calendar');
-          this.submitting = false;
+          this.submitting.set(false);
         }
       });
     } else {
@@ -97,7 +99,7 @@ export class HolidayCalendarFormComponent implements OnInit {
         },
         error: () => {
           this.message.error('Failed to create calendar');
-          this.submitting = false;
+          this.submitting.set(false);
         }
       });
     }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ErIntakeService } from '../../services/er-intake.service';
@@ -9,7 +9,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   standalone: false,
   template: `
     <div class="page-header">
-      <h1 class="text-2xl font-bold mb-4">Triage Intake #{{ intakeId }}</h1>
+      <h1 class="text-2xl font-bold mb-4">Triage Intake #{{ intakeId() }}</h1>
     </div>
 
     <nz-card>
@@ -36,7 +36,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
         <div class="flex justify-end gap-2">
           <button nz-button type="button" (click)="cancel()">Cancel</button>
-          <button nz-button nzType="primary" type="submit" [nzLoading]="loading">Update Triage</button>
+          <button nz-button nzType="primary" type="submit" [nzLoading]="loading()">Update Triage</button>
         </div>
       </form>
     </nz-card>
@@ -44,8 +44,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 })
 export class IntakeEditComponent implements OnInit {
   form: FormGroup;
-  loading = false;
-  intakeId!: number;
+  loading: WritableSignal<boolean> = signal(false);
+  intakeId: WritableSignal<number | null> = signal(null);
 
   constructor(
     private fb: FormBuilder,
@@ -61,33 +61,44 @@ export class IntakeEditComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.intakeId = +this.route.snapshot.params['id'];
+    this.intakeId.set(+this.route.snapshot.params['id']);
     this.loadIntake();
   }
 
   loadIntake(): void {
-    this.loading = true;
-    this.intakeService.getIntake(this.intakeId).subscribe({
+    this.loading.set(true);
+    const intakeId = this.intakeId();
+    if (intakeId === null) {
+      this.message.error('Invalid intake id');
+      return;
+    }
+    this.intakeService.getIntake(intakeId).subscribe({
       next: (data) => {
         this.form.patchValue({
           triageDecision: data.triageDecision,
           triageNotes: data.triageNotes
         });
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
         this.message.error('Failed to load intake');
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }
 
   submit(): void {
     if (this.form.valid) {
-      this.loading = true;
+      this.loading.set(true);
       const val = this.form.value;
+      const intakeId = this.intakeId();
+      if (intakeId === null) {
+        this.message.error('Invalid intake id');
+        this.loading.set(false);
+        return;
+      }
       const payload = {
-        id: this.intakeId,
+        id: intakeId,
         triageDecision: val.triageDecision,
         triageNotes: val.triageNotes
       };
@@ -99,7 +110,7 @@ export class IntakeEditComponent implements OnInit {
         },
         error: () => {
           this.message.error('Failed to update intake');
-          this.loading = false;
+          this.loading.set(false);
         }
       });
     }

@@ -3,12 +3,12 @@
   [nzBackIcon]="'arrow-left'"
   (nzBack)="onBack()"
   [nzTitle]="'Override Details'"
-  [nzSubtitle]="override?.employee?.firstName + ' ' + override?.employee?.lastName"
+  [nzSubtitle]="override()?.employee?.firstName + ' ' + override()?.employee?.lastName"
 >
 </nz-page-header>
 
-<nz-card [nzLoading]="loading">
-  <div *ngIf="override">
+<nz-card [nzLoading]="loading()">
+  <div *ngIf="override() as override">
     <nz-descriptions [nzColumn]="1" nzTitle="Override Information" nzBordered>
       <nz-descriptions-item nzTitle="Employee">{{ override.employee.firstName }} {{ override.employee.lastName }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Rotation Type">

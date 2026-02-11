@@ -1,4 +1,4 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, computed, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WorkContractService } from '../../../services/work-contract.service';
 import { NzMessageService } from 'ng-zorro-antd/message';

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EmployeeGroupService } from '../../../services/employee-group.service';
 import { EmployeeGroup } from '../../../models/employee-group.model';
@@ -17,8 +17,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `]
 })
 export class EmployeeGroupViewComponent implements OnInit {
-  group: EmployeeGroup | null = null;
-  loading = true;
+  group: WritableSignal<EmployeeGroup | null> = signal(null);
+  loading: WritableSignal<boolean> = signal(true);
 
   constructor(
     private route: ActivatedRoute,
@@ -39,11 +39,11 @@ export class EmployeeGroupViewComponent implements OnInit {
   }
 
   loadGroup(id: number): void {
-    this.loading = true;
+    this.loading.set(true);
     this.employeeGroupService.getById(id).subscribe({
       next: (data) => {
-        this.group = data;
-        this.loading = false;
+        this.group.set(data);
+        this.loading.set(false);
       },
       error: (err: any) => {
         this.message.error('Failed to load employee group details');

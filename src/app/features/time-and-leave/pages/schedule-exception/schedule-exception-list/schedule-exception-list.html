@@ -10,7 +10,7 @@
 </div>
 
 <nz-card>
-  <nz-table #basicTable [nzData]="exceptions" [nzLoading]="loading">
+  <nz-table #basicTable [nzData]="exceptions()" [nzLoading]="loading()">
     <thead>
       <tr>
         <th>Target</th>

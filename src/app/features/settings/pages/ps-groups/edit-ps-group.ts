@@ -29,7 +29,7 @@ export class EditPsGroup implements OnInit {
     if (this.form.valid) {
       this.loading.set(true);
       this.service.update(this.id, this.form.value).pipe(finalize(() => this.loading.set(false))).subscribe({
-        next: () => { this.msg.success('Updated successfully'); this.router.navigate(['/settings/ps-groups']); },
+        next: () => { this.msg.success('Updated successfully'); this.router.navigate(['/app/settings/ps-groups']); },
         error: () => this.msg.error('Failed to update')
       });
     }

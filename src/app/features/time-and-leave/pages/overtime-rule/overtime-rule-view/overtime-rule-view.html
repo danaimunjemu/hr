@@ -3,13 +3,13 @@
   [nzBackIcon]="'arrow-left'"
   (nzBack)="onBack()"
   [nzTitle]="'Overtime Rule Details'"
-  [nzSubtitle]="rule?.ruleName"
+  [nzSubtitle]="rule()?.ruleName"
 >
 </nz-page-header>
 
 <div class="p-4">
-  <nz-card [nzLoading]="loading">
-    <div *ngIf="rule">
+  <nz-card [nzLoading]="loading()">
+    <div *ngIf="rule() as rule">
       <nz-descriptions [nzColumn]="2" nzTitle="Rule Information" nzBordered>
         <nz-descriptions-item nzTitle="Rule Code">{{ rule.ruleCode }}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="Rule Name">{{ rule.ruleName }}</nz-descriptions-item>
@@ -23,7 +23,7 @@
         <nz-descriptions-item nzTitle="Start Time">{{ rule.startTime | date:'HH:mm:ss' }}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="End Time">{{ rule.endTime | date:'HH:mm:ss' }}</nz-descriptions-item>
 
-        <nz-descriptions-item nzTitle="Organizational Unit">{{ rule.organizationalUnit?.name || '-' }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Organizational Unit">{{ rule.organizationalUnit.name || '-' }}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="Priority">{{ rule.priority }}</nz-descriptions-item>
 
         <nz-descriptions-item nzTitle="Effective From">{{ rule.effectiveFrom | date:'mediumDate' }}</nz-descriptions-item>

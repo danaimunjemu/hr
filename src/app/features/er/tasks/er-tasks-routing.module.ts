@@ -9,7 +9,17 @@ const routes: Routes = [
   { path: '', component: TaskListComponent },
   { path: 'create', component: TaskCreateComponent },
   { path: 'edit/:id', component: TaskEditComponent },
-  { path: 'view/:id', component: TaskViewComponent }
+  {
+    path: 'view/:id',
+    component: TaskViewComponent,
+    children: [
+      {
+        path: 'parties',
+        loadChildren: () =>
+          import('../parties/er-parties.module').then((m) => m.ErPartiesModule)
+      }
+    ]
+  }
 ];
 
 @NgModule({

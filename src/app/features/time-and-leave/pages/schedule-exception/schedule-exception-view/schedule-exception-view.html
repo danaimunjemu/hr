@@ -3,12 +3,12 @@
   [nzBackIcon]="'arrow-left'"
   (nzBack)="onBack()"
   [nzTitle]="'Exception Details'"
-  [nzSubtitle]="(exception?.exceptionDate | date) || ''"
+  [nzSubtitle]="(exception()?.exceptionDate | date) || ''"
 >
 </nz-page-header>
 
-<nz-card [nzLoading]="loading">
-  <div *ngIf="exception">
+<nz-card [nzLoading]="loading()">
+  <div *ngIf="exception() as exception">
     <nz-descriptions [nzColumn]="1" nzTitle="Exception Information" nzBordered>
       <nz-descriptions-item nzTitle="Target Type">
         {{ exception.employee ? 'Individual Employee' : 'Employee Group' }}

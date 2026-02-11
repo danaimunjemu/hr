@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WorkScheduleRuleService } from '../../../services/work-schedule-rule.service';
@@ -21,11 +21,11 @@ import { WeekendRule } from '../../../models/weekend-rule.model';
 })
 export class WorkScheduleRuleFormComponent implements OnInit {
   form: FormGroup;
-  isEditMode = false;
-  ruleId: number | null = null;
-  loading = false;
-  submitting = false;
-  weekendRules: WeekendRule[] = [];
+  isEditMode: WritableSignal<boolean> = signal(false);
+  ruleId: WritableSignal<number | null> = signal(null);
+  loading: WritableSignal<boolean> = signal(false);
+  submitting: WritableSignal<boolean> = signal(false);
+  weekendRules: WritableSignal<WeekendRule[]> = signal([]);
 
   constructor(
     private fb: FormBuilder,
@@ -51,9 +51,10 @@ export class WorkScheduleRuleFormComponent implements OnInit {
     this.loadWeekendRules();
     this.route.params.subscribe(params => {
       if (params['id']) {
-        this.isEditMode = true;
-        this.ruleId = +params['id'];
-        this.loadRule(this.ruleId);
+        const id = +params['id'];
+        this.isEditMode.set(true);
+        this.ruleId.set(id);
+        this.loadRule(id);
       }
     });
   }
@@ -61,7 +62,7 @@ export class WorkScheduleRuleFormComponent implements OnInit {
   loadWeekendRules(): void {
     this.weekendRuleService.getAll().subscribe({
       next: (data) => {
-        this.weekendRules = data;
+        this.weekendRules.set(data);
       },
       error: (err: any) => {
         console.error('Failed to load weekend rules', err);
@@ -71,7 +72,7 @@ export class WorkScheduleRuleFormComponent implements OnInit {
   }
 
   loadRule(id: number): void {
-    this.loading = true;
+    this.loading.set(true);
     this.workScheduleRuleService.getById(id).subscribe({
       next: (rule) => {
         let startTimeDate = null;
@@ -95,11 +96,11 @@ export class WorkScheduleRuleFormComponent implements OnInit {
           weekendRule: rule.weekendRule
         });
         
-        this.loading = false;
+        this.loading.set(false);
       },
       error: (err: any) => {
         this.message.error('Failed to load schedule rule details');
-        this.loading = false;
+        this.loading.set(false);
         this.router.navigate(['../'], { relativeTo: this.route });
       }
     });
@@ -118,7 +119,7 @@ export class WorkScheduleRuleFormComponent implements OnInit {
       return;
     }
 
-    this.submitting = true;
+    this.submitting.set(true);
     const formValue = this.form.value;
 
     const formatTime = (date: Date): string => {
@@ -134,15 +135,16 @@ export class WorkScheduleRuleFormComponent implements OnInit {
       endTime: formatTime(formValue.endTime),
     };
 
-    if (this.isEditMode && this.ruleId) {
-      this.workScheduleRuleService.update(this.ruleId, ruleData).subscribe({
+    const ruleId = this.ruleId();
+    if (this.isEditMode() && ruleId !== null) {
+      this.workScheduleRuleService.update(ruleId, ruleData).subscribe({
         next: () => {
           this.message.success('Schedule rule updated successfully');
           this.router.navigate(['../'], { relativeTo: this.route });
         },
         error: () => {
           this.message.error('Failed to update schedule rule');
-          this.submitting = false;
+          this.submitting.set(false);
         }
       });
     } else {
@@ -153,7 +155,7 @@ export class WorkScheduleRuleFormComponent implements OnInit {
         },
         error: () => {
           this.message.error('Failed to create schedule rule');
-          this.submitting = false;
+          this.submitting.set(false);
         }
       });
     }

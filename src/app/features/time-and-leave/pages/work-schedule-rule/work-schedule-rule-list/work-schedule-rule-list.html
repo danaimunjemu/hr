@@ -10,7 +10,7 @@
 </div>
 
 <nz-card>
-  <nz-table #basicTable [nzData]="rules" [nzLoading]="loading">
+  <nz-table #basicTable [nzData]="rules()" [nzLoading]="loading()">
     <thead>
       <tr>
         <th>Name</th>
@@ -27,7 +27,7 @@
         <td>{{ data.startTime }}</td>
         <td>{{ data.endTime }}</td>
         <td>{{ data.paidHours }}</td>
-        <td>{{ data.weekendRule.name }}</td>
+        <td>{{ data.weekendRule ? data.weekendRule.name : '-' }}</td>
         <td>
           <a class="action-btn" [routerLink]="['view', data.id]">View</a>
           <nz-divider nzType="vertical"></nz-divider>

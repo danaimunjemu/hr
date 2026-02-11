@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ErPartyService } from '../../services/er-party.service';
@@ -24,7 +24,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
         <div class="flex justify-end gap-2">
           <button nz-button type="button" (click)="cancel()">Cancel</button>
-          <button nz-button nzType="primary" type="submit" [nzLoading]="loading">Update Party</button>
+          <button nz-button nzType="primary" type="submit" [nzLoading]="loading()">Update Party</button>
         </div>
       </form>
     </nz-card>
@@ -32,7 +32,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 })
 export class PartyEditComponent implements OnInit {
   form: FormGroup;
-  loading = false;
+  loading: WritableSignal<boolean> = signal(false);
   partyId!: number;
 
   constructor(
@@ -53,24 +53,24 @@ export class PartyEditComponent implements OnInit {
   }
 
   loadParty(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.partyService.getParty(this.partyId).subscribe({
       next: (data) => {
         this.form.patchValue({
           notes: data.notes
         });
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
         this.message.error('Failed to load party');
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }
 
   submit(): void {
     if (this.form.valid) {
-      this.loading = true;
+      this.loading.set(true);
       const val = this.form.value;
       const payload = {
         id: this.partyId,
@@ -84,7 +84,7 @@ export class PartyEditComponent implements OnInit {
         },
         error: () => {
           this.message.error('Failed to update party');
-          this.loading = false;
+          this.loading.set(false);
         }
       });
     }

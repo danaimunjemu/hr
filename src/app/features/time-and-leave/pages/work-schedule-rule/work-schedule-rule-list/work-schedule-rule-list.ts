@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { WorkScheduleRule } from '../../../models/work-schedule-rule.model';
 import { WorkScheduleRuleService } from '../../../services/work-schedule-rule.service';
 
@@ -16,8 +16,8 @@ import { WorkScheduleRuleService } from '../../../services/work-schedule-rule.se
   `]
 })
 export class WorkScheduleRuleListComponent implements OnInit {
-  loading = true;
-  rules: WorkScheduleRule[] = [];
+  loading: WritableSignal<boolean> = signal(true);
+  rules: WritableSignal<WorkScheduleRule[]> = signal([]);
 
   constructor(private workScheduleRuleService: WorkScheduleRuleService) {}
 
@@ -26,15 +26,15 @@ export class WorkScheduleRuleListComponent implements OnInit {
   }
 
   loadData(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.workScheduleRuleService.getAll().subscribe({
       next: (data) => {
-        this.rules = data;
-        this.loading = false;
+        this.rules.set(data);
+        this.loading.set(false);
       },
       error: (err: any) => {
         console.error('Failed to load work schedule rules', err);
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

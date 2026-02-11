@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ErProcessService } from '../../services/er-process.service';
 import { EmployeesService, Employee } from '../../../../employees/services/employees.service';
@@ -38,7 +38,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
               <nz-form-label nzRequired>Assigned To</nz-form-label>
               <nz-form-control nzErrorTip="Select user">
                 <nz-select formControlName="assignedTo" nzShowSearch nzAllowClear>
-                  <nz-option *ngFor="let emp of employees" [nzValue]="emp.id" [nzLabel]="emp.firstName + ' ' + emp.lastName"></nz-option>
+                  <nz-option *ngFor="let emp of employees()" [nzValue]="emp.id" [nzLabel]="emp.firstName + ' ' + emp.lastName"></nz-option>
                 </nz-select>
               </nz-form-control>
             </nz-form-item>
@@ -58,7 +58,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
             <textarea nz-input formControlName="description" rows="2"></textarea>
           </nz-form-control>
         </nz-form-item>
-        <button nz-button nzType="primary" [nzLoading]="loading">Create Task</button>
+        <button nz-button nzType="primary" [nzLoading]="loading()">Create Task</button>
       </form>
     </nz-card>
   `
@@ -67,8 +67,8 @@ export class CaseTasksComponent implements OnInit {
   @Input() caseId!: number;
   @Output() completed = new EventEmitter<void>();
   form: FormGroup;
-  loading = false;
-  employees: Employee[] = [];
+  loading: WritableSignal<boolean> = signal(false);
+  employees: WritableSignal<Employee[]> = signal([]);
 
   constructor(
     private fb: FormBuilder,
@@ -86,12 +86,12 @@ export class CaseTasksComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.employeeService.getAll().subscribe(data => this.employees = data);
+    this.employeeService.getAll().subscribe(data => this.employees.set(data));
   }
 
   submit() {
     if (this.form.valid) {
-      this.loading = true;
+      this.loading.set(true);
       const val = this.form.value;
       const payload = {
         title: val.title,
@@ -104,12 +104,12 @@ export class CaseTasksComponent implements OnInit {
         next: () => {
           this.message.success('Task created successfully');
           this.form.reset({ taskType: 'INVESTIGATION' });
-          this.loading = false;
+          this.loading.set(false);
           this.completed.emit();
         },
         error: () => {
           this.message.error('Failed to create task');
-          this.loading = false;
+          this.loading.set(false);
         }
       });
     }

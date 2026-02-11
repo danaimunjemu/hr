@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ErTaskService } from '../../services/er-task.service';
 import { ErTask } from '../../models/er-task.model';
@@ -14,8 +14,13 @@ import { NzMessageService } from 'ng-zorro-antd/message';
       </nz-page-header-extra>
     </nz-page-header>
 
-    <nz-spin [nzSpinning]="loading">
-      <div *ngIf="task">
+    <nz-tabs nzLinkRouter class="mb-4">
+      <nz-tab nzTitle="Details" [routerLink]="['./']"></nz-tab>
+      <nz-tab nzTitle="Parties" [routerLink]="['./parties']"></nz-tab>
+    </nz-tabs>
+
+    <nz-spin [nzSpinning]="loading()">
+      <div *ngIf="task() as task">
         <div nz-row [nzGutter]="16">
           <div nz-col [nzSpan]="16">
             <nz-card nzTitle="General Information" class="mb-4">
@@ -52,11 +57,13 @@ import { NzMessageService } from 'ng-zorro-antd/message';
         </div>
       </div>
     </nz-spin>
+
+    <router-outlet></router-outlet>
   `
 })
 export class TaskViewComponent implements OnInit {
-  task: ErTask | null = null;
-  loading = false;
+  task: WritableSignal<ErTask | null> = signal(null);
+  loading: WritableSignal<boolean> = signal(false);
 
   constructor(
     private route: ActivatedRoute,
@@ -73,15 +80,15 @@ export class TaskViewComponent implements OnInit {
   }
 
   loadData(id: number): void {
-    this.loading = true;
+    this.loading.set(true);
     this.taskService.getTask(id).subscribe({
       next: (data) => {
-        this.task = data;
-        this.loading = false;
+        this.task.set(data);
+        this.loading.set(false);
       },
       error: () => {
         this.message.error('Failed to load task details');
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }
@@ -91,8 +98,9 @@ export class TaskViewComponent implements OnInit {
   }
 
   onEdit(): void {
-    if (this.task) {
-      this.router.navigate(['../../edit', this.task.id], { relativeTo: this.route });
+    const task = this.task();
+    if (task) {
+      this.router.navigate(['../../edit', task.id], { relativeTo: this.route });
     }
   }
 }

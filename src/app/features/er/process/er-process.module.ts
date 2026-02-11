@@ -15,7 +15,6 @@ import { TaskDocumentsComponent } from './components/task-documents/task-documen
 import { IntakeDocumentsComponent } from './components/intake-documents/intake-documents.component';
 import { OutcomeDocumentsComponent } from './components/outcome-documents/outcome-documents.component';
 import { CaseTasksComponent } from './components/case-tasks/case-tasks.component';
-import { CaseCreateProcessComponent } from './components/case-create-process/case-create-process.component';
 
 @NgModule({
   declarations: [
@@ -29,8 +28,7 @@ import { CaseCreateProcessComponent } from './components/case-create-process/cas
     TaskDocumentsComponent,
     IntakeDocumentsComponent,
     OutcomeDocumentsComponent,
-    CaseTasksComponent,
-    CaseCreateProcessComponent
+    CaseTasksComponent
   ],
   imports: [
     CommonModule,

@@ -39,7 +39,7 @@ export class EditPosition implements OnInit {
     if (this.form.valid) {
       this.loading.set(true);
       this.service.update(this.id, this.form.value).pipe(finalize(() => this.loading.set(false))).subscribe({
-        next: () => { this.msg.success('Updated successfully'); this.router.navigate(['/settings/positions']); },
+        next: () => { this.msg.success('Updated successfully'); this.router.navigate(['/app/settings/positions']); },
         error: () => this.msg.error('Failed to update')
       });
     }

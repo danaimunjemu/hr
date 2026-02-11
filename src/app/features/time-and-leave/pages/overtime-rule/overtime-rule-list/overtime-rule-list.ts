@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { OvertimeRule } from '../../../models/overtime-rule.model';
 import { OvertimeRuleService } from '../../../services/overtime-rule.service';
 
@@ -16,8 +16,8 @@ import { OvertimeRuleService } from '../../../services/overtime-rule.service';
   `]
 })
 export class OvertimeRuleListComponent implements OnInit {
-  loading = true;
-  rules: OvertimeRule[] = [];
+  loading: WritableSignal<boolean> = signal(true);
+  rules: WritableSignal<OvertimeRule[]> = signal([]);
 
   constructor(private ruleService: OvertimeRuleService) {}
 
@@ -26,15 +26,15 @@ export class OvertimeRuleListComponent implements OnInit {
   }
 
   loadData(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.ruleService.getAll().subscribe({
       next: (data) => {
-        this.rules = data;
-        this.loading = false;
+        this.rules.set(data);
+        this.loading.set(false);
       },
       error: (err: any) => {
         console.error('Failed to load overtime rules', err);
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

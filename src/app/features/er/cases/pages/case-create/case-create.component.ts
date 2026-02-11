@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ErCaseService } from '../../services/er-case.service';
@@ -12,8 +12,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 })
 export class CaseCreateComponent implements OnInit {
   form: FormGroup;
-  loading = false;
-  employees: Employee[] = [];
+  loading: WritableSignal<boolean> = signal(false);
+  employees: WritableSignal<Employee[]> = signal([]);
 
   constructor(
     private fb: FormBuilder,
@@ -41,12 +41,12 @@ export class CaseCreateComponent implements OnInit {
   }
 
   loadEmployees(): void {
-    this.employeeService.getAll().subscribe(data => this.employees = data);
+    this.employeeService.getAll().subscribe(data => this.employees.set(data));
   }
 
   submit(): void {
     if (this.form.valid) {
-      this.loading = true;
+      this.loading.set(true);
       const val = this.form.value;
       const payload = {
         ...val,
@@ -62,7 +62,7 @@ export class CaseCreateComponent implements OnInit {
         },
         error: () => {
           this.message.error('Failed to create case');
-          this.loading = false;
+          this.loading.set(false);
         }
       });
     } else {

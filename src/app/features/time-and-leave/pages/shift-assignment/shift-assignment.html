@@ -6,7 +6,7 @@
 </div>
 
 <nz-card>
-  <nz-table #basicTable [nzData]="employees" [nzLoading]="loading">
+  <nz-table #basicTable [nzData]="employees()" [nzLoading]="loading()">
     <thead>
       <tr>
         <th>Employee</th>
@@ -40,11 +40,12 @@
 </nz-card>
 
 <nz-modal
-  [(nzVisible)]="isVisible"
-  [nzTitle]="'Assign Settings for ' + (selectedEmployee?.firstName || '') + ' ' + (selectedEmployee?.lastName || '')"
+  [nzVisible]="isVisible()"
+  (nzVisibleChange)="isVisible.set($event)"
+  [nzTitle]="'Assign Settings for ' + (selectedEmployee()?.firstName || '') + ' ' + (selectedEmployee()?.lastName || '')"
   (nzOnCancel)="handleCancel()"
   (nzOnOk)="handleOk()"
-  [nzOkLoading]="isSubmitting"
+  [nzOkLoading]="isSubmitting()"
 >
   <ng-container *nzModalContent>
     <form nz-form [formGroup]="assignmentForm" nzLayout="vertical">
@@ -53,7 +54,7 @@
         <nz-form-label [nzSpan]="24" nzFor="workContract">Work Contract</nz-form-label>
         <nz-form-control [nzSpan]="24">
           <nz-select formControlName="workContract" [compareWith]="compareFn" nzPlaceHolder="Select work contract" nzAllowClear>
-            <nz-option *ngFor="let contract of workContracts" [nzValue]="contract" [nzLabel]="contract.name"></nz-option>
+            <nz-option *ngFor="let contract of workContracts()" [nzValue]="contract" [nzLabel]="contract.name"></nz-option>
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -62,7 +63,7 @@
         <nz-form-label [nzSpan]="24" nzFor="workScheduleRule">Work Schedule Rule</nz-form-label>
         <nz-form-control [nzSpan]="24">
           <nz-select formControlName="workScheduleRule" [compareWith]="compareFn" nzPlaceHolder="Select schedule rule" nzAllowClear>
-            <nz-option *ngFor="let rule of workScheduleRules" [nzValue]="rule" [nzLabel]="rule.name"></nz-option>
+            <nz-option *ngFor="let rule of workScheduleRules()" [nzValue]="rule" [nzLabel]="rule.name"></nz-option>
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -71,7 +72,7 @@
         <nz-form-label [nzSpan]="24" nzFor="group">Employee Group</nz-form-label>
         <nz-form-control [nzSpan]="24">
           <nz-select formControlName="group" [compareWith]="compareFn" nzPlaceHolder="Select employee group" nzAllowClear>
-            <nz-option *ngFor="let group of employeeGroups" [nzValue]="group" [nzLabel]="group.name"></nz-option>
+            <nz-option *ngFor="let group of employeeGroups()" [nzValue]="group" [nzLabel]="group.name"></nz-option>
           </nz-select>
         </nz-form-control>
       </nz-form-item>

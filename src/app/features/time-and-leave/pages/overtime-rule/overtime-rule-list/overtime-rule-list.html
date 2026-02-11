@@ -10,7 +10,7 @@
 </div>
 
 <nz-card>
-  <nz-table #basicTable [nzData]="rules" [nzLoading]="loading">
+  <nz-table #basicTable [nzData]="rules()" [nzLoading]="loading()">
     <thead>
       <tr>
         <th>Code</th>
@@ -33,7 +33,7 @@
           <nz-tag [nzColor]="'blue'">{{ data.overtimeType }}</nz-tag>
         </td>
         <td>x{{ data.multiplier }}</td>
-        <td>{{ data.startTime | date:'HH:mm' }} - {{ data.endTime | date:'HH:mm' }}</td>
+        <td>{{ data.startTime }} - {{ data.endTime }}</td>
         <td>
           <div class="text-xs">
             <div>{{ data.effectiveFrom | date:'mediumDate' }}</div>

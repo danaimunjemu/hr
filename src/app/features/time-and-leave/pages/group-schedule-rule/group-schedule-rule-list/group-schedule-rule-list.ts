@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { GroupScheduleRule } from '../../../models/group-schedule-rule.model';
 import { GroupScheduleRuleService } from '../../../services/group-schedule-rule.service';
 
@@ -16,8 +16,8 @@ import { GroupScheduleRuleService } from '../../../services/group-schedule-rule.
   `]
 })
 export class GroupScheduleRuleListComponent implements OnInit {
-  loading = true;
-  rules: GroupScheduleRule[] = [];
+  loading: WritableSignal<boolean> = signal(true);
+  rules: WritableSignal<GroupScheduleRule[]> = signal([]);
 
   constructor(private groupScheduleRuleService: GroupScheduleRuleService) {}
 
@@ -26,15 +26,15 @@ export class GroupScheduleRuleListComponent implements OnInit {
   }
 
   loadData(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.groupScheduleRuleService.getAll().subscribe({
       next: (data) => {
-        this.rules = data;
-        this.loading = false;
+        this.rules.set(data);
+        this.loading.set(false);
       },
       error: (err: any) => {
         console.error('Failed to load group schedule rules', err);
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

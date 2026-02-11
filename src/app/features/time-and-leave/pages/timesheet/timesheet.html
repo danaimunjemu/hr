@@ -10,7 +10,7 @@
 </div>
 
 <nz-card>
-  <nz-table #basicTable [nzData]="entries" [nzLoading]="loading">
+  <nz-table #basicTable [nzData]="entries()" [nzLoading]="loading()">
     <thead>
       <tr>
         <th>Date</th>
@@ -51,11 +51,12 @@
 </nz-card>
 
 <nz-modal
-  [(nzVisible)]="isVisible"
-  [nzTitle]="isEditMode ? 'Edit Timesheet Entry' : 'New Timesheet Entry'"
+  [nzVisible]="isVisible()"
+  (nzVisibleChange)="isVisible.set($event)"
+  [nzTitle]="isEditMode() ? 'Edit Timesheet Entry' : 'New Timesheet Entry'"
   (nzOnCancel)="handleCancel()"
   (nzOnOk)="handleOk()"
-  [nzOkLoading]="isSubmitting"
+  [nzOkLoading]="isSubmitting()"
 >
   <ng-container *nzModalContent>
     <form nz-form [formGroup]="form" nzLayout="vertical">

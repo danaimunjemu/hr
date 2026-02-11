@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { Employee, EmployeesService } from '../../../employees/services/employees.service';
@@ -23,16 +23,16 @@ import { WorkScheduleRuleService } from '../../services/work-schedule-rule.servi
   `]
 })
 export class ShiftAssignmentComponent implements OnInit {
-  employees: Employee[] = [];
-  loading = true;
-  isVisible = false;
-  isSubmitting = false;
+  employees: WritableSignal<Employee[]> = signal([]);
+  loading: WritableSignal<boolean> = signal(true);
+  isVisible: WritableSignal<boolean> = signal(false);
+  isSubmitting: WritableSignal<boolean> = signal(false);
   assignmentForm: FormGroup;
-  selectedEmployee: Employee | null = null;
+  selectedEmployee: WritableSignal<Employee | null> = signal(null);
 
-  workContracts: WorkContract[] = [];
-  workScheduleRules: WorkScheduleRule[] = [];
-  employeeGroups: EmployeeGroup[] = [];
+  workContracts: WritableSignal<WorkContract[]> = signal([]);
+  workScheduleRules: WritableSignal<WorkScheduleRule[]> = signal([]);
+  employeeGroups: WritableSignal<EmployeeGroup[]> = signal([]);
 
   constructor(
     private employeesService: EmployeesService,
@@ -55,70 +55,71 @@ export class ShiftAssignmentComponent implements OnInit {
   }
 
   loadData(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.employeesService.getEmployees().subscribe({
       next: (data: Employee[]) => {
-        this.employees = data;
-        this.loading = false;
+        this.employees.set(data);
+        this.loading.set(false);
       },
       error: (err: any) => {
         console.error('Failed to load employees', err);
         this.message.error('Failed to load employees');
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }
 
   loadDependencies(): void {
-    this.workContractService.getAll().subscribe(data => this.workContracts = data);
-    this.workScheduleRuleService.getAll().subscribe(data => this.workScheduleRules = data);
-    this.employeeGroupService.getAll().subscribe(data => this.employeeGroups = data);
+    this.workContractService.getAll().subscribe(data => this.workContracts.set(data));
+    this.workScheduleRuleService.getAll().subscribe(data => this.workScheduleRules.set(data));
+    this.employeeGroupService.getAll().subscribe(data => this.employeeGroups.set(data));
   }
 
   openAssignmentModal(employee: Employee): void {
-    this.selectedEmployee = employee;
+    this.selectedEmployee.set(employee);
     this.assignmentForm.patchValue({
       workContract: employee.workContract,
       workScheduleRule: employee.workScheduleRule,
       group: employee.group
     });
-    this.isVisible = true;
+    this.isVisible.set(true);
   }
 
   handleCancel(): void {
-    this.isVisible = false;
-    this.selectedEmployee = null;
+    this.isVisible.set(false);
+    this.selectedEmployee.set(null);
     this.assignmentForm.reset();
   }
 
   compareFn = (o1: any, o2: any): boolean => (o1 && o2 ? o1.id === o2.id : o1 === o2);
 
   handleOk(): void {
-    if (this.assignmentForm.invalid || !this.selectedEmployee) {
+    const selectedEmployee = this.selectedEmployee();
+    if (this.assignmentForm.invalid || !selectedEmployee) {
       return;
     }
 
-    this.isSubmitting = true;
+    this.isSubmitting.set(true);
     const formValue = this.assignmentForm.value;
 
     const payload = {
-      id: this.selectedEmployee.id,
+      id: selectedEmployee.id,
       workContract: formValue.workContract,
       workScheduleRule: formValue.workScheduleRule,
       group: formValue.group
     };
 
-    this.employeesService.assignSettings(this.selectedEmployee.id, payload).subscribe({
+    this.employeesService.assignSettings(selectedEmployee.id, payload).subscribe({
       next: () => {
         this.message.success('Assignments updated successfully');
-        this.isVisible = false;
-        this.isSubmitting = false;
+        this.isVisible.set(false);
+        this.isSubmitting.set(false);
         this.loadData(); // Refresh table
       },
       error: (err: any) => {
         console.error('Failed to update assignments', err);
         this.message.error('Failed to update assignments');
-        this.isSubmitting = false;
+        this.isSubmitting.set(false);
       }
     });
   }

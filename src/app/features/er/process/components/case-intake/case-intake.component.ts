@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ErProcessService } from '../../services/er-process.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -32,7 +32,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
           <textarea nz-input formControlName="detailedDescription" rows="4"></textarea>
         </nz-form-control>
       </nz-form-item>
-      <button nz-button nzType="primary" [nzLoading]="loading">Add Intake</button>
+      <button nz-button nzType="primary" [nzLoading]="loading()">Add Intake</button>
     </form>
   `
 })
@@ -40,7 +40,7 @@ export class CaseIntakeComponent {
   @Input() caseId!: number;
   @Output() completed = new EventEmitter<void>();
   form: FormGroup;
-  loading = false;
+  loading: WritableSignal<boolean> = signal(false);
 
   constructor(
     private fb: FormBuilder,
@@ -56,7 +56,7 @@ export class CaseIntakeComponent {
 
   submit() {
     if (this.form.valid) {
-      this.loading = true;
+      this.loading.set(true);
       const val = this.form.value;
       const payload = {
         ...val,
@@ -65,12 +65,12 @@ export class CaseIntakeComponent {
       this.processService.addIntake(this.caseId, payload).subscribe({
         next: () => {
           this.message.success('Intake added successfully');
-          this.loading = false;
+          this.loading.set(false);
           this.completed.emit();
         },
         error: () => {
           this.message.error('Failed to add intake');
-          this.loading = false;
+          this.loading.set(false);
         }
       });
     }

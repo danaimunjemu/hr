@@ -10,7 +10,7 @@
 </div>
 
 <nz-card>
-  <nz-table #basicTable [nzData]="calendars" [nzLoading]="loading">
+  <nz-table #basicTable [nzData]="calendars()" [nzLoading]="loading()">
     <thead>
       <tr>
         <th>Name</th>

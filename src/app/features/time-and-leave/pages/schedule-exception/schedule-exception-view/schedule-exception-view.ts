@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ScheduleExceptionService } from '../../../services/schedule-exception.service';
 import { ScheduleException } from '../../../models/schedule-exception.model';
@@ -17,8 +17,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `]
 })
 export class ScheduleExceptionViewComponent implements OnInit {
-  exception: ScheduleException | null = null;
-  loading = true;
+  exception: WritableSignal<ScheduleException | null> = signal(null);
+  loading: WritableSignal<boolean> = signal(true);
 
   constructor(
     private route: ActivatedRoute,
@@ -39,11 +39,11 @@ export class ScheduleExceptionViewComponent implements OnInit {
   }
 
   loadException(id: number): void {
-    this.loading = true;
+    this.loading.set(true);
     this.exceptionService.getById(id).subscribe({
       next: (data) => {
-        this.exception = data;
-        this.loading = false;
+        this.exception.set(data);
+        this.loading.set(false);
       },
       error: (err: any) => {
         this.message.error('Failed to load exception details');

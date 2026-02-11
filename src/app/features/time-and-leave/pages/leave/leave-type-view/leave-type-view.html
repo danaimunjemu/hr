@@ -3,12 +3,12 @@
   [nzBackIcon]="'arrow-left'"
   (nzBack)="onBack()"
   [nzTitle]="'Leave Type Details'"
-  [nzSubtitle]="type?.name"
+  [nzSubtitle]="type()?.name"
 >
 </nz-page-header>
 
-<nz-card [nzLoading]="loading">
-  <div *ngIf="type">
+<nz-card [nzLoading]="loading()">
+  <div *ngIf="type() as type">
     <nz-descriptions [nzColumn]="1" nzTitle="Type Information" nzBordered>
       <nz-descriptions-item nzTitle="Name">{{ type.name }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Description">{{ type.description || '-' }}</nz-descriptions-item>

@@ -2,11 +2,11 @@
   [nzGhost]="false"
   [nzBackIcon]="'arrow-left'"
   (nzBack)="onCancel()"
-  [nzTitle]="isEditMode ? 'Edit Schedule Rule' : 'New Schedule Rule'"
+  [nzTitle]="isEditMode() ? 'Edit Schedule Rule' : 'New Schedule Rule'"
 >
 </nz-page-header>
 
-<nz-card [nzLoading]="loading">
+<nz-card [nzLoading]="loading()">
   <form nz-form [formGroup]="form" (ngSubmit)="onSubmit()" nzLayout="vertical">
     
     <nz-form-item>
@@ -68,7 +68,7 @@
       <nz-form-label [nzSpan]="24" nzRequired nzFor="weekendRule">Weekend Rule</nz-form-label>
       <nz-form-control [nzSpan]="24" nzErrorTip="Please select a weekend rule">
         <nz-select formControlName="weekendRule" [compareWith]="compareFn" nzPlaceHolder="Select a weekend rule">
-          <nz-option *ngFor="let rule of weekendRules" [nzValue]="rule" [nzLabel]="rule.name"></nz-option>
+          <nz-option *ngFor="let rule of weekendRules()" [nzValue]="rule" [nzLabel]="rule.name"></nz-option>
         </nz-select>
       </nz-form-control>
     </nz-form-item>
@@ -92,8 +92,8 @@
 
     <div class="flex justify-end gap-4 mt-6">
       <button nz-button type="button" (click)="onCancel()">Cancel</button>
-      <button nz-button nzType="primary" [nzLoading]="submitting">
-        {{ isEditMode ? 'Update' : 'Create' }}
+      <button nz-button nzType="primary" [nzLoading]="submitting()">
+        {{ isEditMode() ? 'Update' : 'Create' }}
       </button>
     </div>
   </form>

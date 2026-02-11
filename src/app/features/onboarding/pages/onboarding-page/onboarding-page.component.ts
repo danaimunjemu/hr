@@ -255,6 +255,7 @@ export class OnboardingPageComponent implements OnInit {
         this.otpSent.set(true);
         this.isComplete.set(true);
         this.message.success('OTP sent successfully to ' + target);
+        this.next();
       },
       error: (err) => {
         this.isLoading.set(false);

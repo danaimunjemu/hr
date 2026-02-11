@@ -2,11 +2,11 @@
   [nzGhost]="false"
   [nzBackIcon]="'arrow-left'"
   (nzBack)="onCancel()"
-  [nzTitle]="isEditMode ? 'Edit Group Schedule Rule' : 'New Group Schedule Rule'"
+  [nzTitle]="isEditMode() ? 'Edit Group Schedule Rule' : 'New Group Schedule Rule'"
 >
 </nz-page-header>
 
-<nz-card [nzLoading]="loading">
+<nz-card [nzLoading]="loading()">
   <form nz-form [formGroup]="form" (ngSubmit)="onSubmit()" nzLayout="vertical">
     
     <div nz-row [nzGutter]="24">
@@ -15,7 +15,7 @@
           <nz-form-label [nzSpan]="24" nzRequired nzFor="employeeGroup">Employee Group</nz-form-label>
           <nz-form-control [nzSpan]="24" nzErrorTip="Please select a group">
             <nz-select formControlName="employeeGroup" [compareWith]="compareFn" nzPlaceHolder="Select a group">
-              <nz-option *ngFor="let group of employeeGroups" [nzValue]="group" [nzLabel]="group.name"></nz-option>
+              <nz-option *ngFor="let group of employeeGroups()" [nzValue]="group" [nzLabel]="group.name"></nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>
@@ -79,7 +79,7 @@
         <nz-form-label [nzSpan]="24" nzRequired nzFor="shiftDefinition">Shift Definition</nz-form-label>
         <nz-form-control [nzSpan]="24" nzErrorTip="Please select a shift">
           <nz-select formControlName="shiftDefinition" [compareWith]="compareFn" nzPlaceHolder="Select a shift">
-            <nz-option *ngFor="let shift of shiftDefinitions" [nzValue]="shift" [nzLabel]="shift.name"></nz-option>
+            <nz-option *ngFor="let shift of shiftDefinitions()" [nzValue]="shift" [nzLabel]="shift.name"></nz-option>
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -101,7 +101,7 @@
             <nz-form-item style="margin-bottom: 0;">
               <nz-form-control [nzSpan]="24" nzErrorTip="Required">
                 <nz-select formControlName="shiftDefinition" [compareWith]="compareFn" nzPlaceHolder="Select shift">
-                  <nz-option *ngFor="let s of shiftDefinitions" [nzValue]="s" [nzLabel]="s.name"></nz-option>
+                  <nz-option *ngFor="let s of shiftDefinitions()" [nzValue]="s" [nzLabel]="s.name"></nz-option>
                 </nz-select>
               </nz-form-control>
             </nz-form-item>
@@ -115,8 +115,8 @@
 
     <div class="flex justify-end gap-4 mt-6">
       <button nz-button type="button" (click)="onCancel()">Cancel</button>
-      <button nz-button nzType="primary" [nzLoading]="submitting">
-        {{ isEditMode ? 'Update' : 'Create' }}
+      <button nz-button nzType="primary" [nzLoading]="submitting()">
+        {{ isEditMode() ? 'Update' : 'Create' }}
       </button>
     </div>
   </form>

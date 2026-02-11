@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { ErIntakeService } from '../../services/er-intake.service';
 import { ErIntake } from '../../models/er-intake.model';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -15,7 +16,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
     </div>
 
     <nz-card>
-      <nz-table #basicTable [nzData]="intakes" [nzLoading]="loading">
+      <nz-table #basicTable [nzData]="intakes()" [nzLoading]="loading()">
         <thead>
           <tr>
             <th>Case</th>
@@ -61,12 +62,13 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `]
 })
 export class IntakeListComponent implements OnInit {
-  intakes: ErIntake[] = [];
-  loading = true;
+  intakes: WritableSignal<ErIntake[]> = signal([]);
+  loading: WritableSignal<boolean> = signal(true);
 
   constructor(
     private intakeService: ErIntakeService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -74,17 +76,24 @@ export class IntakeListComponent implements OnInit {
   }
 
   loadIntakes(): void {
-    this.loading = true;
+    this.loading.set(true);
+    const caseId = this.getCaseId();
     this.intakeService.getIntakes().subscribe({
       next: (data) => {
-        this.intakes = data;
-        this.loading = false;
+        const filtered = caseId ? data.filter((item) => item.erCase?.id === caseId) : data;
+        this.intakes.set(filtered);
+        this.loading.set(false);
       },
       error: () => {
         this.message.error('Failed to load intakes');
-        this.loading = false;
+        this.loading.set(false);
       }
     });
+  }
+
+  private getCaseId(): number | null {
+    const id = this.route.parent?.parent?.snapshot.params['id'];
+    return id ? Number(id) : null;
   }
 
   deleteIntake(id: number): void {

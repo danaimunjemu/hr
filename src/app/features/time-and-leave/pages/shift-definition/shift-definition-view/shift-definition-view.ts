@@ -1,4 +1,4 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, computed, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShiftDefinitionService } from '../../../services/shift-definition.service';
 import { NzMessageService } from 'ng-zorro-antd/message';

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ErProcessService } from '../../services/er-process.service';
@@ -27,11 +27,15 @@ import { NzMessageService } from 'ng-zorro-antd/message';
             <nz-form-item>
               <nz-form-label nzRequired>Type</nz-form-label>
               <nz-form-control>
-                <nz-select formControlName="caseType">
-                  <nz-option nzValue="MISCONDUCT" nzLabel="Misconduct"></nz-option>
-                  <nz-option nzValue="GRIEVANCE" nzLabel="Grievance"></nz-option>
-                  <nz-option nzValue="PERFORMANCE" nzLabel="Performance"></nz-option>
-                </nz-select>
+                <nz-select formControlName="caseType" nzPlaceHolder="Select case type">
+  <nz-option nzValue="OTHER" nzLabel="Other"></nz-option>
+  <nz-option nzValue="DISCIPLINARY" nzLabel="Disciplinary"></nz-option>
+  <nz-option nzValue="HARASSMENT" nzLabel="Harassment"></nz-option>
+  <nz-option nzValue="MISCONDUCT" nzLabel="Misconduct"></nz-option>
+  <nz-option nzValue="GRIEVANCE" nzLabel="Grievance"></nz-option>
+  <nz-option nzValue="ABSENCE" nzLabel="Absence"></nz-option>
+</nz-select>
+
               </nz-form-control>
             </nz-form-item>
           </div>
@@ -54,7 +58,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
               <nz-form-label nzRequired>Subject</nz-form-label>
               <nz-form-control>
                 <nz-select formControlName="subjectEmployee" nzShowSearch nzAllowClear>
-                  <nz-option *ngFor="let emp of employees" [nzValue]="emp.id" [nzLabel]="emp.firstName + ' ' + emp.lastName"></nz-option>
+                  <nz-option *ngFor="let emp of employees()" [nzValue]="emp.id" [nzLabel]="emp.firstName + ' ' + emp.lastName"></nz-option>
                 </nz-select>
               </nz-form-control>
             </nz-form-item>
@@ -64,7 +68,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
               <nz-form-label nzRequired>Reporter</nz-form-label>
               <nz-form-control>
                 <nz-select formControlName="reporterEmployee" nzShowSearch nzAllowClear>
-                  <nz-option *ngFor="let emp of employees" [nzValue]="emp.id" [nzLabel]="emp.firstName + ' ' + emp.lastName"></nz-option>
+                  <nz-option *ngFor="let emp of employees()" [nzValue]="emp.id" [nzLabel]="emp.firstName + ' ' + emp.lastName"></nz-option>
                 </nz-select>
               </nz-form-control>
             </nz-form-item>
@@ -76,15 +80,15 @@ import { NzMessageService } from 'ng-zorro-antd/message';
             <textarea nz-input formControlName="summary" rows="4"></textarea>
           </nz-form-control>
         </nz-form-item>
-        <button nz-button nzType="primary" [nzLoading]="loading">Create Case & Start Process</button>
+        <button nz-button nzType="primary" [nzLoading]="loading()">Create Case & Start Process</button>
       </form>
     </nz-card>
   `
 })
 export class CaseCreateProcessComponent implements OnInit {
   form: FormGroup;
-  loading = false;
-  employees: Employee[] = [];
+  loading: WritableSignal<boolean> = signal(false);
+  employees: WritableSignal<Employee[]> = signal([]);
 
   constructor(
     private fb: FormBuilder,
@@ -106,12 +110,12 @@ export class CaseCreateProcessComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.employeeService.getAll().subscribe(data => this.employees = data);
+    this.employeeService.getAll().subscribe(data => this.employees.set(data));
   }
 
   submit() {
     if (this.form.valid) {
-      this.loading = true;
+      this.loading.set(true);
       const val = this.form.value;
       const payload = {
         ...val,
@@ -122,11 +126,11 @@ export class CaseCreateProcessComponent implements OnInit {
       this.processService.createCase(payload).subscribe({
         next: () => {
           this.message.success('Case process started');
-          this.router.navigate(['../../cases'], { relativeTo: this.route });
+          this.router.navigate(['../'], { relativeTo: this.route });
         },
         error: () => {
           this.message.error('Failed to start case process');
-          this.loading = false;
+          this.loading.set(false);
         }
       });
     }

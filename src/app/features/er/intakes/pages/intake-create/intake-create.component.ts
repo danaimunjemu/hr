@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ErIntakeService } from '../../services/er-intake.service';
@@ -14,9 +14,9 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 })
 export class IntakeCreateComponent implements OnInit {
   form: FormGroup;
-  loading = false;
-  employees: Employee[] = [];
-  cases: ErCase[] = [];
+  loading: WritableSignal<boolean> = signal(false);
+  employees: WritableSignal<Employee[]> = signal([]);
+  cases: WritableSignal<ErCase[]> = signal([]);
 
   constructor(
     private fb: FormBuilder,
@@ -28,7 +28,7 @@ export class IntakeCreateComponent implements OnInit {
     private message: NzMessageService
   ) {
     this.form = this.fb.group({
-      erCase: [null, [Validators.required]],
+      erCase: [null],
       incidentDateFrom: [null, [Validators.required]],
       incidentDateTo: [null],
       incidentLocation: [null, [Validators.required]],
@@ -39,16 +39,24 @@ export class IntakeCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadMetadata();
+    this.setCaseFromRoute();
   }
 
   loadMetadata(): void {
-    this.employeeService.getAll().subscribe(data => this.employees = data);
-    this.caseService.getCases().subscribe((data: any) => this.cases = data);
+    this.employeeService.getAll().subscribe(data => this.employees.set(data));
+    this.caseService.getCases().subscribe((data: any) => this.cases.set(data));
+  }
+
+  private setCaseFromRoute(): void {
+    const caseId = this.route.parent?.parent?.snapshot.params['id'];
+    if (caseId) {
+      this.form.get('erCase')?.setValue(Number(caseId));
+    }
   }
 
   submit(): void {
     if (this.form.valid) {
-      this.loading = true;
+      this.loading.set(true);
       const val = this.form.value;
       
       const payload = {
@@ -67,7 +75,7 @@ export class IntakeCreateComponent implements OnInit {
         },
         error: () => {
           this.message.error('Failed to create intake');
-          this.loading = false;
+          this.loading.set(false);
         }
       });
     } else {

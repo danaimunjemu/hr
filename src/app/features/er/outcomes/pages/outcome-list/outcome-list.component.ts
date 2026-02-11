@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { ErOutcomeService } from '../../services/er-outcome.service';
 import { ErOutcome } from '../../models/er-outcome.model';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -15,7 +16,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
     </div>
 
     <nz-card>
-      <nz-table #basicTable [nzData]="outcomes" [nzLoading]="loading">
+      <nz-table #basicTable [nzData]="outcomes()" [nzLoading]="loading()">
         <thead>
           <tr>
             <th>Case</th>
@@ -63,12 +64,13 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   `]
 })
 export class OutcomeListComponent implements OnInit {
-  outcomes: ErOutcome[] = [];
-  loading = true;
+  outcomes: WritableSignal<ErOutcome[]> = signal([]);
+  loading: WritableSignal<boolean> = signal(true);
 
   constructor(
     private outcomeService: ErOutcomeService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -76,17 +78,24 @@ export class OutcomeListComponent implements OnInit {
   }
 
   loadOutcomes(): void {
-    this.loading = true;
+    this.loading.set(true);
+    const caseId = this.getCaseId();
     this.outcomeService.getOutcomes().subscribe({
       next: (data) => {
-        this.outcomes = data;
-        this.loading = false;
+        const filtered = caseId ? data.filter((item) => item.erCase?.id === caseId) : data;
+        this.outcomes.set(filtered);
+        this.loading.set(false);
       },
       error: () => {
         this.message.error('Failed to load outcomes');
-        this.loading = false;
+        this.loading.set(false);
       }
     });
+  }
+
+  private getCaseId(): number | null {
+    const id = this.route.parent?.parent?.snapshot.params['id'];
+    return id ? Number(id) : null;
   }
 
   deleteOutcome(id: number): void {

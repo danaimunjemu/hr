@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { AntDesignModules } from '../../../core/modules/antdesign.module';
 
 @Component({
   selector: 'app-er-cases',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, AntDesignModules],
   template: `
     <div class="page-header">
       <h1 class="text-2xl font-bold mb-4">ER Cases</h1>
