@@ -31,7 +31,7 @@ export class OhsService {
     return this.http.post<SafetyIncident>(`${this.API_URL}/safety-incident/create-draft`, data);
   }
 
-  submitSafetyIncident(data: Partial<SafetyIncident>): Observable<SafetyIncident> {
+  submitSafetyIncident(data: Partial<SafetyIncident> | OhsWorkFlowApprovalRequestDto): Observable<SafetyIncident> {
     return this.http.post<SafetyIncident>(`${this.API_URL}/safety-incident/submit`, data);
   }
 
@@ -56,7 +56,7 @@ export class OhsService {
     return this.http.post<NearMissReport>(`${this.API_URL}/near-miss-report/create-draft`, data);
   }
 
-  submitNearMissReport(data: Partial<NearMissReport>): Observable<NearMissReport> {
+  submitNearMissReport(data: Partial<NearMissReport> | OhsWorkFlowApprovalRequestDto): Observable<NearMissReport> {
     return this.http.post<NearMissReport>(`${this.API_URL}/near-miss-report/submit`, data);
   }
 
@@ -81,7 +81,7 @@ export class OhsService {
     return this.http.post<MedicalSurveillance>(`${this.API_URL}/medical-surveillance/create-draft`, data);
   }
 
-  submitMedicalSurveillance(data: Partial<MedicalSurveillance>): Observable<MedicalSurveillance> {
+  submitMedicalSurveillance(data: Partial<MedicalSurveillance> | OhsWorkFlowApprovalRequestDto): Observable<MedicalSurveillance> {
     return this.http.post<MedicalSurveillance>(`${this.API_URL}/medical-surveillance/submit`, data);
   }
 

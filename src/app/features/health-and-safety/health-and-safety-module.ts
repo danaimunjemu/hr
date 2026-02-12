@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 
 import { HealthAndSafetyRoutingModule } from './health-and-safety-routing-module';
 import { SharedModule } from '../../shared/shared-module';
@@ -39,7 +40,8 @@ import { CorrectiveActionFormComponent } from './pages/corrective-actions/correc
     AntDesignModules,
     SharedModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    NzTabsModule
   ]
 })
 export class HealthAndSafetyModule { }

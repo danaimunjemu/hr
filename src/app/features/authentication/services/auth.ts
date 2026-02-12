@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import {CookiesService} from '../../../core/storage/cookies.service';
 import {Router} from '@angular/router';
+import { SessionService } from '../../../core/services/session.service';
 
 interface LoginRequest {
   username: string;
@@ -27,7 +28,8 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private cookiesService: CookiesService,
-    private router: Router
+    private router: Router,
+    private sessionService: SessionService
   ) {
     // Initialize signal from local storage if available
     const storedUser = localStorage.getItem('user');
@@ -41,6 +43,7 @@ export class AuthService {
   }
 
   login(username: string, password: string): Observable<LoginResponse> {
+    this.cookiesService.deleteCookies();
     const body: LoginRequest = {
       username,
       password,

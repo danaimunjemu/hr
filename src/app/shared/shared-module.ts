@@ -10,6 +10,7 @@ import { SideNav } from './components/layout/main-layout/side-nav/side-nav';
 import { TopNav } from './components/layout/main-layout/top-nav/top-nav';
 import {FormsModule} from '@angular/forms';
 import {NzDropdownDirective, NzDropdownMenuComponent} from 'ng-zorro-antd/dropdown';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from 'ng-zorro-antd/dropdo
     NzDropdownDirective,
     NzDropdownMenuComponent,
     RouterLink,
-    RouterLinkActive
+    RouterLinkActive,
+    NzModalModule
   ],
   exports: [
     Button

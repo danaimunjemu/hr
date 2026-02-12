@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed, effect, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, signal, computed, effect, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { OhsService } from '../../services/ohs.service';
@@ -250,9 +250,9 @@ import { finalize } from 'rxjs';
     <ng-template #approveIcon><span nz-icon nzType="check-circle"></span></ng-template>
     <ng-template #rejectIcon><span nz-icon nzType="close-circle"></span></ng-template>
 
-    <nz-modal [(nzVisible)]="rejectModalVisible" nzTitle="Reject Record" (nzOnCancel)="rejectModalVisible = false" (nzOnOk)="reject()">
+    <nz-modal [nzVisible]="rejectModalVisible()" (nzVisibleChange)="rejectModalVisible.set($event)" nzTitle="Reject Record" (nzOnCancel)="rejectModalVisible.set(false)" (nzOnOk)="reject()">
       <ng-container *nzModalContent>
-        <textarea nz-input placeholder="Reason for rejection..." [(ngModel)]="rejectReason" rows="4"></textarea>
+        <textarea nz-input placeholder="Reason for rejection..." [ngModel]="rejectReason()" (ngModelChange)="rejectReason.set($event)" rows="4"></textarea>
       </ng-container>
     </nz-modal>
   `,
@@ -292,8 +292,8 @@ export class MedicalSurveillanceFormComponent implements OnInit {
     }
   });
 
-  rejectModalVisible = false;
-  rejectReason = '';
+  rejectModalVisible = signal(false);
+  rejectReason = signal('');
 
   constructor(
     private fb: FormBuilder,
@@ -301,8 +301,7 @@ export class MedicalSurveillanceFormComponent implements OnInit {
     private employeesService: EmployeesService,
     private router: Router,
     private route: ActivatedRoute,
-    private message: NzMessageService,
-    private cdr: ChangeDetectorRef
+    private message: NzMessageService
   ) {
     this.form = this.fb.group({
       employee: [null, [Validators.required]],
@@ -372,7 +371,6 @@ export class MedicalSurveillanceFormComponent implements OnInit {
               restrictionEndDate: data.restrictionEndDate ? new Date(data.restrictionEndDate) : null,
               dateReported: data.dateReported ? new Date(data.dateReported) : new Date()
             });
-            this.cdr.markForCheck();
           },
           error: () => this.message.error('Failed to load record')
         });
@@ -425,36 +423,27 @@ export class MedicalSurveillanceFormComponent implements OnInit {
   // --- Submission ---
 
   submit() {
-    if (this.form.valid) {
-      this.loading.set(true);
-      const val = this.form.value;
-      const payload = { 
-        ...val, 
-        examinationDate: val.examinationDate?.toISOString().split('T')[0],
-        nextExaminationDue: val.nextExaminationDue?.toISOString().split('T')[0],
-        restrictionEndDate: val.restrictionEndDate?.toISOString().split('T')[0],
-        dateReported: val.dateReported?.toISOString().split('T')[0],
-        employee: { id: val.employee },
-        reportedBy: { id: val.reportedBy },
-        id: this.record()?.id
-      };
-      
-      const request = this.record()
-        ? this.ohsService.submitMedicalSurveillance(payload)
-        : this.ohsService.submitMedicalSurveillance(payload);
-
-      request.pipe(finalize(() => this.loading.set(false)))
-        .subscribe({
-          next: (res) => {
-            this.message.success('Record submitted successfully');
-            this.record.set(res);
-            this.cdr.markForCheck();
-          },
-          error: () => this.message.error('Failed to submit record')
-        });
-    } else {
+    if (!this.form.valid) {
       this.message.error('Please complete all required fields');
+      return;
     }
+
+    const recordId = this.record()?.id;
+    if (!recordId) {
+      this.message.warning('Save the record as draft first before submitting.');
+      return;
+    }
+
+    this.loading.set(true);
+    this.ohsService.submitMedicalSurveillance({ incidentId: recordId, comment: 'Submitted via Portal' })
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: () => {
+          this.message.success('Record submitted successfully');
+          this.refreshData();
+        },
+        error: () => this.message.error('Failed to submit record')
+      });
   }
 
   saveDraft() {
@@ -481,7 +470,6 @@ export class MedicalSurveillanceFormComponent implements OnInit {
              this.router.navigate(['/app/health-and-safety/medical/view', res.id], { replaceUrl: true });
           }
           this.record.set(res);
-          this.cdr.markForCheck();
         },
         error: () => this.message.error('Failed to save draft')
       });
@@ -502,14 +490,14 @@ export class MedicalSurveillanceFormComponent implements OnInit {
   }
 
   showRejectModal() {
-    this.rejectModalVisible = true;
+    this.rejectModalVisible.set(true);
   }
 
   reject() {
     if (!this.record()?.id) return;
     this.loading.set(true);
-    this.rejectModalVisible = false;
-    this.ohsService.rejectMedicalSurveillance({ incidentId: this.record()!.id, comment: this.rejectReason })
+    this.rejectModalVisible.set(false);
+    this.ohsService.rejectMedicalSurveillance({ incidentId: this.record()!.id, comment: this.rejectReason() })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: () => {
@@ -524,7 +512,6 @@ export class MedicalSurveillanceFormComponent implements OnInit {
     if (this.record()?.id) {
       this.ohsService.getMedicalSurveillance(this.record()!.id).subscribe(data => {
         this.record.set(data);
-        this.cdr.markForCheck();
       });
     }
   }

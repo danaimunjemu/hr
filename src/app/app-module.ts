@@ -12,6 +12,7 @@ import {ModeToggleService} from './core/modules/mode/mode-toggle.service';
 import {MODE_STORAGE_SERVICE, ModeLocalStorageService} from './core/modules/mode/mode-storage.service';
 import {provideAnimations} from '@angular/platform-browser/animations';
 import { HttpTokenInterceptor } from './core/interceptors/http.interceptor';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
 registerLocaleData(en);
 
@@ -21,7 +22,8 @@ registerLocaleData(en);
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    NzModalModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

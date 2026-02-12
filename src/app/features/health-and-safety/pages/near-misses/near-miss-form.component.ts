@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed, effect, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, signal, computed, effect, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { OhsService } from '../../services/ohs.service';
@@ -227,9 +227,9 @@ import { finalize } from 'rxjs';
     <ng-template #approveIcon><span nz-icon nzType="check-circle"></span></ng-template>
     <ng-template #rejectIcon><span nz-icon nzType="close-circle"></span></ng-template>
 
-    <nz-modal [(nzVisible)]="rejectModalVisible" nzTitle="Reject Report" (nzOnCancel)="rejectModalVisible = false" (nzOnOk)="reject()">
+    <nz-modal [nzVisible]="rejectModalVisible()" (nzVisibleChange)="rejectModalVisible.set($event)" nzTitle="Reject Report" (nzOnCancel)="rejectModalVisible.set(false)" (nzOnOk)="reject()">
       <ng-container *nzModalContent>
-        <textarea nz-input placeholder="Reason for rejection..." [(ngModel)]="rejectReason" rows="4"></textarea>
+        <textarea nz-input placeholder="Reason for rejection..." [ngModel]="rejectReason()" (ngModelChange)="rejectReason.set($event)" rows="4"></textarea>
       </ng-container>
     </nz-modal>
   `,
@@ -270,8 +270,8 @@ export class NearMissFormComponent implements OnInit {
     }
   });
 
-  rejectModalVisible = false;
-  rejectReason = '';
+  rejectModalVisible = signal(false);
+  rejectReason = signal('');
 
   constructor(
     private fb: FormBuilder,
@@ -279,8 +279,7 @@ export class NearMissFormComponent implements OnInit {
     private employeesService: EmployeesService,
     private router: Router,
     private route: ActivatedRoute,
-    private message: NzMessageService,
-    private cdr: ChangeDetectorRef
+    private message: NzMessageService
   ) {
     this.form = this.fb.group({
       incidentDateTime: [new Date(), [Validators.required]],
@@ -337,7 +336,6 @@ export class NearMissFormComponent implements OnInit {
               dateReported: data.dateReported ? new Date(data.dateReported) : new Date(),
               reportedBy: data.reportedBy?.id || data.reportedBy
             });
-            this.cdr.markForCheck();
           },
           error: () => this.message.error('Failed to load report')
         });
@@ -399,34 +397,27 @@ export class NearMissFormComponent implements OnInit {
   // --- Submission ---
 
   submit() {
-    if (this.form.valid) {
-      this.loading.set(true);
-      const val = this.form.value;
-      const payload = { 
-        ...val, 
-        incidentDateTime: val.incidentDateTime?.toISOString(),
-        dateReported: val.dateReported?.toISOString().split('T')[0], // LocalDate
-        reportedBy: val.anonymous ? null : { id: val.reportedBy },
-        attachments: this.attachments(),
-        id: this.report()?.id
-      };
-      
-      const request = this.report()
-        ? this.ohsService.submitNearMissReport(payload)
-        : this.ohsService.submitNearMissReport(payload);
-
-      request.pipe(finalize(() => this.loading.set(false)))
-        .subscribe({
-          next: (res) => {
-            this.message.success('Report submitted successfully');
-            this.report.set(res);
-            this.cdr.markForCheck();
-          },
-          error: () => this.message.error('Failed to submit report')
-        });
-    } else {
+    if (!this.form.valid) {
       this.message.error('Please complete all required fields');
+      return;
     }
+
+    const reportId = this.report()?.id;
+    if (!reportId) {
+      this.message.warning('Save the report as draft first before submitting.');
+      return;
+    }
+
+    this.loading.set(true);
+    this.ohsService.submitNearMissReport({ incidentId: reportId, comment: 'Submitted via Portal' })
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: () => {
+          this.message.success('Report submitted successfully');
+          this.refreshData();
+        },
+        error: () => this.message.error('Failed to submit report')
+      });
   }
 
   saveDraft() {
@@ -451,7 +442,6 @@ export class NearMissFormComponent implements OnInit {
              this.router.navigate(['/app/health-and-safety/near-misses/view', res.id], { replaceUrl: true });
           }
           this.report.set(res);
-          this.cdr.markForCheck();
         },
         error: () => this.message.error('Failed to save draft')
       });
@@ -478,14 +468,14 @@ export class NearMissFormComponent implements OnInit {
   }
 
   showRejectModal() {
-    this.rejectModalVisible = true;
+    this.rejectModalVisible.set(true);
   }
 
   reject() {
     if (!this.report()?.id) return;
     this.loading.set(true);
-    this.rejectModalVisible = false;
-    this.ohsService.rejectNearMissReport({ incidentId: this.report()!.id, comment: this.rejectReason })
+    this.rejectModalVisible.set(false);
+    this.ohsService.rejectNearMissReport({ incidentId: this.report()!.id, comment: this.rejectReason() })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: () => {
@@ -500,7 +490,6 @@ export class NearMissFormComponent implements OnInit {
     if (this.report()?.id) {
       this.ohsService.getNearMissReport(this.report()!.id).subscribe(data => {
         this.report.set(data);
-        this.cdr.markForCheck();
       });
     }
   }

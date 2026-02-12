@@ -16,7 +16,7 @@ export interface Position {
   updatedOn: string;
   deletedOn: string;
   name: string;
-  superior: string;
+  superior: any;
   secondSuperior: SecondSuperior;
   subordinates: string[];
 }

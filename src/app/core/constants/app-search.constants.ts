@@ -2,77 +2,74 @@ export interface AppSearchItem {
   name: string;
   path: string;
   description: string;
+  keywords?: string[];
 }
 
 export const APP_SEARCH_ITEMS: AppSearchItem[] = [
   {
     name: 'Dashboard',
-    path: '/dashboard/main',
-    description: 'View overall ESG performance insights, key metrics, and progress toward sustainability goals.'
+    path: '/app/dashboard',
+    description: 'View HR overview metrics and quick summaries.',
+    keywords: ['home', 'overview', 'main'],
   },
   {
-    name: 'Condensed Report',
-    path: '/reports/all/condensed',
-    description: 'Access a summarized ESG report highlighting key performance indicators and compliance status.'
+    name: 'Employees',
+    path: '/app/employees',
+    description: 'Manage employee profiles and employee records.',
+    keywords: ['staff', 'people', 'employee list'],
   },
   {
-    name: 'Detailed Report',
-    path: '/reports/all/detailed',
-    description: 'Explore comprehensive ESG data and analytics for all factors, subcategories, and reporting periods.'
+    name: 'Onboarding',
+    path: '/app/onboarding',
+    description: 'Track onboarding tasks and new hire progress.',
+    keywords: ['new hire', 'orientation', 'induction'],
   },
   {
-    name: 'Emissions Report',
-    path: '/reports/all/emissions',
-    description: 'Analyze greenhouse gas emissions data, trends, and performance against reduction targets.'
+    name: 'My Time and Leave',
+    path: '/app/time-and-leave-user',
+    description: 'Submit timesheets and leave requests as an employee.',
+    keywords: ['timesheet', 'leave', 'attendance'],
   },
   {
-    name: 'Trend Analysis Report',
-    path: '/reports/all/trend-analysis',
-    description: 'Visualize ESG performance trends over time to track improvements and identify areas for action.'
+    name: 'Performance (User)',
+    path: '/app/performance-user',
+    description: 'Manage appraisals and user performance activities.',
+    keywords: ['goals', 'reviews', 'appraisal'],
   },
   {
-    name: 'Anomalies Report',
-    path: '/reports/all/anomalies',
-    description: 'Detect irregularities or deviations in ESG data, helping ensure accuracy and data integrity.'
+    name: 'Health and Safety',
+    path: '/app/health-and-safety',
+    description: 'Manage incidents, near misses, and medical surveillance.',
+    keywords: ['incident', 'near miss', 'medical', 'safety'],
   },
   {
-    name: 'Audit Report',
-    path: '/reports/all/audit',
-    description: 'Review a historical audit trail of ESG submissions, target adjustments, and user activity logs.'
+    name: 'Employee Relations',
+    path: '/app/employee-relations',
+    description: 'Access employee relations cases and workflows.',
+    keywords: ['er', 'cases', 'relations'],
   },
   {
-    name: 'Yearly Targets',
-    path: '/data/all/yearly-targets',
-    description: 'Set and monitor annual ESG targets for various categories such as environment, social, and governance.'
+    name: 'Chatbot',
+    path: '/app/chatbot',
+    description: 'Use AI assistant features within HR workflows.',
+    keywords: ['assistant', 'ai', 'chat'],
   },
   {
-    name: 'Reporting Data',
-    path: '/data/all/reporting-data',
-    description: 'Manage ESG reporting data inputs and validate factor-level information across departments.'
+    name: 'Employee Master Data',
+    path: '/app/settings',
+    description: 'Configure companies, org units, grades, and master data.',
+    keywords: ['settings', 'master', 'configuration'],
   },
   {
-    name: 'Actuals',
-    path: '/data/all/actuals',
-    description: 'Capture and verify actual ESG performance metrics against established yearly targets.'
+    name: 'Time and Leave Setup',
+    path: '/app/time-and-leave',
+    description: 'Configure leave types, overtime rules, and timesheet setup.',
+    keywords: ['leave setup', 'overtime', 'rules'],
   },
   {
-    name: 'User Management',
-    path: '/reports/user-management',
-    description: 'Administer system users, assign ESG-related roles, and control access to reporting features.'
-  },
-  {
-    name: 'Frameworks Library',
-    path: '/esg-analysis/library',
-    description: 'Browse and manage ESG frameworks, indicators, and scoring methodologies used in assessments.'
-  },
-  {
-    name: 'Commentaries',
-    path: '/esg-analysis/commentaries',
-    description: 'View and add qualitative commentaries and explanations supporting ESG data submissions.'
-  },
-  {
-    name: 'User Profile',
-    path: '/profile/user/details',
-    description: 'Manage personal information, preferences, and organization-level ESG user settings.'
+    name: 'Performance Setup',
+    path: '/app/performance',
+    description: 'Configure performance templates, cycles, and settings.',
+    keywords: ['performance settings', 'templates', 'cycles'],
   },
 ];

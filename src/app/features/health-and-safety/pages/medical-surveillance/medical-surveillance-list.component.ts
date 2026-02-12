@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { OhsService } from '../../services/ohs.service';
 import { MedicalSurveillance } from '../../models/ohs.model';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -52,8 +52,7 @@ export class MedicalSurveillanceListComponent implements OnInit {
 
   constructor(
     private ohsService: OhsService, 
-    private message: NzMessageService,
-    private cdr: ChangeDetectorRef
+    private message: NzMessageService
   ) {}
 
   ngOnInit() {
@@ -67,7 +66,6 @@ export class MedicalSurveillanceListComponent implements OnInit {
       .subscribe({
         next: (data) => {
           this.records.set(data);
-          this.cdr.markForCheck();
         },
         error: () => this.message.error('Failed to load records')
       });

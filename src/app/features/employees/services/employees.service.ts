@@ -235,7 +235,7 @@ export interface Employee {
   terminationDate?: string;
   bankDetail?: BankDetail;
   employmentStatus: string;
-  superior?: string;
+  superior?: any;
   subordinates?: string[];
   company?: Company;
   costCenter?: CostCenter;

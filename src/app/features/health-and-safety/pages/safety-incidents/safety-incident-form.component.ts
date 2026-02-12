@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed, effect, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, signal, computed, effect, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { OhsService } from '../../services/ohs.service';
@@ -277,9 +277,9 @@ import { finalize } from 'rxjs';
     <ng-template #rejectIcon><span nz-icon nzType="close-circle"></span></ng-template>
 
     <!-- Reject Modal -->
-    <nz-modal [(nzVisible)]="rejectModalVisible" nzTitle="Reject Incident" (nzOnCancel)="rejectModalVisible = false" (nzOnOk)="reject()">
+    <nz-modal [nzVisible]="rejectModalVisible()" (nzVisibleChange)="rejectModalVisible.set($event)" nzTitle="Reject Incident" (nzOnCancel)="rejectModalVisible.set(false)" (nzOnOk)="reject()">
       <ng-container *nzModalContent>
-        <textarea nz-input placeholder="Reason for rejection..." [(ngModel)]="rejectReason" rows="4"></textarea>
+        <textarea nz-input placeholder="Reason for rejection..." [ngModel]="rejectReason()" (ngModelChange)="rejectReason.set($event)" rows="4"></textarea>
       </ng-container>
     </nz-modal>
   `,
@@ -318,8 +318,8 @@ export class SafetyIncidentFormComponent implements OnInit {
   });
 
   // Modal
-  rejectModalVisible = false;
-  rejectReason = '';
+  rejectModalVisible = signal(false);
+  rejectReason = signal('');
 
   constructor(
     private fb: FormBuilder,
@@ -327,8 +327,7 @@ export class SafetyIncidentFormComponent implements OnInit {
     private employeesService: EmployeesService,
     private router: Router,
     private route: ActivatedRoute,
-    private message: NzMessageService,
-    private cdr: ChangeDetectorRef
+    private message: NzMessageService
   ) {
     this.form = this.fb.group({
       incidentType: ['INJURY', [Validators.required]],
@@ -345,7 +344,7 @@ export class SafetyIncidentFormComponent implements OnInit {
       daysLost: [0],
       immediateActions: [''],
       rootCauseAnalysis: [''],
-      investigationStatus: ['PENDING'],
+      investigationStatus: ['OPEN'],
       investigationCompletedDate: [null],
       investigationFindings: [''],
       correctiveActions: [''],
@@ -391,7 +390,6 @@ export class SafetyIncidentFormComponent implements OnInit {
               closedDate: data.closedDate ? new Date(data.closedDate) : null,
               reportedBy: data.reportedBy?.id || data.reportedBy // Handle object or ID
             });
-            this.cdr.markForCheck();
           },
           error: () => this.message.error('Failed to load incident')
         });
@@ -399,41 +397,32 @@ export class SafetyIncidentFormComponent implements OnInit {
   }
 
   submit() {
-    if (this.form.valid) {
-      this.loading.set(true);
-      const val = this.form.value;
-      const payload = { 
-        ...val, 
-        incidentDateTime: val.incidentDateTime?.toISOString(),
-        dateReported: val.dateReported?.toISOString().split('T')[0], // LocalDate
-        investigationCompletedDate: val.investigationCompletedDate?.toISOString().split('T')[0], // LocalDate
-        closedDate: val.closedDate?.toISOString().split('T')[0], // LocalDate
-        reportedBy: { id: val.reportedBy }, // Send as object with ID
-        referenceNumber: this.incident()?.referenceNumber || this.generateReferenceNumber(),
-        id: this.incident()?.id
-      };
-      
-      const request = this.incident() 
-        ? this.ohsService.submitSafetyIncident(payload)
-        : this.ohsService.submitSafetyIncident(payload);
-
-      request.pipe(finalize(() => this.loading.set(false)))
-        .subscribe({
-          next: (res) => {
-            this.message.success('Incident submitted');
-            this.incident.set(res);
-            this.cdr.markForCheck();
-          },
-          error: () => this.message.error('Failed to submit')
-        });
-    } else {
+    if (!this.form.valid) {
       Object.values(this.form.controls).forEach(control => {
         if (control.invalid) {
           control.markAsDirty();
           control.updateValueAndValidity({ onlySelf: true });
         }
       });
+      return;
     }
+
+    const incidentId = this.incident()?.id;
+    if (!incidentId) {
+      this.message.warning('Save the incident as draft first before submitting.');
+      return;
+    }
+
+    this.loading.set(true);
+    this.ohsService.submitSafetyIncident({ incidentId, comment: 'Submitted via Portal' })
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: () => {
+          this.message.success('Incident submitted');
+          this.refreshData();
+        },
+        error: () => this.message.error('Failed to submit')
+      });
   }
 
   saveDraft() {
@@ -459,7 +448,6 @@ export class SafetyIncidentFormComponent implements OnInit {
              this.router.navigate(['/app/health-and-safety/incidents/view', res.id], { replaceUrl: true });
           }
           this.incident.set(res);
-          this.cdr.markForCheck();
         },
         error: () => this.message.error('Failed to save draft')
       });
@@ -480,14 +468,14 @@ export class SafetyIncidentFormComponent implements OnInit {
   }
 
   showRejectModal() {
-    this.rejectModalVisible = true;
+    this.rejectModalVisible.set(true);
   }
 
   reject() {
     if (!this.incident()?.id) return;
     this.loading.set(true);
-    this.rejectModalVisible = false;
-    this.ohsService.rejectSafetyIncident({ incidentId: this.incident()!.id, comment: this.rejectReason })
+    this.rejectModalVisible.set(false);
+    this.ohsService.rejectSafetyIncident({ incidentId: this.incident()!.id, comment: this.rejectReason() })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: () => {
@@ -502,7 +490,6 @@ export class SafetyIncidentFormComponent implements OnInit {
     if (this.incident()?.id) {
       this.ohsService.getSafetyIncident(this.incident()!.id).subscribe(data => {
         this.incident.set(data);
-        this.cdr.markForCheck();
       });
     }
   }

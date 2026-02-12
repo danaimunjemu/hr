@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { OhsService } from '../../services/ohs.service';
 import { NearMissReport } from '../../models/ohs.model';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -52,8 +52,7 @@ export class NearMissListComponent implements OnInit {
 
   constructor(
     private ohsService: OhsService, 
-    private message: NzMessageService,
-    private cdr: ChangeDetectorRef
+    private message: NzMessageService
   ) {}
 
   ngOnInit() {
@@ -67,7 +66,6 @@ export class NearMissListComponent implements OnInit {
       .subscribe({
         next: (data) => {
           this.reports.set(data);
-          this.cdr.markForCheck();
         },
         error: () => this.message.error('Failed to load reports')
       });

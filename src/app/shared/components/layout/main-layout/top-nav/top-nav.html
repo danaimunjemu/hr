@@ -151,87 +151,52 @@
 </header>
 
 
-<!--<nz-modal-->
-<!--  [(nzVisible)]="isVisible"-->
-<!--  [nzTitle]="modalTitle"-->
-<!--  [nzContent]="modalContent"-->
-<!--  [nzFooter]="modalFooter"-->
-<!--  (nzOnCancel)="handleCancel()"-->
-<!--&gt;-->
-<!--  <ng-template #modalTitle>-->
-<!--    <div class="modal-search">-->
-<!--      <nz-input-group [nzSuffix]="suffixIconSearch">-->
-<!--        <input-->
-<!--          cdkFocusInitial-->
-<!--          type="text"-->
-<!--          nz-input-->
-<!--          placeholder="Search reports or pages..."-->
-<!--          [(ngModel)]="searchTerm"-->
-<!--          (input)="onSearchChange(searchTerm)"-->
-<!--        />-->
-<!--      </nz-input-group>-->
-<!--      <ng-template #suffixIconSearch>-->
-<!--        <nz-icon nzType="search" />-->
-<!--      </ng-template>-->
-<!--    </div>-->
-<!--  </ng-template>-->
+<nz-modal
+  [(nzVisible)]="isVisible"
+  [nzTitle]="modalTitle"
+      [nzContent]="modalContent"
+      [nzFooter]="modalFooter"
+  [nzWidth]="760"
+  (nzOnCancel)="handleCancel()">
+  <ng-template #modalTitle>Custom Modal Title</ng-template>
 
-<!--  <ng-template #modalContent>-->
-<!--    @if(searchResults.length){-->
-<!--      <ul class="search-results">-->
-<!--        @for(item of searchResults; track $index; let i = $index){-->
-<!--          <li-->
-<!--            [class.active]="i === activeIndex"-->
-<!--            (click)="navigate(item.path)">-->
-<!--            <div class="flex flex-col">-->
-<!--&lt;!&ndash;              <div class="search-path">{{ item.path | pathToTitle }}</div>&ndash;&gt;-->
-<!--              <div class="search-name">{{ item.name }}</div>-->
-<!--              <div class="search-description">{{ item.description }}</div>-->
-<!--            </div>-->
-<!--          </li>-->
-<!--        }-->
-<!--      </ul>-->
-<!--    }-->
-<!--  </ng-template>-->
+      <ng-template #modalContent>
+        <div class="modal-search">
+    <nz-input-group [nzPrefix]="searchIcon">
+      <input
+        #searchInput
+        nz-input
+        placeholder="Search pages, modules, and actions..."
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange($event)" />
+    </nz-input-group>
+    <ng-template #searchIcon>
+      <span nz-icon nzType="search"></span>
+    </ng-template>
+  </div>
 
-<!--  <ng-template #modalFooter>-->
-<!--    <div class="flex flex-row">-->
-<!--      <div class="search-nav-item flex flex-row">-->
-<!--        <div class="search-nav-icon">-->
-<!--          <span>-->
-<!--            <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 4v16m10-1V4m-7 3S7.79 4 7 4S4 7 4 7m16 10s-2.21 3-3 3s-3-3-3-3"/></svg>-->
-<!--          </span>-->
-<!--        </div>-->
-<!--        <div class="search-nav-text">-->
-<!--          <span>-->
-<!--            navigate-->
-<!--          </span>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="search-nav-item flex flex-row">-->
-<!--        <div class="search-nav-icon">-->
-<!--          <span>-->
-<!--            <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 56 56"><path fill="currentColor" d="M19.281 49.516c1.242 0 2.063-.844 2.063-2.063c0-.61-.188-1.055-.563-1.43l-6.75-6.586l-4.453-3.796l5.508.234h29.906c5.46 0 7.735-2.508 7.735-7.805V14.22c0-5.461-2.274-7.735-7.735-7.735H31.867c-1.289 0-2.133.938-2.133 2.086c0 1.149.844 2.086 2.133 2.086h13.125c2.484 0 3.563 1.078 3.563 3.563v13.85c0 2.555-1.079 3.633-3.563 3.633H15.086l-5.508.235l4.453-3.797l6.75-6.586c.375-.375.563-.844.563-1.453c0-1.196-.82-2.063-2.063-2.063c-.515 0-1.125.258-1.523.656L3.976 32.22c-.468.445-.703.984-.703 1.57c0 .563.235 1.125.703 1.57l13.782 13.524a2.27 2.27 0 0 0 1.523.633"/></svg>-->
-<!--          </span>-->
-<!--        </div>-->
-<!--        <div class="search-nav-text">-->
-<!--          <span>-->
-<!--            go-->
-<!--          </span>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="search-nav-item flex flex-row">-->
-<!--        <div class="search-nav-icon">-->
-<!--          <span>-->
-<!--            <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24"><path fill="currentColor" d="M1 7h6v2H3v2h4v2H3v2h4v2H1zm10 0h4v2h-4v2h2a2 2 0 0 1 2 2v2c0 1.11-.89 2-2 2H9v-2h4v-2h-2a2 2 0 0 1-2-2V9c0-1.1.9-2 2-2m8 0h2a2 2 0 0 1 2 2v1h-2V9h-2v6h2v-1h2v1c0 1.11-.89 2-2 2h-2a2 2 0 0 1-2-2V9c0-1.1.9-2 2-2"/></svg>-->
-<!--          </span>-->
-<!--        </div>-->
-<!--        <div class="search-nav-text">-->
-<!--          <span>-->
-<!--            exit-->
-<!--          </span>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </ng-template>-->
-<!--</nz-modal>-->
+  <div class="search-hint">Use Ctrl/Cmd + K to open, arrows to navigate, Enter to open.</div>
+
+  <nz-list *ngIf="searchResults.length; else emptySearchState" nzSize="small" class="search-results">
+    <nz-list-item
+      *ngFor="let item of searchResults; let i = index"
+      [class.active]="i === activeIndex"
+      (mouseenter)="activeIndex = i"
+      (click)="navigate(item.path)">
+      <nz-list-item-meta [nzTitle]="item.name" [nzDescription]="item.description"></nz-list-item-meta>
+      <div class="search-path">{{ item.path }}</div>
+    </nz-list-item>
+  </nz-list>
+
+  <ng-template #emptySearchState>
+    <div class="search-empty">
+      <span *ngIf="!searchTerm">Start typing to search the application.</span>
+      <span *ngIf="searchTerm">No matching pages found.</span>
+    </div>
+  </ng-template>
+      </ng-template>
+
+      <ng-template #modalFooter>
+      </ng-template>
+  
+</nz-modal>

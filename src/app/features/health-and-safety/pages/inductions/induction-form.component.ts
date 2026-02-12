@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed, effect, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, signal, computed, effect, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { OhsService } from '../../services/ohs.service';
@@ -114,8 +114,7 @@ export class InductionFormComponent implements OnInit {
     private ohsService: OhsService,
     private router: Router,
     private route: ActivatedRoute,
-    private message: NzMessageService,
-    private cdr: ChangeDetectorRef
+    private message: NzMessageService
   ) {
     this.form = this.fb.group({
       title: ['', [Validators.required]],
@@ -150,7 +149,6 @@ export class InductionFormComponent implements OnInit {
               validUntil: new Date(data.validUntil),
               requiredForRoles: data.requiredForRoles.join(', ')
             });
-            this.cdr.markForCheck();
           },
           error: () => this.message.error('Failed to load induction')
         });

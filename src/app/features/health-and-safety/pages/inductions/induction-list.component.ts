@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { OhsService } from '../../services/ohs.service';
 import { Induction } from '../../models/ohs.model';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -50,8 +50,7 @@ export class InductionListComponent implements OnInit {
 
   constructor(
     private ohsService: OhsService, 
-    private message: NzMessageService,
-    private cdr: ChangeDetectorRef
+    private message: NzMessageService
   ) {}
 
   ngOnInit() {
@@ -65,7 +64,6 @@ export class InductionListComponent implements OnInit {
       .subscribe({
         next: (data) => {
           this.inductions.set(data);
-          this.cdr.markForCheck();
         },
         error: () => {
           this.message.error('Failed to load inductions');

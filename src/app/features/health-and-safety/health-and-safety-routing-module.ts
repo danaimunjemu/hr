@@ -17,9 +17,10 @@ const routes: Routes = [
   {
     path: '',
     component: OhsShellComponent,
+    data: { breadcrumb: 'Health and Safety' },
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: HealthAndSafetyPageComponent },
+      { path: 'dashboard', component: HealthAndSafetyPageComponent, data: { breadcrumb: 'Dashboard' }, },
       { path: 'incidents', component: SafetyIncidentListComponent },
       { path: 'incidents/create', component: SafetyIncidentFormComponent },
       { path: 'incidents/view/:id', component: SafetyIncidentFormComponent },

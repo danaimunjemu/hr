@@ -87,7 +87,7 @@ export class EditEmployee implements OnInit {
       maritalStatus: employee.maritalStatus,
       nationality: employee.nationality,
       employmentStatus: employee.employmentStatus,
-      superior: employee.superior,
+      superior: employee.superior ? employee.superior?.firstName + ' ' + employee.superior?.lastName : '',
       address: {
         physicalAddress: employee.address?.physicalAddress,
         postalAddress: employee.address?.postalAddress
