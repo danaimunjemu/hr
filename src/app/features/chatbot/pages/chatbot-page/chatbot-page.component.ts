@@ -2,6 +2,7 @@ import { Component, ElementRef, ViewChild, AfterViewChecked, signal, WritableSig
 import { ChatbotService } from '../../services/chatbot.service';
 import { ChatMessage } from '../../models/chatbot.model';
 import { finalize } from 'rxjs';
+import { AuthService } from '../../../authentication/services/auth';
 
 @Component({
   selector: 'app-chatbot-page',
@@ -14,6 +15,11 @@ export class ChatbotPageComponent implements AfterViewChecked {
 
   isLoading: WritableSignal<boolean> = signal(false);
   userInput = '';
+  readonly starterPrompts: string[] = [
+    'Summarize my pending leave balance.',
+    'What are the steps to submit a timesheet',
+    'How do I apply for leave?'
+  ];
   messages: ChatMessage[] = [
     {
       content: 'Hello! I am your HR Assistant. How can I help you today?',
@@ -22,7 +28,10 @@ export class ChatbotPageComponent implements AfterViewChecked {
     }
   ];
 
-  constructor(private chatbotService: ChatbotService) {}
+  constructor(
+    private chatbotService: ChatbotService,
+    private authService: AuthService
+  ) {}
 
   ngAfterViewChecked(): void {
     this.scrollToBottom();
@@ -48,6 +57,14 @@ export class ChatbotPageComponent implements AfterViewChecked {
       });
   }
 
+  useStarterPrompt(prompt: string): void {
+    if (this.isLoading()) {
+      return;
+    }
+    this.userInput = prompt;
+    this.sendMessage();
+  }
+
   private addMessage(content: string, sender: 'user' | 'bot'): void {
     this.messages.push({
       content,
@@ -64,5 +81,19 @@ export class ChatbotPageComponent implements AfterViewChecked {
     } catch (err) {
       console.error('Scroll to bottom failed', err);
     }
+  }
+
+  get userInitials(): string {
+    const user = this.authService.currentUser();
+    const username = String(user?.username || '').trim();
+    if (!username) {
+      return 'US';
+    }
+    return username.slice(0, 2).toUpperCase();
+  }
+
+  get userDisplayName(): string {
+    const user = this.authService.currentUser();
+    return String(user?.username || 'Team Member');
   }
 }
