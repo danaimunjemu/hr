@@ -27,7 +27,7 @@ import { finalize } from 'rxjs';
       </thead>
       <tbody>
         <tr *ngFor="let data of table.data">
-          <td>{{ data.employee }}</td>
+          <td>{{ data.employee.id }}</td>
           <td>{{ data.examinationDate | date }}</td>
           <td>{{ data.examinationType }}</td>
           <td>
