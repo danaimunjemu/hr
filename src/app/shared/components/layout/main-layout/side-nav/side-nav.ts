@@ -1,10 +1,10 @@
-import {ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
-import {filter, Subscription} from 'rxjs';
-import {NavigationEnd, Router} from '@angular/router';
-import {ModeToggleService} from '../../../../../core/modules/mode/mode-toggle.service';
-import {AuthService} from '../../../../../features/authentication/services/auth';
-import {Mode} from '../../../../../core/modules/mode/mode-toggle.model';
-import {CookiesService} from '../../../../../core/storage/cookies.service';
+import { ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { filter, Subscription } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
+import { ModeToggleService } from '../../../../../core/modules/mode/mode-toggle.service';
+import { AuthService } from '../../../../../features/authentication/services/auth';
+import { Mode } from '../../../../../core/modules/mode/mode-toggle.model';
+import { CookiesService } from '../../../../../core/storage/cookies.service';
 import { PortalService } from '../../../../services/portal';
 
 @Component({
@@ -15,7 +15,7 @@ import { PortalService } from '../../../../services/portal';
 })
 export class SideNav implements OnInit, OnDestroy {
 
-  isCollapsed = false;
+  isCollapsed = true;
   private manualOverride: boolean | null = null;
   private subs = new Subscription();
   user!: any | null;
@@ -62,7 +62,7 @@ export class SideNav implements OnInit, OnDestroy {
     await this.authService.logout();
   }
 
-  initializeMode(){
+  initializeMode() {
     this.selectedMode = this.modeToggleService.getMode();
   }
 

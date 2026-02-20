@@ -15,16 +15,18 @@ nz-header {
   padding: 8px 12px;
   border-radius: 15px;
   transition: all .5s;
-  box-shadow: 0 0 25px 0 rgba(0,0,0, .05);
+  box-shadow: 0 0 25px 0 rgba(0, 0, 0, .05);
 }
 
-.nerd-nav-button:hover, .top-nav-button-icon:hover {
+.nerd-nav-button:hover,
+.top-nav-button-icon:hover {
   cursor: pointer;
   box-shadow: 0 10px 20px -10px #dfe2e1;
   transform: translateY(-2px);
 }
 
-.nerd-nav-button:active, .top-nav-button-icon:active {
+.nerd-nav-button:active,
+.top-nav-button-icon:active {
   transform: translateY(1px) scale(0.98);
   box-shadow: 0 4px 12px -6px #dfe2e1;
 }
@@ -35,7 +37,8 @@ nz-header {
 }
 
 .gradient-tag {
-  background: linear-gradient(90deg, #b2faba, #dbfeb3); /* green gradient */
+  background: linear-gradient(90deg, #b2faba, #dbfeb3);
+  /* green gradient */
   color: #4a9965 !important;
   border: none !important;
   margin: 0 0 0 8px;
@@ -78,7 +81,8 @@ nz-header {
 
   .search-box {
     nz-input-group {
-      background: transparent; /* your desired background */
+      background: transparent;
+      /* your desired background */
       border-radius: 8px;
       border: none;
 
@@ -187,6 +191,7 @@ nz-header {
 
 .top-nav-header {
   padding: 0px !important;
+  background: linear-gradient(to right, #1B212D, #1C212D);
 }
 
 .esg-score-container {
@@ -209,4 +214,46 @@ nz-header {
 .top-nav-time-greeting {
   font-weight: 700;
   font-size: 18px;
+}
+
+.nav-user-area {
+  padding: 10px 0;
+}
+
+.nav-user-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.nav-user-email {
+  font-size: 9px;
+  font-weight: 400;
+  color: var(--color-text);
+}
+
+.user-menu {
+  padding: 5px;
+  margin: 0 5px;
+  border-radius: 12px;
+  transition: all .5s ease;
+}
+
+.user-menu:hover {
+  background: var(--color-bg);
+  cursor: pointer;
+}
+
+.user-menu-icon {
+  color: var(--color-text);
+}
+
+.logo-img {
+  height: 20px;
+}
+
+.nerd-top-nav-app-name {
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
 }

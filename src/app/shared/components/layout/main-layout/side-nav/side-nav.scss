@@ -1,4 +1,3 @@
-
 nz-content {
   margin: 0 16px;
 }
@@ -14,7 +13,7 @@ nz-breadcrumb {
   border-radius: 8px;
 }
 
-:host > nz-layout {
+:host>nz-layout {
   min-height: 100vh;
 }
 
@@ -40,9 +39,30 @@ nz-breadcrumb {
 }
 
 nz-sider {
-  height: 100vh;
-  background: var(--side-nav);
-  box-shadow: 0 0 25px 0 rgba(0, 0, 0, .05);
+  height: -webkit-fill-available;
+  // height: calc(100vh - 70px);
+  // background: var(--side-nav);
+  // box-shadow: 0 0 25px 0 rgba(0, 0, 0, .05);
+
+  border-radius: 5px;
+
+  /* Soft translucent background */
+  background: rgba(255, 255, 255, 0.6);
+
+  /* Frosted glass effect */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  /* Very soft layered shadow */
+  box-shadow:
+    0 8px 24px rgba(31, 38, 135, 0.08),
+    0 2px 6px rgba(31, 38, 135, 0.05);
+
+  /* Smooth edges */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2px;
+
+  transition: all 0.3s ease;
 }
 
 .trigger {
@@ -58,7 +78,8 @@ nz-sider {
   background: linear-gradient(90deg, #b2faba, #dbfeb3);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text; /* for modern browsers */
+  background-clip: text;
+  /* for modern browsers */
   text-fill-color: transparent;
 }
 
@@ -66,9 +87,7 @@ nz-sider {
 
 .nerd-sider-menu-icon {}
 
-.nerd-sider-menu-text {
-
-}
+.nerd-sider-menu-text {}
 
 .nav-mode-toggler-area {
   padding: 10px 0;

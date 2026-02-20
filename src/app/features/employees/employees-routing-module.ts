@@ -6,7 +6,8 @@ import { EditEmployee } from './pages/edit-employee/edit-employee';
 import { NewEmployee } from './pages/new-employee/new-employee';
 
 const routes: Routes = [
-  { path: '', component: AllEmployees },
+  { path: '', redirectTo: 'all', pathMatch: 'full' },
+  { path: 'all', component: AllEmployees },
   { path: 'new', component: NewEmployee },
   { path: 'view/:id', component: ViewEmployee },
   { path: 'edit/:id', component: EditEmployee }

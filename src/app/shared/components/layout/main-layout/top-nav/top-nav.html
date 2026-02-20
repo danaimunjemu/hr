@@ -1,78 +1,51 @@
-<header class="flex py-4 px-4 sm:px-10 min-h-[70px] tracking-wide relative z-50 top-nav-header">
+<header class="flex py-4 px-4 sm:px-10 tracking-wide relative z-50 top-nav-header">
   <div class="nerd-top-header flex flex-wrap items-center justify-between gap-5 w-full">
-    <div class="flex flex-col">
+    <div class="flex flex-row">
 
-      <div class="top-nav-user-greeting">
+      <div>
+        <img src="/images/brand/nerdsmart-full-logo-with-white.png" class="logo-img" />
+      </div>
+
+      <nz-divider nzType="vertical" />
+
+      <div class="nerd-top-nav-app-name">
+        {{ pageTitle }}
+      </div>
+
+      <!-- <div class="top-nav-user-greeting">
         Hello {{ user()?.employee?.firstName }} {{ user()?.employee?.lastName }}
       </div>
 
       <div class="top-nav-time-greeting">
         {{ getGreeting() }}
-      </div>
+      </div> -->
 
     </div>
 
     <div class="esg-score flex grow justify-center">
       <div class="flex esg-score-container">
         <div class="flex items-center" style="font-size: 14px; font-weight: 500; font-family: Orbitron, sans-serif">
-          <!-- <span>ESG Score </span> -->
+
+
+          <ul nz-menu nzMode="horizontal" style="border-bottom: none;">
+            <li nz-menu-item *ngFor="let item of menuItems" [routerLink]="item.link"
+              routerLinkActive="ant-menu-item-selected">
+              {{ item.label }}
+            </li>
+          </ul>
+
+
+
         </div>
-        <div>
-          <nz-select
-  [(ngModel)]="selectedPortalValue"
-  (ngModelChange)="onPortalChangeByValue($event)"
->
-  @for (portal of portals; track portal.value) {
-    <nz-option
-      [nzValue]="portal"
-      [nzLabel]="portal.label"
-    />
-  }
-</nz-select>
-        </div>
-<!--        @if (!esgReport()) {-->
-<!--          <nz-space nzSize="middle" class="ml-3">-->
-<!--            <nz-skeleton-element-->
-<!--              *nzSpaceItem-->
-<!--              nzType="avatar"-->
-<!--              [nzActive]="true"-->
-<!--              [nzSize]="'small'"-->
-<!--              [nzShape]="'circle'"-->
-<!--            ></nz-skeleton-element>-->
-<!--          </nz-space>-->
-<!--          <nz-space nzSize="middle" class="ml-5">-->
-<!--            <nz-skeleton-element-->
-<!--              *nzSpaceItem-->
-<!--              nzType="input"-->
-<!--              [nzActive]="true"-->
-<!--              [nzSize]="'small'"-->
-<!--              style="width:50px"-->
-<!--            ></nz-skeleton-element>-->
-<!--          </nz-space>-->
-<!--        }-->
-<!--        @if (esgReport()) {-->
-<!--          <div class="flex top-nav-esg-score">-->
-<!--            <div class="top-nav-gauge-container">-->
-<!--              <app-gauge-->
-<!--                [name]="'ESG Score'"-->
-<!--                [percent]="formattedTotalScore()"-->
-<!--                [color]="chartColor">-->
-<!--              </app-gauge>-->
-<!--            </div>-->
-<!--            <div class="flex items-center" style="font-size: 14px; font-weight: 500; font-family: Montserrat, sans-serif">-->
-<!--              {{formattedTotalScore()}} %-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        }-->
-        <!-- Score Here -->
       </div>
 
 
     </div>
-    <span class="hidden max-md:block"><nz-page-header nzTitle="Nerdscore" ></nz-page-header></span>
+    <span class="hidden max-md:block"><nz-page-header nzTitle="Nerdscore"></nz-page-header></span>
     <div id="collapseMenu"
-         class="max-lg:hidden lg:!block max-lg:before:fixed max-lg:before:bg-black max-lg:before:opacity-50 max-lg:before:inset-0 max-lg:before:z-50">
-      <button id="toggleClose" class="lg:hidden fixed top-2 right-4 z-[100] rounded-full bg-white w-9 h-9 flex items-center justify-center border border-gray-200 cursor-pointer">
+      class="max-lg:hidden lg:!block max-lg:before:fixed max-lg:before:bg-black max-lg:before:opacity-50 max-lg:before:inset-0 max-lg:before:z-50">
+      <button id="toggleClose"
+        class="lg:hidden fixed top-2 right-4 z-[100] rounded-full bg-white w-9 h-9 flex items-center justify-center border border-gray-200 cursor-pointer">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 fill-black" viewBox="0 0 320.591 320.591">
           <path
             d="M30.391 318.583a30.37 30.37 0 0 1-21.56-7.288c-11.774-11.844-11.774-30.973 0-42.817L266.643 10.665c12.246-11.459 31.462-10.822 42.921 1.424 10.362 11.074 10.966 28.095 1.414 39.875L51.647 311.295a30.366 30.366 0 0 1-21.256 7.288z"
@@ -90,17 +63,7 @@
 
       <div class="flex flex-row" style="margin-right: 0;">
 
-        <div>
-          <nerd-button
-            [label]="'Search anything'"
-            [disableButton]="false"
-            [loading]="false"
-            (click)="showModal()"
-            [style]="'white'"
-            [size]="'sm'"
-            [icon]="'search'"
-          />
-        </div>
+
 
 
         <!-- TODO Notification Badge -->
@@ -126,24 +89,60 @@
 
 
 
+        <div class="flex items-center">
+          <nz-segmented [nzOptions]="partOptions" nzShape="round" (nzValueChange)="selectMode($event)"
+            [ngModel]="selectedMode"></nz-segmented>
+        </div>
 
 
 
-        <div class="top-nav-button-icon" nzTooltipTitle="Log Out" nzTooltipPlacement="rightBottom" nz-tooltip (click)="logout()">
+
+        <div class="top-nav-button-icon" nzTooltipTitle="Log Out" nzTooltipPlacement="rightBottom" nz-tooltip
+          (click)="showModal()">
           <span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.5 8.04c-.041-1.16-.178-1.885-.636-2.453c-.653-.812-1.77-1.066-4.004-1.576l-1-.228c-3.395-.774-5.092-1.161-6.226-.27C2.5 4.405 2.5 6.126 2.5 9.568v4.864c0 3.442 0 5.164 1.134 6.055s2.83.504 6.225-.27l1.002-.228c2.233-.51 3.35-.764 4.003-1.576c.458-.567.595-1.293.636-2.453m3-6.948s3 2.21 3 3s-3 3-3 3m2.5-3H8.5"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
+              <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="m17 17l4 4m-2-10a8 8 0 1 0-16 0a8 8 0 0 0 16 0" />
+            </svg>
           </span>
         </div>
-        
 
-        
+        <div>
+          <div class="nav-user-area flex flex-row items-center gap-3 user-menu" nz-dropdown [nzDropdownMenu]="userMenu"
+            [nzPlacement]="'topRight'">
+            <div>
+              <nz-avatar [nzText]="
+              (username?.username ?? '').charAt(0) + (username?.username ?? '').charAt(0)
+            " style="color: #f56a00; background-color: #fde3cf"></nz-avatar>
+            </div>
+            <div>
+              <div class="flex flex-col leading-tight">
+                <div class="nav-user-name">
+                  {{ username!.username }}
+                </div>
+                <div class="nav-user-email">{{ username!.email }}</div>
+              </div>
+            </div>
+          </div>
+          <nz-dropdown-menu #userMenu="nzDropdownMenu">
+            <ul nz-menu>
+              <li nz-menu-item (click)="navigate('/app/profile/user')">Account Settings</li>
+              <li nz-menu-item (click)="logout()">Logout</li>
+            </ul>
+          </nz-dropdown-menu>
+        </div>
+
+
+
+
+
 
       </div>
       <button id="toggleOpen" class="lg:hidden cursor-pointer">
         <svg class="w-7 h-7" fill="#000" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
           <path fill-rule="evenodd"
-                d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                clip-rule="evenodd"></path>
+            d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+            clip-rule="evenodd"></path>
         </svg>
       </button>
     </div>
@@ -151,52 +150,40 @@
 </header>
 
 
-<nz-modal
-  [(nzVisible)]="isVisible"
-  [nzTitle]="modalTitle"
-      [nzContent]="modalContent"
-      [nzFooter]="modalFooter"
-  [nzWidth]="760"
-  (nzOnCancel)="handleCancel()">
-  <ng-template #modalTitle>Custom Modal Title</ng-template>
+<nz-modal [(nzVisible)]="isVisible" [nzTitle]="modalTitle" [nzContent]="modalContent" [nzFooter]="modalFooter"
+  [nzWidth]="760" (nzOnCancel)="handleCancel()">
+  <ng-template #modalTitle>Search the application</ng-template>
 
-      <ng-template #modalContent>
-        <div class="modal-search">
-    <nz-input-group [nzPrefix]="searchIcon">
-      <input
-        #searchInput
-        nz-input
-        placeholder="Search pages, modules, and actions..."
-        [(ngModel)]="searchTerm"
-        (ngModelChange)="onSearchChange($event)" />
-    </nz-input-group>
-    <ng-template #searchIcon>
-      <span nz-icon nzType="search"></span>
-    </ng-template>
-  </div>
-
-  <div class="search-hint">Use Ctrl/Cmd + K to open, arrows to navigate, Enter to open.</div>
-
-  <nz-list *ngIf="searchResults.length; else emptySearchState" nzSize="small" class="search-results">
-    <nz-list-item
-      *ngFor="let item of searchResults; let i = index"
-      [class.active]="i === activeIndex"
-      (mouseenter)="activeIndex = i"
-      (click)="navigate(item.path)">
-      <nz-list-item-meta [nzTitle]="item.name" [nzDescription]="item.description"></nz-list-item-meta>
-      <div class="search-path">{{ item.path }}</div>
-    </nz-list-item>
-  </nz-list>
-
-  <ng-template #emptySearchState>
-    <div class="search-empty">
-      <span *ngIf="!searchTerm">Start typing to search the application.</span>
-      <span *ngIf="searchTerm">No matching pages found.</span>
+  <ng-template #modalContent>
+    <div class="modal-search">
+      <nz-input-group [nzPrefix]="searchIcon">
+        <input #searchInput nz-input placeholder="Search pages, modules, and actions..." [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearchChange($event)" />
+      </nz-input-group>
+      <ng-template #searchIcon>
+        <span nz-icon nzType="search"></span>
+      </ng-template>
     </div>
-  </ng-template>
-      </ng-template>
 
-      <ng-template #modalFooter>
-      </ng-template>
-  
+    <div class="search-hint">Use Ctrl/Cmd + K to open, arrows to navigate, Enter to open.</div>
+
+    <nz-list *ngIf="searchResults.length; else emptySearchState" nzSize="small" class="search-results">
+      <nz-list-item *ngFor="let item of searchResults; let i = index" [class.active]="i === activeIndex"
+        (mouseenter)="activeIndex = i" (click)="navigate(item.path)">
+        <nz-list-item-meta [nzTitle]="item.name" [nzDescription]="item.description"></nz-list-item-meta>
+        <div class="search-path">{{ item.path }}</div>
+      </nz-list-item>
+    </nz-list>
+
+    <ng-template #emptySearchState>
+      <div class="search-empty">
+        <span *ngIf="!searchTerm">Start typing to search the application.</span>
+        <span *ngIf="searchTerm">No matching pages found.</span>
+      </div>
+    </ng-template>
+  </ng-template>
+
+  <ng-template #modalFooter>
+  </ng-template>
+
 </nz-modal>
