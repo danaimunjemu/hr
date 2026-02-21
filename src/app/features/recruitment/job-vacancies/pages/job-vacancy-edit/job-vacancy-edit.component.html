@@ -1,0 +1,158 @@
+<div class="page-header">
+    <div class="header-title">
+        <button nz-button nzType="link" [routerLink]="['/app/recruitment/job-vacancies']">
+            <span nz-icon nzType="arrow-left"></span>
+            Back to List
+        </button>
+        <h1>Edit Job Vacancy</h1>
+    </div>
+</div>
+
+<nz-spin [nzSpinning]="loading()">
+    <nz-card [nzBordered]="false" class="form-container card">
+        <form nz-form [formGroup]="vacancyForm" (ngSubmit)="submitForm()" nzLayout="vertical">
+            <div nz-row [nzGutter]="24">
+                <!-- Position, OU & Company -->
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Position</nz-form-label>
+                        <nz-form-control nzErrorTip="Please select a position">
+                            <nz-select formControlName="positionId" nzPlaceHolder="Select Position" nzShowSearch>
+                                <nz-option *ngFor="let p of positions()" [nzLabel]="p.name"
+                                    [nzValue]="p.id"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Organisational Unit</nz-form-label>
+                        <nz-form-control nzErrorTip="Please select an organisational unit">
+                            <nz-select formControlName="organisationalUnitId" nzPlaceHolder="Select OU" nzShowSearch>
+                                <nz-option *ngFor="let u of units()" [nzLabel]="u.name" [nzValue]="u.id"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Company</nz-form-label>
+                        <nz-form-control nzErrorTip="Please select a company">
+                            <nz-select formControlName="companyId" nzPlaceHolder="Select Company" nzShowSearch>
+                                <nz-option *ngFor="let c of companies()" [nzLabel]="c.name"
+                                    [nzValue]="c.id"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+
+                <!-- Managers -->
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Hiring Manager</nz-form-label>
+                        <nz-form-control nzErrorTip="Please select hiring manager">
+                            <nz-select formControlName="hiringManagerId" nzPlaceHolder="Select Manager" nzShowSearch>
+                                <nz-option *ngFor="let e of employees()" [nzLabel]="e.name"
+                                    [nzValue]="e.id"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Head of Department</nz-form-label>
+                        <nz-form-control nzErrorTip="Please select HOD">
+                            <nz-select formControlName="headOfDepartmentId" nzPlaceHolder="Select HOD" nzShowSearch>
+                                <nz-option *ngFor="let e of employees()" [nzLabel]="e.name"
+                                    [nzValue]="e.id"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                        <nz-form-label nzRequired>HR Manager</nz-form-label>
+                        <nz-form-control nzErrorTip="Please select HR manager">
+                            <nz-select formControlName="hrManagerId" nzPlaceHolder="Select HR Manager" nzShowSearch>
+                                <nz-option *ngFor="let e of employees()" [nzLabel]="e.name"
+                                    [nzValue]="e.id"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+
+                <!-- Details -->
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Job Posting Type</nz-form-label>
+                        <nz-form-control>
+                            <nz-select formControlName="jobPostingType">
+                                <nz-option *ngFor="let type of postingTypes" [nzLabel]="type"
+                                    [nzValue]="type"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Number of Positions</nz-form-label>
+                        <nz-form-control nzErrorTip="Required (min 1)">
+                            <input nz-input type="number" formControlName="numberOfPositions" min="1" />
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="8" class="flex items-center h-full pt-8">
+                    <nz-form-label class="mr-4">Internal Opportunity</nz-form-label>
+                    <nz-form-control>
+                        <nz-switch formControlName="internalOpportunity"></nz-switch>
+                    </nz-form-control>
+                </div>
+
+                <!-- Dates -->
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Requested Date</nz-form-label>
+                        <nz-form-control>
+                            <nz-date-picker formControlName="requestedDate" class="w-full"></nz-date-picker>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Start Date</nz-form-label>
+                        <nz-form-control>
+                            <nz-date-picker formControlName="startDate" class="w-full"></nz-date-picker>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Target Start Date</nz-form-label>
+                        <nz-form-control>
+                            <nz-date-picker formControlName="targetStartDate" class="w-full"></nz-date-picker>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+
+                <!-- Motivation -->
+                <div nz-col [nzSpan]="24">
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Motivation / Justification</nz-form-label>
+                        <nz-form-control nzErrorTip="Motivation is required">
+                            <textarea nz-input formControlName="motivation" rows="4"></textarea>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+
+                <div nz-col [nzSpan]="24" class="text-right mt-6">
+                    <nz-space>
+                        <button nz-button nzType="default" [routerLink]="['/app/recruitment/job-vacancies']"
+                            type="button">Cancel</button>
+                        <button nz-button nzType="primary" [nzLoading]="submitting()" type="submit">Update
+                            Vacancy</button>
+                    </nz-space>
+                </div>
+            </div>
+        </form>
+    </nz-card>
+</nz-spin>

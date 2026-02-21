@@ -4,64 +4,69 @@
 
 .page-content {
   padding: 24px;
+  background-color: #f5f7fa;
+  min-height: calc(100vh - 64px);
 }
 
-.content-card {
-  margin-bottom: 24px;
+.chart-container {
+  min-height: 300px;
+  margin-top: 16px;
 }
 
-.job-stats {
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #f0f0f0;
-}
+.events {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 
-.job-meta {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 16px;
-  font-size: 14px;
-  color: #8c8c8c;
-}
-
-.card-actions {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  
-  a {
-    font-size: 14px;
+  li {
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
   }
 }
 
-.candidate-status {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  
-  .date {
-    color: #8c8c8c;
-    font-size: 12px;
-  }
-}
-
-.loading-container {
-  display: flex;
-  justify-content: center;
-  padding: 50px;
-}
-
-.error-container {
-  margin-bottom: 24px;
+:host ::v-deep .ant-picker-calendar-date-content {
+  height: 85px;
+  overflow-y: auto;
 }
 
 nz-card {
-  border-radius: 8px;
-  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.03);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: none;
+  margin-bottom: 16px;
+
+  &::v-deep .ant-card-head {
+    border-bottom: 1px solid #f0f0f0;
+    min-height: 48px;
+    padding: 0 20px;
+
+    .ant-card-head-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1f2937;
+    }
+  }
+}
+
+.text-blue-500 {
+  color: #3b82f6;
+}
+
+.text-green-500 {
+  color: #10b981;
+}
+
+.text-orange-500 {
+  color: #f59e0b;
+}
+
+.text-purple-500 {
+  color: #8b5cf6;
 }
 
 div[nz-col] {
-  margin-bottom: 16px;
+  margin-bottom: 0px; // Reset from previous
 }

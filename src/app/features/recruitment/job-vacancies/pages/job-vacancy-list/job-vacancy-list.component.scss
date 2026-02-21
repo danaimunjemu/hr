@@ -1,0 +1,58 @@
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    p {
+        margin: 4px 0 0;
+        color: #666;
+    }
+}
+
+.card {
+    background: #fff;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.filter-section {
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        font-size: 13px;
+        color: #333;
+    }
+}
+
+.flex {
+    display: flex;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.items-end {
+    align-items: flex-end;
+}
+
+.mr-2 {
+    margin-right: 8px;
+}
+
+.mt-4 {
+    margin-top: 16px;
+}
+
+.w-full {
+    width: 100%;
+}

@@ -1,0 +1,99 @@
+<div class="page-header">
+    <div class="header-title">
+        <h1>Job Vacancies</h1>
+        <p>Manage and track job vacancy requests across the organization.</p>
+    </div>
+    <div class="header-actions">
+        <button nz-button nzType="primary" [routerLink]="['create']">
+            <span nz-icon nzType="plus"></span>
+            New Vacancy
+        </button>
+    </div>
+</div>
+
+<div class="filter-section card">
+    <div nz-row [nzGutter]="16">
+        <div nz-col [nzSpan]="6">
+            <label>Status</label>
+            <nz-select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)"
+                nzPlaceHolder="Filter by Status" nzAllowClear class="w-full">
+                <nz-option *ngFor="let status of statusOptions" [nzLabel]="status" [nzValue]="status"></nz-option>
+            </nz-select>
+        </div>
+        <div nz-col [nzSpan]="6">
+            <label>Organisational Unit</label>
+            <nz-input-group [nzPrefix]="ouIcon">
+                <input type="text" nz-input [ngModel]="ouFilter()" (ngModelChange)="ouFilter.set($event)"
+                    placeholder="Filter by OU" />
+            </nz-input-group>
+            <ng-template #ouIcon><span nz-icon nzType="cluster"></span></ng-template>
+        </div>
+        <div nz-col [nzSpan]="6" class="flex items-center">
+            <label class="mr-2">Internal Opportunity</label>
+            <nz-switch [ngModel]="internalOnly()" (ngModelChange)="internalOnly.set($event)"></nz-switch>
+        </div>
+        <div nz-col [nzSpan]="6" class="flex items-end">
+            <button nz-button (click)="loadVacancies()">
+                <span nz-icon nzType="reload"></span>
+                Refresh
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="table-section card mt-4">
+    <nz-table #basicTable [nzData]="filteredVacancies()" [nzLoading]="loading()" [nzBordered]="true" nzSize="middle">
+        <thead>
+            <tr>
+                <th>Position</th>
+                <th>Organisational Unit</th>
+                <th>Hiring Manager</th>
+                <th>Status</th>
+                <th>Positions</th>
+                <th>Filled</th>
+                <th>Requested Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of basicTable.data">
+                <td>
+                    <div class="font-semibold">{{ data.position.name }}</div>
+                    <div class="text-xs text-gray-500">{{ data.position.code }}</div>
+                </td>
+                <td>{{ data.organisationalUnit.name }}</td>
+                <td>{{ data.hiringManager.firstName }} {{ data.hiringManager.lastName }}</td>
+                <td>
+                    <nz-tag [nzColor]="getStatusColor(data.status)">
+                        {{ data.status }}
+                    </nz-tag>
+                </td>
+                <td class="text-center">{{ data.numberOfPositions }}</td>
+                <td class="text-center">{{ data.positionsFilled }}</td>
+                <td>{{ data.requestedDate | date:'mediumDate' }}</td>
+                <td>
+                    <nz-space>
+                        <button nz-button nzType="default" nzSize="small" [routerLink]="[data.id]"
+                            nzTooltipTitle="View Details" nz-tooltip>
+                            <span nz-icon nzType="eye"></span>
+                        </button>
+                        <button nz-button nzType="default" nzSize="small" [routerLink]="[data.id, 'edit']"
+                            nzTooltipTitle="Edit" nz-tooltip>
+                            <span nz-icon nzType="edit"></span>
+                        </button>
+                        <button nz-button nzType="default" nzSize="small" nzDanger nz-popconfirm
+                            nzPopconfirmTitle="Are you sure you want to delete this vacancy?"
+                            (nzOnConfirm)="deleteVacancy(data.id)" nzTooltipTitle="Delete" nz-tooltip>
+                            <span nz-icon nzType="delete"></span>
+                        </button>
+                        <button *ngIf="data.status === 'APPROVED' && data.positionsFilled < data.numberOfPositions"
+                            nz-button nzType="primary" nzSize="small" (click)="fulfillVacancy(data.id)"
+                            nzTooltipTitle="Fulfill Position" nz-tooltip>
+                            <span nz-icon nzType="check-circle"></span>
+                        </button>
+                    </nz-space>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</div>

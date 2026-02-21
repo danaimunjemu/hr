@@ -5,6 +5,7 @@ import { RecruitmentRoutingModule } from './recruitment-routing-module';
 import { AntDesignModules } from '../../core/modules/antdesign.module';
 import { SharedModule } from '../../shared/shared-module';
 import { RecruitmentPageComponent } from './pages/recruitment-page/recruitment-page.component';
+import { NzSpaceModule } from 'ng-zorro-antd/space';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { RecruitmentPageComponent } from './pages/recruitment-page/recruitment-p
     CommonModule,
     RecruitmentRoutingModule,
     AntDesignModules,
-    SharedModule
+    SharedModule,
+    NzSpaceModule
   ]
 })
 export class RecruitmentModule { }

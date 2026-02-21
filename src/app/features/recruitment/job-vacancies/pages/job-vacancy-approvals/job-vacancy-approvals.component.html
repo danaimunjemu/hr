@@ -1,0 +1,58 @@
+<div class="page-header">
+    <div class="header-title">
+        <h1>Pending Approvals</h1>
+        <p>Review and action pending job vacancy requests for your department or HR group.</p>
+    </div>
+    <div class="header-actions">
+        <nz-radio-group [ngModel]="role()" (ngModelChange)="role.set($event); onRoleChange()" nzButtonStyle="solid">
+            <label nz-radio-button nzValue="HR">HR View</label>
+            <label nz-radio-button nzValue="HOD">HOD View</label>
+        </nz-radio-group>
+    </div>
+</div>
+
+<nz-card [nzBordered]="false" class="card">
+    <nz-table #approvalTable [nzData]="pendingApprovals()" [nzLoading]="loading()" [nzBordered]="true" nzSize="middle">
+        <thead>
+            <tr>
+                <th>Position</th>
+                <th>Requested By</th>
+                <th>OU</th>
+                <th>Requested Date</th>
+                <th>HOD Approved</th>
+                <th>HR Approved</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of approvalTable.data">
+                <td>{{ data.position.name }}</td>
+                <td>{{ data.hiringManager.firstName }} {{ data.hiringManager.lastName }}</td>
+                <td>{{ data.organisationalUnit.name }}</td>
+                <td>{{ data.requestedDate | date:'mediumDate' }}</td>
+                <td>
+                    <nz-tag [nzColor]="data.headOfDepartmentApprovalStatus === 'APPROVE' ? 'green' : 'gold'">
+                        {{ data.headOfDepartmentApprovalStatus }}
+                    </nz-tag>
+                </td>
+                <td>
+                    <nz-tag [nzColor]="data.hrManagerApprovalStatus === 'APPROVE' ? 'green' : 'gold'">
+                        {{ data.hrManagerApprovalStatus }}
+                    </nz-tag>
+                </td>
+                <td>
+                    <nz-space>
+                        <button nz-button nzType="primary" nzSize="small" (click)="handleApproval(data.id)">
+                            <span nz-icon nzType="check"></span>
+                            Action
+                        </button>
+                        <button nz-button nzType="default" nzSize="small"
+                            [routerLink]="['/app/recruitment/job-vacancies', data.id]">
+                            Details
+                        </button>
+                    </nz-space>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</nz-card>

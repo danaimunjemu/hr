@@ -1,59 +1,125 @@
-<nz-page-header nzTitle="Recruitment">
+<nz-page-header nzTitle="Recruitment Dashboard">
   <nz-page-header-extra>
-    <button nz-button>Job Board</button>
-    <button nz-button nzType="primary">Post Job</button>
+    <nz-space>
+      <button *nzSpaceItem nz-button [routerLink]="['job-vacancies']">View Vacancies</button>
+      <button *nzSpaceItem nz-button nzType="primary" [routerLink]="['job-vacancies/create']">
+        <span nz-icon nzType="plus"></span>
+        Post Job
+      </button>
+    </nz-space>
   </nz-page-header-extra>
 </nz-page-header>
 
 <div class="page-content">
-  <!-- Loading & Error States -->
-  <div *ngIf="loading" class="loading-container">
-    <nz-spin nzSimple></nz-spin>
-  </div>
+  <nz-spin [nzSpinning]="loading()">
+    <div *ngIf="!loading()">
 
-  <div *ngIf="error" class="error-container">
-    <nz-alert nzType="error" [nzMessage]="error" nzShowIcon></nz-alert>
-  </div>
-
-  <div *ngIf="!loading && !error">
-    <!-- Active Jobs -->
-    <nz-card nzTitle="Active Job Postings" class="content-card">
+      <!-- Stats Cards -->
       <div nz-row [nzGutter]="16">
-        <div nz-col [nzSpan]="8" *ngFor="let job of jobs">
-          <nz-card nzType="inner" [nzTitle]="job.title">
-            <div class="job-stats">
-              <nz-statistic [nzValue]="job.applicants" [nzTitle]="'Applicants'" [nzValueStyle]="{ fontSize: '16px' }"></nz-statistic>
-              <nz-statistic [nzValue]="job.interviews" [nzTitle]="'Interviews'" [nzValueStyle]="{ fontSize: '16px' }"></nz-statistic>
-            </div>
-            <div class="job-meta">
-              <span class="location">{{ job.location }}</span>
-              <span class="type">{{ job.type }}</span>
-            </div>
-            <div class="card-actions">
-              <a (click)="viewApplicants(job.id)">View Applicants</a>
-              <nz-divider nzType="vertical"></nz-divider>
-              <a>Edit</a>
-            </div>
+        <div nz-col [nzSpan]="6">
+          <nz-card>
+            <nz-statistic [nzValue]="stats().totalJobs" [nzTitle]="'Active Jobs'" [nzPrefix]="jobsIcon"></nz-statistic>
+            <ng-template #jobsIcon><span nz-icon nzType="profile" class="text-blue-500"></span></ng-template>
+          </nz-card>
+        </div>
+        <div nz-col [nzSpan]="6">
+          <nz-card>
+            <nz-statistic [nzValue]="stats().totalApplicants" [nzTitle]="'Total Applicants'"
+              [nzPrefix]="applicantsIcon"></nz-statistic>
+            <ng-template #applicantsIcon><span nz-icon nzType="team" class="text-green-500"></span></ng-template>
+          </nz-card>
+        </div>
+        <div nz-col [nzSpan]="6">
+          <nz-card>
+            <nz-statistic [nzValue]="stats().pendingInterviews" [nzTitle]="'Pending Interviews'"
+              [nzPrefix]="interviewsIcon"></nz-statistic>
+            <ng-template #interviewsIcon><span nz-icon nzType="calendar" class="text-orange-500"></span></ng-template>
+          </nz-card>
+        </div>
+        <div nz-col [nzSpan]="6">
+          <nz-card>
+            <nz-statistic [nzValue]="stats().hiresThisMonth" [nzTitle]="'Hires This Month'"
+              [nzPrefix]="hiresIcon"></nz-statistic>
+            <ng-template #hiresIcon><span nz-icon nzType="user-add" class="text-purple-500"></span></ng-template>
           </nz-card>
         </div>
       </div>
-    </nz-card>
 
-    <!-- Recent Candidates -->
-    <nz-card nzTitle="Recent Candidates" class="content-card">
-      <nz-list nzItemLayout="horizontal">
-        <nz-list-item *ngFor="let candidate of candidates">
-          <nz-list-item-meta
-            [nzAvatar]="candidate.avatar"
-            [nzTitle]="candidate.name"
-            [nzDescription]="'Applied for ' + candidate.position">
-          </nz-list-item-meta>
-          <div class="candidate-status">
-            <nz-tag [nzColor]="getStatusColor(candidate.status)">{{ candidate.status }}</nz-tag>
-            <span class="date">{{ candidate.appliedDate }}</span>
-          </div>
-        </nz-list-item>
-      </nz-list>
-    </nz-card>
-  </div>
+      <div nz-row [nzGutter]="16" class="mt-6">
+        <!-- Recruitment Trends Chart -->
+        <div nz-col [nzXl]="16" [nzLg]="16" [nzMd]="24" [nzSm]="24" [nzXs]="24">
+          <nz-card nzTitle="Recruitment Trends (Applicants per Month)">
+            <div #chartContainer class="chart-container"></div>
+          </nz-card>
+        </div>
+
+        <!-- Recent Candidates -->
+        <div nz-col [nzXl]="8" [nzLg]="8" [nzMd]="24" [nzSm]="24" [nzXs]="24">
+          <nz-card nzTitle="Recent Candidates">
+            <nz-list nzItemLayout="horizontal" [nzDataSource]="candidates()" [nzRenderItem]="candidateItem">
+              <ng-template #candidateItem let-item>
+                <nz-list-item>
+                  <nz-list-item-meta [nzAvatar]="item.avatar" [nzTitle]="item.name" [nzDescription]="item.position">
+                  </nz-list-item-meta>
+                  <nz-tag [nzColor]="getStatusColor(item.status)">{{ item.status }}</nz-tag>
+                </nz-list-item>
+              </ng-template>
+            </nz-list>
+          </nz-card>
+        </div>
+      </div>
+
+      <div nz-row [nzGutter]="16" class="mt-6">
+        <!-- Job Vacancies Table -->
+        <div nz-col [nzSpan]="24">
+          <nz-card nzTitle="Job Vacancies Overview">
+            <nz-table #vacanciesTable [nzData]="vacancies()" [nzSize]="'middle'" [nzBordered]="true">
+              <thead>
+                <tr>
+                  <th>Position</th>
+                  <th>Department</th>
+                  <th>Hiring Manager</th>
+                  <th>Status</th>
+                  <th>Closing Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of vacanciesTable.data">
+                  <td>
+                    <div class="font-semibold">{{ data.position.name }}</div>
+                  </td>
+                  <td>{{ data.organisationalUnit.name }}</td>
+                  <td>{{ data.hiringManager.firstName }} {{ data.hiringManager.lastName }}</td>
+                  <td>
+                    <nz-tag [nzColor]="getJobVacancyStatusColor(data.status)">{{ data.status }}</nz-tag>
+                  </td>
+                  <td>{{ data.closingDate | date:'mediumDate' }}</td>
+                  <td>
+                    <a [routerLink]="['job-vacancies', data.id]">View</a>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </nz-card>
+        </div>
+      </div>
+
+      <div nz-row [nzGutter]="16" class="mt-6">
+        <!-- Interview Calendar -->
+        <div nz-col [nzSpan]="24">
+          <nz-card nzTitle="Interview Calendar">
+            <nz-calendar>
+              <ul *nzDateCell="let date" class="events">
+                <li *ngFor="let item of getListData(date)">
+                  <nz-badge [nzStatus]="'processing'" [nzText]="item.time + ' - ' + item.candidate"></nz-badge>
+                </li>
+              </ul>
+            </nz-calendar>
+          </nz-card>
+        </div>
+      </div>
+
+    </div>
+  </nz-spin>
 </div>

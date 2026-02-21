@@ -1,0 +1,25 @@
+.page-header {
+    margin-bottom: 24px;
+
+    h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    p {
+        margin: 4px 0 0;
+        color: #666;
+    }
+}
+
+.card {
+    background: #fff;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.mt-4 {
+    margin-top: 16px;
+}

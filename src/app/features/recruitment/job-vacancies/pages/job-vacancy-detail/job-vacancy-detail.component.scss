@@ -1,0 +1,56 @@
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    .header-title {
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        button {
+            padding-left: 0;
+        }
+    }
+}
+
+.card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.motivation-text {
+    background: #f9f9f9;
+    padding: 16px;
+    border-radius: 4px;
+    border-left: 4px solid #1890ff;
+    font-style: italic;
+    white-space: pre-wrap;
+}
+
+.stakeholder-item {
+    label {
+        display: block;
+        font-size: 12px;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    div {
+        font-weight: 500;
+    }
+}
+
+.mt-4 {
+    margin-top: 16px;
+}
+
+.my-2 {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}

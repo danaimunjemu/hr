@@ -1,0 +1,57 @@
+<div class="page-header">
+    <div class="header-title">
+        <h1>Job Vacancy Requests</h1>
+        <p>View and manage vacancy requests by different workflow categories.</p>
+    </div>
+</div>
+
+<nz-card [nzBordered]="false" class="card">
+    <nz-tabs [nzSelectedIndex]="activeTabIndex()" (nzSelectedIndexChange)="onTabChange($event)" nzSize="large">
+        <nz-tab nzTitle="All Requests"></nz-tab>
+        <nz-tab nzTitle="By Status"></nz-tab>
+        <nz-tab nzTitle="By HR Approval"></nz-tab>
+        <nz-tab nzTitle="By HOD Approval"></nz-tab>
+        <nz-tab nzTitle="Active Internal"></nz-tab>
+    </nz-tabs>
+
+    <nz-table #requestTable [nzData]="requests()" [nzLoading]="loading()" [nzBordered]="true" nzSize="middle"
+        class="mt-4">
+        <thead>
+            <tr>
+                <th>Position</th>
+                <th>Hiring Manager</th>
+                <th>OU</th>
+                <th>HR Approval</th>
+                <th>HOD Approval</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of requestTable.data">
+                <td>{{ data.position.name }}</td>
+                <td>{{ data.hiringManager.firstName }} {{ data.hiringManager.lastName }}</td>
+                <td>{{ data.organisationalUnit.name }}</td>
+                <td>
+                    <nz-tag [nzColor]="getStatusColor(data.hrManagerApprovalStatus)">
+                        {{ data.hrManagerApprovalStatus }}
+                    </nz-tag>
+                </td>
+                <td>
+                    <nz-tag [nzColor]="getStatusColor(data.headOfDepartmentApprovalStatus)">
+                        {{ data.headOfDepartmentApprovalStatus }}
+                    </nz-tag>
+                </td>
+                <td>
+                    <nz-tag [nzColor]="getStatusColor(data.status)">
+                        {{ data.status }}
+                    </nz-tag>
+                </td>
+                <td>
+                    <button nz-button nzType="link"
+                        [routerLink]="['/app/recruitment/job-vacancies', data.id]">View</button>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</nz-card>
