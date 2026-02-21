@@ -106,7 +106,13 @@ nz-header {
   align-items: center;
   padding: 5px;
   transition: all .5s;
-  color: var(--color-text);
+  color: #DAE0E5;
+  background-color: #343947;
+  border-radius: 8px;
+  aspect-ratio: 1/1;
+  justify-content: center;
+  font-size: 10px;
+  height: 32px;
 }
 
 .search-nav-icon {
@@ -192,6 +198,7 @@ nz-header {
 .top-nav-header {
   padding: 0px !important;
   background: linear-gradient(to right, #1B212D, #1C212D);
+  min-height: 50.78px;
 }
 
 .esg-score-container {
@@ -223,13 +230,13 @@ nz-header {
 .nav-user-name {
   font-size: 11px;
   font-weight: 500;
-  color: var(--color-text);
+  color: #848995;
 }
 
 .nav-user-email {
   font-size: 9px;
   font-weight: 400;
-  color: var(--color-text);
+  color: #848995;
 }
 
 .user-menu {
@@ -237,10 +244,11 @@ nz-header {
   margin: 0 5px;
   border-radius: 12px;
   transition: all .5s ease;
+  max-height: 32px;
 }
 
 .user-menu:hover {
-  background: var(--color-bg);
+  background: #343945;
   cursor: pointer;
 }
 
@@ -256,4 +264,10 @@ nz-header {
   color: white;
   font-family: "Montserrat", sans-serif;
   font-weight: 600;
+}
+
+.top-nav-add {
+  margin-left: 5px;
+  background-color: #F9DA57;
+  color: #2E2B18;
 }

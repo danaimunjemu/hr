@@ -1,6 +1,6 @@
 <nz-page-header nzTitle="All Employees" nzBackIcon>
   <nz-page-header-extra>
-    <button nz-button nzType="primary" routerLink="/app/employees/new">
+    <button nz-button nzType="primary" routerLink="/app/onboarding">
       <span nz-icon nzType="plus"></span>
       New Employee
     </button>
@@ -10,9 +10,9 @@
   <nz-card>
     <!-- Use @if for error handling -->
     @if (error()) {
-      <div class="mb-4">
-        <nz-alert [nzType]="'error'" [nzMessage]="error()!" nzShowIcon></nz-alert>
-      </div>
+    <div class="mb-4">
+      <nz-alert [nzType]="'error'" [nzMessage]="error()!" nzShowIcon></nz-alert>
+    </div>
     }
 
     <!-- Bind directly to computed signals -->
@@ -32,42 +32,43 @@
       <tbody>
         <!-- Iterate over the table's processed data -->
         @for (data of basicTable.data; track data.id) {
-          <tr>
-            <td>{{ data.employeeNumber }}</td>
-            <td>{{ data.firstName }} {{ data.lastName }}</td>
-            <td>{{ data.email }}</td>
-            <td>{{ data.jobDescription?.name || '-' }}</td>
-            <td>{{ data.organizationalUnit?.name || '-' }}</td>
-            <td>
-              <nz-tag [nzColor]="data.employmentStatus === 'ACTIVE' ? 'success' : 'error'">
-                {{ data.employmentStatus }}
-              </nz-tag>
-            </td>
-            <td>
-              @if (data.user?.enabled) {
-                <nz-tag nzColor="success">Active</nz-tag>
-              } @else if (data.user && !data.user.enabled) {
-                <nz-tag nzColor="warning">Pending</nz-tag>
-              } @else {
-                <nz-tag nzColor="default">No User</nz-tag>
+        <tr>
+          <td>{{ data.employeeNumber }}</td>
+          <td>{{ data.firstName }} {{ data.lastName }}</td>
+          <td>{{ data.email }}</td>
+          <td>{{ data.jobDescription?.name || '-' }}</td>
+          <td>{{ data.organizationalUnit?.name || '-' }}</td>
+          <td>
+            <nz-tag [nzColor]="data.employmentStatus === 'ACTIVE' ? 'success' : 'error'">
+              {{ data.employmentStatus }}
+            </nz-tag>
+          </td>
+          <td>
+            @if (data.user?.enabled) {
+            <nz-tag nzColor="success">Active</nz-tag>
+            } @else if (data.user && !data.user.enabled) {
+            <nz-tag nzColor="warning">Pending</nz-tag>
+            } @else {
+            <nz-tag nzColor="default">No User</nz-tag>
+            }
+          </td>
+          <td>
+            <nz-space>
+              @if (!data.user || !data.user.enabled) {
+              <button *nzSpaceItem nz-button nzType="primary" nzSize="small" nzGhost [routerLink]="['/app/onboarding']"
+                [queryParams]="{ employeeId: data.id }">
+                Continue Onboarding
+              </button>
               }
-            </td>
-            <td>
-              <nz-space>
-                @if (!data.user || !data.user.enabled) {
-                  <button *nzSpaceItem nz-button nzType="primary" nzSize="small" nzGhost [routerLink]="['/app/onboarding']" [queryParams]="{ employeeId: data.id }">
-                    Continue Onboarding
-                  </button>
-                }
-                <a *nzSpaceItem nz-button nzType="default" nzSize="small" [routerLink]="['/app/employees/view', data.id]">
-                  <span nz-icon nzType="eye" nzTheme="outline"></span>
-                </a>
-                <a *nzSpaceItem nz-button nzType="primary" nzSize="small" [routerLink]="['/app/employees/edit', data.id]">
-                  <span nz-icon nzType="edit" nzTheme="outline"></span>
-                </a>
-              </nz-space>
-            </td>
-          </tr>
+              <a *nzSpaceItem nz-button nzType="default" nzSize="small" [routerLink]="['/app/employees/view', data.id]">
+                <span nz-icon nzType="eye" nzTheme="outline"></span>
+              </a>
+              <a *nzSpaceItem nz-button nzType="primary" nzSize="small" [routerLink]="['/app/employees/edit', data.id]">
+                <span nz-icon nzType="edit" nzTheme="outline"></span>
+              </a>
+            </nz-space>
+          </td>
+        </tr>
         }
       </tbody>
     </nz-table>

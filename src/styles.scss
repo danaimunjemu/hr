@@ -1104,13 +1104,31 @@ $line-height-lg: 1.75;
   color: #D8DBE4;
 }
 
-.ant-menu-item-selected>.ant-menu-title-content {
-  background: #2E313A;
-  padding: 8px 16px;
-  border-radius: 8px;
+.top-nav-menu-container {
+  .ant-menu-item-selected>.ant-menu-title-content {
+    background: #2E313A;
+    padding: 8px 16px;
+    border-radius: 8px;
+  }
 }
+
 
 .ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-item,
 .ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-submenu {
   font-size: 12px;
+}
+
+.top-nav-segmented {
+  margin-right: 5px;
+
+  .ant-segmented-shape-round {
+    background: #343947;
+    color: #DAE0E5;
+  }
+
+  .ant-segmented:not(.ant-segmented-disabled):hover,
+  .ant-segmented:not(.ant-segmented-disabled):focus {
+    background: #343947;
+    color: #DAE0E5;
+  }
 }

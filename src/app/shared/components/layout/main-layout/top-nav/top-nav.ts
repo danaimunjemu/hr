@@ -88,8 +88,7 @@ export class TopNav implements OnInit {
     'employees': {
       title: 'Employees',
       items: [
-        { label: 'All Employees', link: '/app/employees' },
-        { label: 'New Employee', link: '/app/employees/new' }
+        { label: 'All Employees', link: '/app/employees/all' },
       ]
     },
     'time-and-leave': {

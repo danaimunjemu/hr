@@ -38,11 +38,13 @@
 
     <nz-divider nzPlain nzText="Main Menu" [nzOrientation]="isCollapsed ? 'center' : 'left'" />
 
+
+
     <li nz-menu-item routerLink="/app/dashboard" routerLinkActive="ant-menu-item-selected"
       [ngClass]="{ 'collapsed-side-li': isCollapsed }">
       <div class="flex flex-row">
         <nz-icon>
-          <span class="nerd-sider-menu-icon">
+          <span class="nerd-sider-menu-icon" nzTooltipTitle="Dashboard" nzTooltipPlacement="right" nz-tooltip>
             <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
               <path fill="currentColor"
                 d="M14 3h-4C6.229 3 4.343 3 3.172 4.172S2 7.229 2 11s0 5.657 1.172 6.828S6.229 19 10 19h4c3.771 0 5.657 0 6.828-1.172S22 14.771 22 11s0-5.657-1.172-6.828S17.771 3 14 3"
@@ -60,7 +62,7 @@
       [ngClass]="{ 'collapsed-side-li': isCollapsed }">
       <div class="flex flex-row">
         <nz-icon>
-          <span class="nerd-sider-menu-icon">
+          <span class="nerd-sider-menu-icon" nzTooltipTitle="Employees" nzTooltipPlacement="right" nz-tooltip>
             <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
               <path fill="currentColor"
                 d="M14 4h-4C6.229 4 4.343 4 3.172 5.172S2 8.229 2 12s0 5.657 1.172 6.828S6.229 20 10 20h4c3.771 0 5.657 0 6.828-1.172S22 15.771 22 12s0-5.657-1.172-6.828S17.771 4 14 4"
@@ -97,7 +99,7 @@
       [ngClass]="{ 'collapsed-side-li': isCollapsed }">
       <div class="flex flex-row">
         <nz-icon>
-          <span class="nerd-sider-menu-icon">
+          <span class="nerd-sider-menu-icon" nzTooltipTitle="Time and Leave" nzTooltipPlacement="right" nz-tooltip>
             <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
               <path fill="currentColor" d="M12 23a9 9 0 1 0 0-18a9 9 0 0 0 0 18" opacity="0.5" />
               <path fill="currentColor" d="M12 9.25a.75.75 0 0 1 .75.75v4a.75.75 0 0 1-1.5 0v-4a.75.75 0 0 1 .75-.75" />
@@ -114,7 +116,7 @@
       [ngClass]="{ 'collapsed-side-li': isCollapsed }">
       <div class="flex flex-row">
         <nz-icon>
-          <span class="nerd-sider-menu-icon">
+          <span class="nerd-sider-menu-icon" nzTooltipTitle="Performance" nzTooltipPlacement="right" nz-tooltip>
             <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
               <path fill="currentColor" d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2s10 4.477 10 10"
                 opacity="0.5" />
@@ -131,7 +133,7 @@
       [ngClass]="{ 'collapsed-side-li': isCollapsed }">
       <div class="flex flex-row">
         <nz-icon>
-          <span class="nerd-sider-menu-icon">
+          <span class="nerd-sider-menu-icon" nzTooltipTitle="Health and Safety" nzTooltipPlacement="right" nz-tooltip>
             <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
               <path fill="currentColor"
                 d="M2 9.318c0 3.729 4.02 7.673 6.962 10.06C10.294 20.46 10.96 21 12 21s1.706-.54 3.038-1.621C17.981 16.99 22 13.047 22 9.317c0-6.23-5.5-8.556-10-3.743C7.5.761 2 3.087 2 9.318"
@@ -149,7 +151,7 @@
       [ngClass]="{ 'collapsed-side-li': isCollapsed }">
       <div class="flex flex-row">
         <nz-icon>
-          <span class="nerd-sider-menu-icon">
+          <span class="nerd-sider-menu-icon" nzTooltipTitle="Employee Relations" nzTooltipPlacement="right" nz-tooltip>
             <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
               <circle cx="15" cy="6" r="3" fill="currentColor" opacity="0.4" />
               <ellipse cx="16" cy="17" fill="currentColor" opacity="0.4" rx="5" ry="3" />
@@ -201,7 +203,7 @@
       [ngClass]="{ 'collapsed-side-li': isCollapsed }">
       <div class="flex flex-row">
         <nz-icon>
-          <span class="nerd-sider-menu-icon">
+          <span class="nerd-sider-menu-icon" nzTooltipTitle="Recruitment" nzTooltipPlacement="right" nz-tooltip>
             <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
               <path fill="currentColor" fill-rule="evenodd"
                 d="M2.028 11.25A10 10 0 0 1 12 2c-.83 0-1.57.364-2.18.921c-.605.554-1.116 1.328-1.53 2.242c-.416.92-.74 1.996-.959 3.163a20 20 0 0 0-.318 2.924zm0 1.5h4.985c.036 1.002.143 1.988.318 2.924c.22 1.167.543 2.243.959 3.163c.414.914.925 1.688 1.53 2.242c.61.557 1.35.921 2.18.921c-5.27 0-9.589-4.077-9.972-9.25"
@@ -256,7 +258,8 @@
       [ngClass]="{ 'collapsed-side-li': isCollapsed }">
       <div class="flex flex-row">
         <nz-icon>
-          <span class="nerd-sider-menu-icon">
+          <span class="nerd-sider-menu-icon" nzTooltipTitle="Employee Master Data" nzTooltipPlacement="right"
+            nz-tooltip>
             <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
               <path fill="currentColor" d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2s10 4.477 10 10"
                 opacity="0.5" />
@@ -273,7 +276,8 @@
       [ngClass]="{ 'collapsed-side-li': isCollapsed }">
       <div class="flex flex-row">
         <nz-icon>
-          <span class="nerd-sider-menu-icon">
+          <span class="nerd-sider-menu-icon" nzTooltipTitle="Time and Leave Setup" nzTooltipPlacement="right"
+            nz-tooltip>
             <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
               <path fill="currentColor" fill-rule="evenodd"
                 d="M9.25 2.75A.75.75 0 0 1 10 2h4a.75.75 0 0 1 0 1.5h-4a.75.75 0 0 1-.75-.75" clip-rule="evenodd" />
@@ -290,7 +294,8 @@
       [ngClass]="{ 'collapsed-side-li': isCollapsed }">
       <div class="flex flex-row">
         <nz-icon>
-          <span class="nerd-sider-menu-icon">
+          <span class="nerd-sider-menu-icon" nzTooltipTitle="Performance Settings" nzTooltipPlacement="right"
+            nz-tooltip>
             <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
               <path fill="currentColor"
                 d="M12.795 2h-2c-1.886 0-2.829 0-3.414.586c-.586.586-.586 1.528-.586 3.414v3.5h10V6c0-1.886 0-2.828-.586-3.414S14.681 2 12.795 2"
@@ -310,7 +315,7 @@
       [ngClass]="{ 'collapsed-side-li': isCollapsed }">
       <div class="flex flex-row">
         <nz-icon>
-          <span class="nerd-sider-menu-icon">
+          <span class="nerd-sider-menu-icon" nzTooltipTitle="Chatbot" nzTooltipPlacement="right" nz-tooltip>
             <!-- <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
               <g fill="none" stroke="currentColor" stroke-width="1.5">
                 <path stroke-linejoin="round"
