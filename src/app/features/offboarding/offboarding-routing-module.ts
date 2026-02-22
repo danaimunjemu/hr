@@ -4,12 +4,14 @@ import { OffboardingListPageComponent } from './pages/offboarding-list-page/offb
 import { OffboardingCreatePageComponent } from './pages/offboarding-create-page/offboarding-create-page.component';
 import { OffboardingDetailsPageComponent } from './pages/offboarding-details-page/offboarding-details-page.component';
 import { OffboardingEditPageComponent } from './pages/offboarding-edit-page/offboarding-edit-page.component';
+import { Organo } from './pages/organo/organo';
 
 const routes: Routes = [
   { path: '', component: OffboardingListPageComponent },
   { path: 'new', component: OffboardingCreatePageComponent },
   { path: ':id/edit', component: OffboardingEditPageComponent },
-  { path: ':id', component: OffboardingDetailsPageComponent }
+  { path: ':id', component: OffboardingDetailsPageComponent },
+  { path: 'organo', component: Organo }
 ];
 
 @NgModule({

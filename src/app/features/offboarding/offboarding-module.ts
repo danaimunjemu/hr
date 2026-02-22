@@ -47,6 +47,9 @@ import { OffboardingCreatePageComponent } from './pages/offboarding-create-page/
 import { OffboardingDetailsPageComponent } from './pages/offboarding-details-page/offboarding-details-page.component';
 import { OffboardingEditPageComponent } from './pages/offboarding-edit-page/offboarding-edit-page.component';
 import { OffboardingListPageComponent } from './pages/offboarding-list-page/offboarding-list-page.component';
+import { Organo } from './pages/organo/organo';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -54,11 +57,13 @@ import { OffboardingListPageComponent } from './pages/offboarding-list-page/offb
     OffboardingCreatePageComponent,
     OffboardingEditPageComponent,
     OffboardingDetailsPageComponent,
-    OffboardingFormComponent
+    OffboardingFormComponent,
+    Organo
   ],
   imports: [
     CommonModule,
     FormsModule,
+    // BrowserAnimationsModule,
     ReactiveFormsModule,
     OffboardingRoutingModule,
     AntDesignModules,

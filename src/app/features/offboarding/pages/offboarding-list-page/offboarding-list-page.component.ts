@@ -168,4 +168,40 @@ export class OffboardingListPageComponent implements OnInit {
   private isInApprovalFlow(status: string): boolean {
     return String(status || '').toUpperCase().startsWith('PENDING');
   }
+
+   orgData: OrgChartNode = {
+    id: 'ceo', // auto generated if not provided
+    name: 'John Smith',
+    data: {
+      // add any additional data properties here to customize the node and use it for displaying different types of nodes
+    },
+    children: [
+      {
+        id: 'cto',
+        name: 'Jane Doe',
+        children: [
+          {
+            id: 'dev1',
+            name: 'Mike Johnson',
+          },
+        ],
+      },
+      {
+        id: 'cfo',
+        name: 'Sarah Wilson',
+      },
+    ],
+  };
+}
+
+
+
+interface OrgChartNode<T = any> {
+  id?: string;
+  name?: string;
+  data?: T;
+  children?: OrgChartNode<T>[];
+  collapsed?: boolean;
+  hidden?: boolean;
+  nodeClass?: string;
 }
