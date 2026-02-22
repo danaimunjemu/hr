@@ -38,6 +38,12 @@ const routes: Routes = [
         canActivate: [],
       },
       {
+        path: 'offboarding',
+        loadChildren: () =>
+          import('./features/offboarding/offboarding-module').then((m) => m.OffboardingModule),
+        canActivate: [],
+      },
+      {
         path: 'time-and-leave',
         loadChildren: () =>
           import('./features/time-and-leave/time-and-leave-module').then((m) => m.TimeAndLeaveModule),

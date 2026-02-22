@@ -1,0 +1,19 @@
+<nz-page-header nzTitle="Edit Offboarding Record" nzBackIcon (nzBack)="cancel()"></nz-page-header>
+
+<div class="page-content">
+  <nz-card *ngIf="loading">
+    <nz-spin nzTip="Loading offboarding record..."></nz-spin>
+  </nz-card>
+
+  <nz-card *ngIf="!loading && record" nzSize="small">
+    <app-offboarding-form
+      [mode]="'edit'"
+      [saving]="saving"
+      [initialValue]="record"
+      (submitted)="update($event)"
+      (cancelled)="cancel()"
+    ></app-offboarding-form>
+  </nz-card>
+
+  <nz-empty *ngIf="!loading && !record" nzNotFoundContent="Offboarding record not found."></nz-empty>
+</div>
