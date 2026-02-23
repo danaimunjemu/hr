@@ -137,13 +137,15 @@ export class CandidateCreateComponent implements OnInit {
     }
 
     submit(): void {
-        if (this.form.invalid) {
-            Object.values(this.form.controls).forEach(control => {
-                if (control.invalid) {
-                    control.markAsDirty();
-                    control.updateValueAndValidity({ onlySelf: true });
-                }
-            });
+        if (this.submitting() || this.form.invalid) {
+            if (this.form.invalid) {
+                Object.values(this.form.controls).forEach(control => {
+                    if (control.invalid) {
+                        control.markAsDirty();
+                        control.updateValueAndValidity({ onlySelf: true });
+                    }
+                });
+            }
             return;
         }
 

@@ -227,7 +227,7 @@
                 <nz-space>
                     <button *nzSpaceItem nz-button (click)="router.navigate(['../'], { relativeTo: route })"
                         [disabled]="submitting()">Cancel</button>
-                    <button *nzSpaceItem nz-button nzType="primary" [nzLoading]="submitting()" (click)="submit()">
+                    <button *nzSpaceItem nz-button nzType="primary" type="submit" [nzLoading]="submitting()">
                         {{ isEdit() ? 'Update' : 'Submit Application' }}
                     </button>
                 </nz-space>
