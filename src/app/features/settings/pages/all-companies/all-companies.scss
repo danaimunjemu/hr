@@ -1,3 +1,60 @@
 :host {
   display: block;
 }
+
+.companies-page {
+  padding: 8px 12px 12px;
+}
+
+.page-error {
+  margin-bottom: 8px;
+}
+
+.companies-card {
+  border-radius: 6px;
+}
+
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 260px;
+  max-width: 420px;
+  width: 100%;
+  padding: 0 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.search-wrap input {
+  border: 0;
+  box-shadow: none;
+  padding: 4px 0;
+}
+
+.search-wrap input:focus {
+  box-shadow: none;
+}
+
+.actions-col {
+  width: 92px;
+}
+
+.actions-cell {
+  white-space: nowrap;
+}
+
+.action-btn {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+}

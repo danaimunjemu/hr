@@ -1,0 +1,635 @@
+.batch-detail-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+.summary-card,
+.timeline-card,
+.table-card {
+  border-radius: 6px;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.metric-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.metric-label {
+  font-size: 11px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.metric-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.1;
+}
+
+.metric-block.success .metric-value {
+  color: #237804;
+}
+
+.metric-block.failed .metric-value {
+  color: #a8071a;
+}
+
+.metric-block.warning .metric-value {
+  color: #ad6800;
+}
+
+.card-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.timeline-title {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.timeline-meta {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.timeline-detail {
+  margin-top: 2px;
+  font-size: 11px;
+  color: #374151;
+}
+
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.table-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 260px;
+  max-width: 420px;
+  width: 100%;
+  padding: 0 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.table-search input {
+  border: 0;
+  box-shadow: none;
+  padding: 4px 0;
+}
+
+.table-search input:focus {
+  box-shadow: none;
+}
+
+.message-col {
+  max-width: 420px;
+  white-space: normal;
+  line-height: 1.25;
+}
+
+.table-fullscreen .table-card {
+  position: fixed;
+  inset: 8px;
+  z-index: 1200;
+  margin: 0;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.18);
+}
+
+@media (max-width: 1200px) {
+  .summary-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .table-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toolbar-left {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .table-search {
+    max-width: none;
+  }
+}
+
+
+
+
+
+    .content {
+      display: flex;
+    }
+
+    .extra > div {
+      display: flex;
+      width: max-content;
+      justify-content: flex-end;
+    }
+
+    @media (max-width: 576px) {
+      .content {
+        display: block;
+      }
+
+      .main {
+        width: 100%;
+        margin-bottom: 12px;
+      }
+
+      .extra {
+        width: 100%;
+        margin-left: 0;
+        text-align: left;
+      }
+    }
+
+
+    :host {
+  display: block;
+}
+
+.batch-page {
+  padding: 8px 12px 12px;
+}
+
+.batch-card {
+  border-radius: 6px;
+}
+
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.toolbar-left,
+.toolbar-right {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 320px;
+  // max-width: 480px;
+  width: 100%;
+  padding: 0 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.search-wrap input {
+  border: 0;
+  box-shadow: none;
+  padding: 4px 0;
+}
+
+.search-wrap input:focus {
+  box-shadow: none;
+}
+
+.status-select {
+  width: 170px;
+}
+
+.actions-col {
+  width: 64px;
+}
+
+.actions-cell {
+  white-space: nowrap;
+}
+
+.action-btn {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+}
+:host {
+  display: block;
+}
+
+/* Page layout around nz-card / nz-page-header */
+
+.page-content {
+  padding: 24px;
+}
+
+.employees-page {
+  padding: 0;
+}
+
+.employees-card {
+  border-radius: 12px;
+}
+
+/* Page header / toolbar */
+
+.page-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+
+
+.search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 320px;
+  // max-width: 520px;
+  width: 100%;
+  padding: 4px 10px;
+  // border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+
+  input[nz-input] {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    padding: 0;
+    font-size: 12px;
+  }
+
+  span[nz-icon] {
+    font-size: 14px;
+    color: #9ca3af;
+  }
+}
+
+/* Table basics (nz-table) – scoped to this component only */
+
+:host ::ng-deep .ant-table.ant-table-small {
+  font-size: 12px;
+}
+
+:host ::ng-deep .ant-table-thead > tr > th {
+  padding: 6px 8px;
+  background: #f3f4f6;
+  font-weight: 600;
+  font-size: 11px;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+:host ::ng-deep .ant-table-tbody > tr > td {
+  padding: 2px 8px;
+  font-size: 12px;
+}
+
+.actions-col {
+  width: 220px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.actions-cell {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Tag / status look (nz-tag) – scoped */
+
+:host ::ng-deep .ant-tag {
+  font-size: 10px;
+  padding: 0 8px;
+}
+
+/* Compact buttons in tables */
+
+.action-btn,
+.compact-continue-btn {
+  padding-inline: 8px;
+}
+
+.action-btn {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+}
+
+.compact-continue-btn {
+  height: 28px;
+  line-height: 26px;
+}
+
+/* Alerts / messages */
+
+.page-error {
+  margin-bottom: 12px;
+}
+
+/* Date picker compact style (nz-date-picker) */
+
+nz-date-picker {
+  .ant-picker {
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .ant-picker-input > input {
+    font-size: 12px;
+  }
+}
+
+/* Small segmented controls / pills (if you use nz-segmented) */
+
+.icon-text-inline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &--active {
+    background: #e5f3eb;
+  }
+}
+
+/* Misc */
+
+.mb-4 {
+  margin-bottom: 16px;
+}
+
+.actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+::ng-deep .ant-page-header-content {
+    padding-top: 0;
+}
+.search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 320px;
+  // max-width: 520px;
+  width: 100%;
+  padding: 4px 10px;
+  // border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+
+  input[nz-input] {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    padding: 0;
+    font-size: 12px;
+  }
+
+  span[nz-icon] {
+    font-size: 14px;
+    color: #9ca3af;
+  }
+}
+
+/* Basic nz-descriptions styling */
+::ng-deep .ant-descriptions-bordered.ant-descriptions-small .ant-descriptions-item-label {
+  color: #41454afa !important;
+  font-weight: 600 !important;
+  border-bottom: 1px solid rgba(179, 179, 179, 0.2784313725) !important;
+  padding: 4px 16px !important;
+  background: transparent !important;
+}
+
+::ng-deep .ant-descriptions-bordered .ant-descriptions-view {
+  background: linear-gradient(90deg, rgba(225, 232, 239, 0.6) 0%, #fbfcfd 100%) !important;
+  border: 1px solid #e7e7e7b8 !important;
+}
+
+::ng-deep .ant-descriptions-bordered .ant-descriptions-item-label {
+  background-color: transparent !important;
+}
+
+::ng-deep .ant-descriptions-small .ant-descriptions-row > td {
+  padding-bottom: 8px !important;
+}
+
+::ng-deep .ant-descriptions-item-content {
+  background: #fff !important;
+  font-size: 13px !important;
+}
+
+::ng-deep .ant-descriptions-item-label {
+  color: rgba(0, 0, 0, 0.85) !important;
+  font-weight: normal !important;
+  font-size: 13px !important;
+}
+
+
+
+/* Basic timeline container */
+::ng-deep .ant-timeline {
+  font-family: inherit;
+}
+
+/* Timeline item */
+::ng-deep .ant-timeline-item {
+  padding-bottom: 20px;
+}
+
+/* Timeline item tail (the connecting line) */
+::ng-deep .ant-timeline-item-tail {
+  border-left: 2px solid #f0f0f0;
+}
+
+/* Timeline item head (the dot/circle) */
+::ng-deep .ant-timeline-item-head {
+  background-color: #fff;
+  border-radius: 50%;
+  border: 2px solid transparent;
+}
+
+/* Different status colors for timeline heads */
+::ng-deep .ant-timeline-item-head-blue {
+  color: #1890ff;
+  border-color: #1890ff;
+}
+
+::ng-deep .ant-timeline-item-head-green {
+  color: #52c41a;
+  border-color: #52c41a;
+}
+
+::ng-deep .ant-timeline-item-head-red {
+  color: #f5222d;
+  border-color: #f5222d;
+}
+
+::ng-deep .ant-timeline-item-head-gray {
+  color: #bfbfbf;
+  border-color: #bfbfbf;
+}
+
+/* Timeline item content */
+::ng-deep .ant-timeline-item-content {
+  margin: 0 0 0 26px;
+  font-size: 14px;
+}
+
+/* Custom timeline item content (for your classes) */
+::ng-deep .ant-timeline-item-content {
+  .timeline-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 2px;
+    color: #1a1a1a;
+  }
+
+  .timeline-meta {
+    font-size: 12px;
+    color: #667085;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .timeline-status {
+    margin-bottom: 4px;
+    
+    [nz-tag] {
+      margin-right: 0;
+    }
+  }
+
+  .timeline-comment {
+    font-size: 12px;
+    color: #344054;
+    line-height: 1.35;
+    background: #f9f9f9;
+    padding: 8px;
+    border-radius: 4px;
+    margin-top: 4px;
+  }
+}
+
+/* First timeline item */
+::ng-deep .ant-timeline-item:first-child {
+  .ant-timeline-item-content {
+    margin-top: 0;
+  }
+}
+
+/* Last timeline item */
+::ng-deep .ant-timeline-item:last-child {
+  .ant-timeline-item-tail {
+    display: none;
+  }
+}
+
+/* Timeline with custom dot */
+::ng-deep .ant-timeline-item-head-custom {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  top: 0;
+}
+
+/* Alternate timeline (left/right) */
+::ng-deep .ant-timeline.ant-timeline-alternate,
+::ng-deep .ant-timeline.ant-timeline-right,
+::ng-deep .ant-timeline.ant-timeline-left {
+  .ant-timeline-item-content {
+    width: calc(50% - 18px);
+  }
+}
+
+/* Pending timeline item */
+::ng-deep .ant-timeline-item-pending {
+  .ant-timeline-item-head {
+    font-size: 12px;
+    background-color: transparent;
+  }
+  
+  .ant-timeline-item-tail {
+    display: none;
+  }
+}
+
+/* Responsive timeline */
+@media (max-width: 768px) {
+  ::ng-deep .ant-timeline-item-content {
+    .timeline-meta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+  }
+}
+
+::ng-deep .ant-progress-text {
+    display: none !important;
+ 
+}
+
+::ng-deep .ant-tabs-tab + .ant-tabs-tab {
+    margin: 0 0 0 16px !important;
+}

@@ -32,9 +32,21 @@ const routes: Routes = [
         canActivate: [],
       },
       {
+        path: 'organogram',
+        loadChildren: () =>
+          import('./modules/organogram/organogram.module').then((m) => m.OrganogramModule),
+        canActivate: [],
+      },
+      {
         path: 'onboarding',
         loadChildren: () =>
           import('./features/onboarding/onboarding-module').then((m) => m.OnboardingModule),
+        canActivate: [],
+      },
+      {
+        path: 'offboarding',
+        loadChildren: () =>
+          import('./features/offboarding/offboarding-module').then((m) => m.OffboardingModule),
         canActivate: [],
       },
       {

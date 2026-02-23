@@ -1,0 +1,73 @@
+<nz-page-header
+  nzBackIcon
+  nzTitle="New Batch"
+  nzSubtitle="Bulk onboarding upload"
+  (nzBack)="back()"
+>
+  <nz-page-header-extra>
+    <button nz-button nzType="link" nzSize="small" (click)="goToBatches()">
+      <span nz-icon nzType="unordered-list"></span>
+      View batches
+    </button>
+  </nz-page-header-extra>
+</nz-page-header>
+
+<div class="bulk-onboarding-page">
+  <nz-spin [nzSpinning]="submitting" nzTip="Uploading batch...">
+    <nz-card nzSize="small" class="compact-card">
+      <div class="header-row">
+        <div class="flow">
+          <span class="meta-label">Flow:</span>
+          <span class="meta-value">Upload → Validate → Authorize</span>
+        </div>
+
+        <button
+          nz-button
+          nzType="default"
+          nzSize="small"
+          (click)="downloadSampleTemplate()"
+        >
+          <span nz-icon nzType="download"></span>
+          Sample template
+        </button>
+      </div>
+
+      <p class="text-muted compact-text">
+        Upload the approved spreadsheet template to create a batch for validation and authorization.
+      </p>
+
+      <nz-upload
+        class="upload-block"
+        nzType="drag"
+        [nzMultiple]="false"
+        [nzShowUploadList]="true"
+        [nzBeforeUpload]="beforeUpload"
+        [nzFileList]="fileList"
+        (nzChange)="handleChange($event)"
+      >
+        <p class="ant-upload-drag-icon">
+          <span nz-icon nzType="inbox"></span>
+        </p>
+        <p class="ant-upload-text">Click or drag file to upload</p>
+        <p class="ant-upload-hint">Only approved bulk onboarding templates are supported.</p>
+      </nz-upload>
+
+      <div class="actions-row">
+        <button nz-button nzSize="small" (click)="goToBatches()">
+          Cancel
+        </button>
+        <button
+          nz-button
+          nzType="primary"
+          nzSize="small"
+          [nzLoading]="submitting"
+          [disabled]="!fileList.length || submitting"
+          (click)="submit()"
+        >
+          <span nz-icon nzType="cloud-upload"></span>
+          Upload batch
+        </button>
+      </div>
+    </nz-card>
+  </nz-spin>
+</div>
