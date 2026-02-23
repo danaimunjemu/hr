@@ -1,0 +1,151 @@
+﻿.organogram-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.toolbar-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #eef2f5;
+  border-radius: 10px;
+  padding: 6px 10px;
+  min-width: 220px;
+
+  input[nz-input] {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    font-size: 12px;
+    padding: 0;
+  }
+
+  span[nz-icon] {
+    color: #7c8a99;
+    font-size: 12px;
+  }
+}
+
+.dept-select {
+  min-width: 200px;
+}
+
+.chart-card {
+  border-radius: 14px;
+  background: #ffffff;
+  min-height: 560px;
+}
+
+.chart-shell {
+  position: relative;
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chart-canvas {
+  flex: 1;
+  min-height: 480px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid rgba(44, 62, 80, 0.08);
+  overflow: hidden;
+}
+
+.loading-wrap,
+.error-wrap {
+  padding: 24px 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.search-empty {
+  padding: 8px 0 0;
+}
+
+.org-node-card {
+  display: grid;
+  gap: 2px;
+  text-align: left;
+  border: none;
+  background: transparent;
+  padding: 0;
+  width: 100%;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+}
+
+.org-node-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1f2a37;
+}
+
+.org-node-title,
+.org-node-dept {
+  font-size: 11px;
+  font-weight: 400;
+  color: #516071;
+}
+
+.org-node-number {
+  font-size: 10px;
+  font-weight: 500;
+  color: #8a99a8;
+}
+
+.org-node-card.is-focused {
+  outline: 1px solid rgba(44, 62, 80, 0.4);
+  border-radius: 8px;
+  padding: 6px 8px;
+  background: rgba(44, 62, 80, 0.04);
+}
+
+.drawer-loading {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
+}
+
+::ng-deep ngx-interactive-org-chart {
+  display: block;
+  height: 100%;
+}
+
+::ng-deep ngx-interactive-org-chart .org-chart-container {
+  min-height: 480px;
+}
+
+::ng-deep ngx-interactive-org-chart .org-chart {
+  background: transparent;
+}
+
+::ng-deep ngx-interactive-org-chart .node-content.organogram-node {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+::ng-deep ngx-interactive-org-chart .node-content.organogram-node:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
+}
+
+::ng-deep ngx-interactive-org-chart .node-content.organogram-node.highlighted {
+  animation: none;
+  box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.25);
+}
+
+@media (max-width: 768px) {
+  .toolbar-search {
+    min-width: 160px;
+  }
+
+  .chart-card {
+    min-height: 480px;
+  }
+
+  .chart-canvas {
+    min-height: 420px;
+  }
+}

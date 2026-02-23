@@ -1,25 +1,48 @@
 <nz-page-header nzTitle="Companies" nzBackIcon>
   <nz-page-header-extra>
-    <button nz-button nzType="primary" routerLink="/app/settings/companies/new">
+    <button nz-button nzType="primary" nzSize="small" routerLink="/app/settings/companies/new">
       <span nz-icon nzType="plus"></span>
       New Company
     </button>
   </nz-page-header-extra>
 </nz-page-header>
 
-<div class="p-6">
-  <nz-card>
-    <div *ngIf="error()" class="mb-4">
-      <nz-alert nzType="error" [nzMessage]="error()" nzShowIcon></nz-alert>
+<div class="companies-page">
+  <div *ngIf="error()" class="page-error">
+    <nz-alert nzType="error" [nzMessage]="error()" nzShowIcon nzBanner></nz-alert>
+  </div>
+
+  <nz-card nzSize="small" class="companies-card">
+    <div class="table-toolbar">
+      <div class="search-wrap">
+        <span nz-icon nzType="search"></span>
+        <input
+          nz-input
+          type="text"
+          [value]="searchTerm()"
+          (input)="onSearch($any($event.target).value)"
+          placeholder="Search by ID, name, or location"
+        />
+      </div>
+      <!-- <button nz-button nzType="default" nzSize="small" (click)="resetTableFilters(basicTable)">
+        Reset Filters
+      </button> -->
     </div>
 
-    <nz-table #basicTable [nzData]="companies()" [nzLoading]="loading()" [nzPageSize]="10">
+    <nz-table
+      #basicTable
+      [nzData]="filteredCompanies()"
+      [nzLoading]="loading()"
+      [nzPageSize]="10"
+      [nzSize]="'small'"
+      [nzShowSizeChanger]="false"
+    >
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Location</th>
-          <th>Actions</th>
+          <th [nzFilters]="idFilters()" [nzFilterFn]="idFilterFn" [nzFilterMultiple]="true">ID</th>
+          <th [nzFilters]="nameFilters()" [nzFilterFn]="nameFilterFn" [nzFilterMultiple]="true">Name</th>
+          <th [nzFilters]="locationFilters()" [nzFilterFn]="locationFilterFn" [nzFilterMultiple]="true">Location</th>
+          <th class="actions-col">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -27,12 +50,26 @@
           <td>{{ data.id }}</td>
           <td>{{ data.name }}</td>
           <td>{{ data.workLocation }}</td>
-          <td>
-            <nz-space>
-              <a *nzSpaceItem nz-button nzType="default" nzSize="small" [routerLink]="['/app/settings/companies/view', data.id]">
+          <td class="actions-cell">
+            <nz-space nzSize="small">
+              <a
+                *nzSpaceItem
+                nz-button
+                nzType="default"
+                nzSize="small"
+                class="action-btn"
+                [routerLink]="['/app/settings/companies/view', data.id]"
+              >
                 <span nz-icon nzType="eye" nzTheme="outline"></span>
               </a>
-              <a *nzSpaceItem nz-button nzType="primary" nzSize="small" [routerLink]="['/app/settings/companies/edit', data.id]">
+              <a
+                *nzSpaceItem
+                nz-button
+                nzType="primary"
+                nzSize="small"
+                class="action-btn"
+                [routerLink]="['/app/settings/companies/edit', data.id]"
+              >
                 <span nz-icon nzType="edit" nzTheme="outline"></span>
               </a>
             </nz-space>

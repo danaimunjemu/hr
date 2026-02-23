@@ -1,0 +1,122 @@
+﻿<nz-page-header nzTitle="Organogram">
+  <nz-page-header-subtitle>Clinical organisation chart</nz-page-header-subtitle>
+  <nz-page-header-extra>
+    <nz-space nzSize="small">
+      <div *nzSpaceItem class="toolbar-search">
+        <span nz-icon nzType="search"></span>
+        <input
+          nz-input
+          [(ngModel)]="searchQuery"
+          (keyup.enter)="onSearch()"
+          placeholder="Search name or employee number"
+        />
+      </div>
+
+      <div *nzSpaceItem class="dept-select nerd-select">
+        <nz-select
+          nzSize="small"
+          [ngModel]="departmentFilter"
+          (ngModelChange)="onDepartmentChange($event)"
+        >
+          <nz-option nzLabel="All Departments" nzValue="ALL"></nz-option>
+          <nz-option
+            *ngFor="let dept of departmentOptions()"
+            [nzLabel]="dept.label"
+            [nzValue]="dept.id"
+          ></nz-option>
+        </nz-select>
+      </div>
+
+      <button *nzSpaceItem nz-button nzType="default" nzSize="small" (click)="onSearch()" [disabled]="searchLoading()">
+        <span nz-icon nzType="search"></span>
+      </button>
+      <button *nzSpaceItem nz-button nzType="default" nzSize="small" (click)="resetView()">
+        <span nz-icon nzType="fullscreen"></span>
+      </button>
+      <button *nzSpaceItem nz-button nzType="default" nzSize="small" (click)="zoomIn()">
+        <span nz-icon nzType="plus"></span>
+      </button>
+      <button *nzSpaceItem nz-button nzType="default" nzSize="small" (click)="zoomOut()">
+        <span nz-icon nzType="minus"></span>
+      </button>
+    </nz-space>
+  </nz-page-header-extra>
+</nz-page-header>
+
+<div class="organogram-page">
+  <nz-card nzSize="small" class="chart-card">
+    <div *ngIf="loading()" class="loading-wrap">
+      <nz-spin nzTip="Loading organogram..."></nz-spin>
+    </div>
+
+    <div *ngIf="!loading() && error()" class="error-wrap">
+      <nz-alert nzType="error" [nzMessage]="error()!" nzShowIcon></nz-alert>
+    </div>
+
+    <nz-empty
+      *ngIf="!loading() && !error() && !chartData()"
+      nzNotFoundContent="No Organogram Data Available"
+    ></nz-empty>
+
+    <div *ngIf="!loading() && chartData()" class="chart-shell">
+      <div *ngIf="searchEmpty()" class="search-empty">
+        <nz-empty nzNotFoundContent="No employee found for that search."></nz-empty>
+      </div>
+
+      <div class="chart-canvas">
+        <ngx-interactive-org-chart
+          #orgChart
+          [data]="chartData()!"
+          [collapsible]="true"
+          [displayChildrenCount]="true"
+          [highlightZoomNodeWidthRatio]="0.45"
+          [highlightZoomNodeHeightRatio]="0.5"
+          [highlightZoomMinimum]="0.9"
+          [showMiniMap]="true"
+          [miniMapPosition]="'bottom-right'"
+          [miniMapWidth]="200"
+          [miniMapHeight]="140"
+          [themeOptions]="themeOptions"
+          nodeClass="organogram-node"
+        >
+          <ng-template #nodeTemplate let-node="node">
+            <button
+              class="org-node-card"
+              type="button"
+              [class.is-focused]="focusedEmployeeId() === node.id"
+              (click)="openProfile(node)"
+            >
+              <div class="org-node-name">{{ node.name || 'Unknown Employee' }}</div>
+              <div class="org-node-title">{{ node.title || 'N/A' }}</div>
+              <div class="org-node-dept">{{ node.department || 'N/A' }}</div>
+              <div class="org-node-number">#{{ node.employeeNumber || 'N/A' }}</div>
+            </button>
+          </ng-template>
+        </ngx-interactive-org-chart>
+      </div>
+    </div>
+  </nz-card>
+</div>
+
+<nz-drawer
+  [nzVisible]="drawerVisible()"
+  nzTitle="Employee Profile"
+  nzPlacement="right"
+  [nzWidth]="360"
+  (nzOnClose)="closeProfile()"
+>
+  <ng-container *nzDrawerContent>
+    <div *ngIf="profileLoading()" class="drawer-loading">
+      <nz-spin nzTip="Loading profile..."></nz-spin>
+    </div>
+
+    <nz-descriptions *ngIf="!profileLoading() && selectedProfile()" nzBordered nzSize="small" [nzColumn]="1">
+      <nz-descriptions-item nzTitle="Name">{{ employeeFullName(selectedProfile()) }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Employee Number">{{ selectedProfile()?.employeeNumber || 'N/A' }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Email">{{ selectedProfile()?.email || 'N/A' }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Department">{{ selectedProfile()?.organizationalUnitName || 'N/A' }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Job Title">{{ selectedProfile()?.positionName || 'N/A' }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Employment Status">{{ selectedProfile()?.employmentStatus || 'N/A' }}</nz-descriptions-item>
+    </nz-descriptions>
+  </ng-container>
+</nz-drawer>
