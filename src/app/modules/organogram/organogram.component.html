@@ -1,8 +1,5 @@
-<nz-page-header nzTitle="Organogram" nzBackIcon>
-  <nz-page-header-subtitle>
-    Dynamic organisation chart
-  </nz-page-header-subtitle>
-
+﻿<nz-page-header nzTitle="Organogram">
+  <nz-page-header-subtitle>Clinical organisation chart</nz-page-header-subtitle>
   <nz-page-header-extra>
     <nz-space nzSize="small">
       <div *nzSpaceItem class="toolbar-search">
@@ -15,45 +12,38 @@
         />
       </div>
 
-      <nz-select
-        *nzSpaceItem
-        nzSize="small"
-        class="dept-select"
-        [ngModel]="departmentFilter"
-        (ngModelChange)="onDepartmentChange($event)"
-      >
-        <nz-option nzLabel="All Departments" nzValue="ALL"></nz-option>
-        <nz-option
-          *ngFor="let dept of departmentOptions()"
-          [nzLabel]="dept.label"
-          [nzValue]="dept.id"
-        ></nz-option>
-      </nz-select>
+      <div *nzSpaceItem class="dept-select nerd-select">
+        <nz-select
+          nzSize="small"
+          [ngModel]="departmentFilter"
+          (ngModelChange)="onDepartmentChange($event)"
+        >
+          <nz-option nzLabel="All Departments" nzValue="ALL"></nz-option>
+          <nz-option
+            *ngFor="let dept of departmentOptions()"
+            [nzLabel]="dept.label"
+            [nzValue]="dept.id"
+          ></nz-option>
+        </nz-select>
+      </div>
 
-      <button *nzSpaceItem nz-button nzType="default" nzSize="small" (click)="onSearch()">
-        Search
+      <button *nzSpaceItem nz-button nzType="default" nzSize="small" (click)="onSearch()" [disabled]="searchLoading()">
+        <span nz-icon nzType="search"></span>
       </button>
-      <button *nzSpaceItem nz-button nzType="default" nzSize="small" (click)="loadOrganogram()">
-        <span nz-icon nzType="reload"></span>
+      <button *nzSpaceItem nz-button nzType="default" nzSize="small" (click)="resetView()">
+        <span nz-icon nzType="fullscreen"></span>
+      </button>
+      <button *nzSpaceItem nz-button nzType="default" nzSize="small" (click)="zoomIn()">
+        <span nz-icon nzType="plus"></span>
+      </button>
+      <button *nzSpaceItem nz-button nzType="default" nzSize="small" (click)="zoomOut()">
+        <span nz-icon nzType="minus"></span>
       </button>
     </nz-space>
   </nz-page-header-extra>
 </nz-page-header>
 
 <div class="organogram-page">
-  <nz-card nzSize="small" class="summary-card">
-    <div class="summary-metrics">
-      <div class="metric">
-        <span class="metric-label">Positions</span>
-        <span class="metric-value">{{ totalNodes() }}</span>
-      </div>
-      <div class="metric">
-        <span class="metric-label">Employees</span>
-        <span class="metric-value">{{ totalEmployees() }}</span>
-      </div>
-    </div>
-  </nz-card>
-
   <nz-card nzSize="small" class="chart-card">
     <div *ngIf="loading()" class="loading-wrap">
       <nz-spin nzTip="Loading organogram..."></nz-spin>
@@ -64,68 +54,49 @@
     </div>
 
     <nz-empty
-      *ngIf="!loading() && !error() && !tree().length"
-      nzNotFoundContent="Organogram data is currently unavailable."
+      *ngIf="!loading() && !error() && !chartData()"
+      nzNotFoundContent="No Organogram Data Available"
     ></nz-empty>
 
-    <div *ngIf="!loading() && tree().length" class="tree-scroll">
-      <div class="tree-root-row">
-        <ng-container *ngFor="let root of tree(); trackBy: trackNode">
-          <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: root }"></ng-container>
-        </ng-container>
+    <div *ngIf="!loading() && chartData()" class="chart-shell">
+      <div *ngIf="searchEmpty()" class="search-empty">
+        <nz-empty nzNotFoundContent="No employee found for that search."></nz-empty>
+      </div>
+
+      <div class="chart-canvas">
+        <ngx-interactive-org-chart
+          #orgChart
+          [data]="chartData()!"
+          [collapsible]="true"
+          [displayChildrenCount]="true"
+          [highlightZoomNodeWidthRatio]="0.45"
+          [highlightZoomNodeHeightRatio]="0.5"
+          [highlightZoomMinimum]="0.9"
+          [showMiniMap]="true"
+          [miniMapPosition]="'bottom-right'"
+          [miniMapWidth]="200"
+          [miniMapHeight]="140"
+          [themeOptions]="themeOptions"
+          nodeClass="organogram-node"
+        >
+          <ng-template #nodeTemplate let-node="node">
+            <button
+              class="org-node-card"
+              type="button"
+              [class.is-focused]="focusedEmployeeId() === node.id"
+              (click)="openProfile(node)"
+            >
+              <div class="org-node-name">{{ node.name || 'Unknown Employee' }}</div>
+              <div class="org-node-title">{{ node.title || 'N/A' }}</div>
+              <div class="org-node-dept">{{ node.department || 'N/A' }}</div>
+              <div class="org-node-number">#{{ node.employeeNumber || 'N/A' }}</div>
+            </button>
+          </ng-template>
+        </ngx-interactive-org-chart>
       </div>
     </div>
   </nz-card>
 </div>
-
-<ng-template #nodeTemplate let-node>
-  <div class="org-branch">
-    <div class="node-shell">
-      <div class="node-header">
-        <span class="position-name">{{ node.positionName || 'N/A' }}</span>
-        <button
-          *ngIf="node.children.length"
-          nz-button
-          nzType="text"
-          nzSize="small"
-          (click)="toggleNode(node)"
-        >
-          <span nz-icon [nzType]="node.collapsed ? 'plus-square' : 'minus-square'"></span>
-        </button>
-      </div>
-
-      <div class="employee-list">
-        <button
-          *ngFor="let employee of node.employees; trackBy: trackEmployee"
-          class="employee-card"
-          type="button"
-          [class.focused]="focusedEmployeeId() === employee.id"
-          (click)="openProfile(employee)"
-        >
-          <div class="name">{{ employeeFullName(employee) }}</div>
-          <div class="meta">{{ employee.positionName || 'N/A' }}</div>
-          <div class="meta">{{ employee.organizationalUnitName || 'N/A' }}</div>
-          <div class="meta">#{{ employee.employeeNumber || 'N/A' }}</div>
-        </button>
-
-        <div *ngIf="!node.employees.length" class="employee-card placeholder">
-          <div class="name">Unknown Employee</div>
-          <div class="meta">Position: {{ node.positionName || 'N/A' }}</div>
-          <div class="meta">Department: N/A</div>
-        </div>
-      </div>
-    </div>
-
-    <div *ngIf="node.children.length" class="children-wrap" [class.collapsed]="node.collapsed">
-      <div class="link-line"></div>
-      <div *ngIf="!node.collapsed" class="children-row">
-        <ng-container *ngFor="let child of node.children; trackBy: trackNode">
-          <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: child }"></ng-container>
-        </ng-container>
-      </div>
-    </div>
-  </div>
-</ng-template>
 
 <nz-drawer
   [nzVisible]="drawerVisible()"

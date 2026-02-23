@@ -9,10 +9,10 @@ export interface OrganogramEmployee {
 }
 
 export interface OrganogramPositionResponse {
-  positionId: number;
-  positionName: string;
-  employees: OrganogramEmployee[];
-  subordinates: string[];
+  positionId?: number | null;
+  positionName?: string | null;
+  employees?: OrganogramEmployee[] | null;
+  subordinates?: Array<OrganogramPositionResponse | string | number> | null;
 }
 
 export interface OrganogramEmployeeProfile {
@@ -26,13 +26,16 @@ export interface OrganogramEmployeeProfile {
   employmentStatus?: string | null;
 }
 
-export interface OrganogramTreeNode {
-  key: string;
-  positionId: number;
-  positionName: string;
-  employees: OrganogramEmployee[];
-  children: OrganogramTreeNode[];
-  collapsed: boolean;
-  parentKey: string | null;
-  depth: number;
+export interface OrganogramNode {
+  id: string;
+  name: string;
+  title: string;
+  department: string;
+  employeeNumber: string;
+  employeeId?: number | null;
+  departmentId?: number | null;
+  children?: OrganogramNode[];
+  collapsed?: boolean;
+  hidden?: boolean;
+  nodeClass?: string;
 }
