@@ -1,0 +1,129 @@
+<nz-page-header nzTitle="Candidates Dashboard">
+    <nz-page-header-extra>
+        <button nz-button nzType="primary" routerLink="create">
+            <span nz-icon nzType="plus"></span>
+            Add Candidate
+        </button>
+    </nz-page-header-extra>
+</nz-page-header>
+
+<div class="page-content">
+    <!-- Stats Cards -->
+    <div nz-row [nzGutter]="16">
+        <div nz-col [nzSpan]="6">
+            <nz-card>
+                <nz-statistic [nzValue]="stats().total" [nzTitle]="'Total Candidates'"
+                    [nzPrefix]="totalIcon"></nz-statistic>
+                <ng-template #totalIcon><span nz-icon nzType="team" class="text-blue-500"></span></ng-template>
+            </nz-card>
+        </div>
+        <div nz-col [nzSpan]="6">
+            <nz-card>
+                <nz-statistic [nzValue]="stats().new" [nzTitle]="'New Applications'"
+                    [nzPrefix]="newIcon"></nz-statistic>
+                <ng-template #newIcon><span nz-icon nzType="user-add" class="text-green-500"></span></ng-template>
+            </nz-card>
+        </div>
+        <div nz-col [nzSpan]="6">
+            <nz-card>
+                <nz-statistic [nzValue]="stats().interviewing" [nzTitle]="'In Interview'"
+                    [nzPrefix]="interviewIcon"></nz-statistic>
+                <ng-template #interviewIcon><span nz-icon nzType="calendar"
+                        class="text-purple-500"></span></ng-template>
+            </nz-card>
+        </div>
+        <div nz-col [nzSpan]="6">
+            <nz-card>
+                <nz-statistic [nzValue]="stats().hired" [nzTitle]="'Hired'" [nzPrefix]="hiredIcon"></nz-statistic>
+                <ng-template #hiredIcon><span nz-icon nzType="check-circle"
+                        class="text-geekblue-500"></span></ng-template>
+            </nz-card>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <nz-card class="mt-6 mb-4 filter-card">
+        <div nz-row [nzGutter]="16">
+            <div nz-col [nzSpan]="12">
+                <nz-input-group [nzPrefix]="searchIcon">
+                    <input type="text" nz-input placeholder="Search candidates..." [ngModel]="searchQuery()"
+                        (ngModelChange)="searchQuery.set($event)">
+                </nz-input-group>
+                <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+            </div>
+            <div nz-col [nzSpan]="6">
+                <nz-select class="w-full" [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
+                    <nz-option nzValue="ALL" nzLabel="All Statuses"></nz-option>
+                    <nz-option nzValue="New" nzLabel="New"></nz-option>
+                    <nz-option nzValue="Review" nzLabel="Review"></nz-option>
+                    <nz-option nzValue="Interview" nzLabel="Interview"></nz-option>
+                    <nz-option nzValue="Offer" nzLabel="Offer"></nz-option>
+                    <nz-option nzValue="Rejected" nzLabel="Rejected"></nz-option>
+                    <nz-option nzValue="Hired" nzLabel="Hired"></nz-option>
+                </nz-select>
+            </div>
+            <div nz-col [nzSpan]="6">
+                <button nz-button nzBlock (click)="searchQuery.set(''); statusFilter.set('ALL')">Reset Filters</button>
+            </div>
+        </div>
+    </nz-card>
+
+    <!-- Table -->
+    <nz-card>
+        <nz-table #candidateTable [nzData]="filteredCandidates()" [nzLoading]="loading()" nzSize="middle"
+            [nzBordered]="true">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Contact</th>
+                    <th>Applied For</th>
+                    <th>Status</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of candidateTable.data">
+                    <td>
+                        <div class="flex items-center">
+                            <nz-avatar nzSize="small" nzIcon="user" class="mr-2"></nz-avatar>
+                            <a [routerLink]="[data.id]" class="font-semibold">{{ data.firstName }} {{ data.lastName
+                                }}</a>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="text-xs text-gray-500">{{ data.email }}</div>
+                        <div class="text-xs">{{ data.phone }}</div>
+                    </td>
+                    <td>
+                        <div *ngIf="data.jobVacancy" class="text-xs font-semibold">{{ data.jobVacancy.position.name }}
+                        </div>
+                        <div class="text-xs text-gray-400">{{ data.applicationDate | date:'mediumDate' }}</div>
+                    </td>
+                    <td>
+                        <nz-tag [nzColor]="getStatusColor(data.status)">{{ data.status }}</nz-tag>
+                    </td>
+                    <td>
+                        <nz-tag [nzColor]="data.employee ? 'purple' : 'blue'">
+                            {{ data.employee ? 'Internal' : 'External' }}
+                        </nz-tag>
+                    </td>
+                    <td>
+                        <nz-space>
+                            <a *nzSpaceItem [routerLink]="[data.id]" nz-button nzType="link" nzSize="small">
+                                <span nz-icon nzType="eye"></span>
+                            </a>
+                            <a *nzSpaceItem [routerLink]="['edit', data.id]" nz-button nzType="link" nzSize="small">
+                                <span nz-icon nzType="edit"></span>
+                            </a>
+                            <button *nzSpaceItem nz-button nzType="link" nzDanger nzSize="small" nz-popconfirm
+                                nzPopconfirmTitle="Are you sure?" (nzOnConfirm)="deleteCandidate(data.id)">
+                                <span nz-icon nzType="delete"></span>
+                            </button>
+                        </nz-space>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </nz-card>
+</div>

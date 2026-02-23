@@ -1,0 +1,237 @@
+<nz-page-header [nzTitle]="isEdit() ? 'Edit Candidate' : 'New Application'" nzBackIcon
+    (nzBack)="router.navigate(['../'], { relativeTo: route })"></nz-page-header>
+
+<div class="page-content">
+    <nz-spin [nzSpinning]="loading()">
+        <form nz-form [formGroup]="form" (ngSubmit)="submit()" nzLayout="vertical">
+
+            <!-- Application Type -->
+            <nz-card class="mb-6">
+                <nz-form-item>
+                    <nz-form-label>Application Type</nz-form-label>
+                    <nz-form-control>
+                        <nz-radio-group [ngModel]="isInternal()" [ngModelOptions]="{standalone: true}"
+                            (ngModelChange)="isInternal.set($event); form.patchValue({employeeId: null})">
+                            <label nz-radio [nzValue]="false">External Candidate</label>
+                            <label nz-radio [nzValue]="true">Internal Employee</label>
+                        </nz-radio-group>
+                    </nz-form-control>
+                </nz-form-item>
+            </nz-card>
+
+            <div nz-row [nzGutter]="24">
+                <!-- Main Column -->
+                <div nz-col [nzSpan]="16">
+
+                    <nz-card nzTitle="Personal Information" class="mb-6">
+                        <div *ngIf="isInternal()" class="mb-4">
+                            <nz-form-item>
+                                <nz-form-label nzRequired>Select Employee</nz-form-label>
+                                <nz-form-control nzErrorTip="Please select an employee">
+                                    <nz-select formControlName="employeeId" nzShowSearch nzAllowClear
+                                        nzPlaceHolder="Choose employee...">
+                                        <nz-option *ngFor="let emp of employees()" [nzValue]="emp.id.toString()"
+                                            [nzLabel]="emp.firstName + ' ' + emp.lastName + ' (' + emp.employeeNumber + ')'">
+                                        </nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+                            <nz-divider></nz-divider>
+                        </div>
+
+                        <div nz-row [nzGutter]="16">
+                            <div nz-col [nzSpan]="8">
+                                <nz-form-item>
+                                    <nz-form-label nzRequired>First Name</nz-form-label>
+                                    <nz-form-control nzErrorTip="First name is required">
+                                        <input nz-input formControlName="firstName" placeholder="First Name" />
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                            <div nz-col [nzSpan]="8">
+                                <nz-form-item>
+                                    <nz-form-label>Middle Name</nz-form-label>
+                                    <nz-form-control>
+                                        <input nz-input formControlName="middleName" placeholder="Middle Name" />
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                            <div nz-col [nzSpan]="8">
+                                <nz-form-item>
+                                    <nz-form-label nzRequired>Last Name</nz-form-label>
+                                    <nz-form-control nzErrorTip="Last name is required">
+                                        <input nz-input formControlName="lastName" placeholder="Last Name" />
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                        </div>
+
+                        <div nz-row [nzGutter]="16">
+                            <div nz-col [nzSpan]="12">
+                                <nz-form-item>
+                                    <nz-form-label nzRequired>Email</nz-form-label>
+                                    <nz-form-control nzErrorTip="Enter a valid email">
+                                        <input nz-input formControlName="email" type="email" placeholder="Email" />
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                            <div nz-col [nzSpan]="12">
+                                <nz-form-item>
+                                    <nz-form-label>Phone Number</nz-form-label>
+                                    <nz-form-control>
+                                        <input nz-input formControlName="phone" placeholder="Phone" />
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                        </div>
+
+                        <nz-form-item>
+                            <nz-form-label>Current Address</nz-form-label>
+                            <nz-form-control>
+                                <textarea nz-input formControlName="currentAddress" rows="2"
+                                    placeholder="Address"></textarea>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </nz-card>
+
+                    <nz-card nzTitle="Professional Background" class="mb-6">
+                        <div nz-row [nzGutter]="16">
+                            <div nz-col [nzSpan]="12">
+                                <nz-form-item>
+                                    <nz-form-label>Current Employer</nz-form-label>
+                                    <nz-form-control>
+                                        <input nz-input formControlName="currentEmployer" placeholder="Company Name" />
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                            <div nz-col [nzSpan]="12">
+                                <nz-form-item>
+                                    <nz-form-label>Current Job Title</nz-form-label>
+                                    <nz-form-control>
+                                        <input nz-input formControlName="currentJobTitle" placeholder="Position" />
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                        </div>
+
+                        <div nz-row [nzGutter]="16">
+                            <div nz-col [nzSpan]="12">
+                                <nz-form-item>
+                                    <nz-form-label>Years of Experience</nz-form-label>
+                                    <nz-form-control>
+                                        <nz-input-number formControlName="yearsOfExperience" [nzMin]="0"
+                                            class="w-full"></nz-input-number>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                            <div nz-col [nzSpan]="12">
+                                <nz-form-item>
+                                    <nz-form-label>LinkedIn Profile</nz-form-label>
+                                    <nz-form-control>
+                                        <input nz-input formControlName="linkedInProfile"
+                                            placeholder="https://linkedin.com/in/..." />
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                        </div>
+
+                        <nz-form-item>
+                            <nz-form-label>Skills</nz-form-label>
+                            <nz-form-control>
+                                <textarea nz-input formControlName="skills" rows="3"
+                                    placeholder="List skills separated by commas"></textarea>
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        <nz-form-item>
+                            <nz-form-label>Qualifications</nz-form-label>
+                            <nz-form-control>
+                                <textarea nz-input formControlName="qualifications" rows="3"
+                                    placeholder="Education, Certifications..."></textarea>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </nz-card>
+                </div>
+
+                <!-- Sidebar Column -->
+                <div nz-col [nzSpan]="8">
+                    <nz-card nzTitle="Application Details" class="mb-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired>Target Job Vacancy</nz-form-label>
+                            <nz-form-control nzErrorTip="Please select a vacancy">
+                                <nz-select formControlName="jobVacancyId" nzShowSearch nzAllowClear
+                                    nzPlaceHolder="Select Vacancy">
+                                    <nz-option *ngFor="let v of vacancies()" [nzValue]="v.id"
+                                        [nzLabel]="v.position.name + ' (' + v.organisationalUnit.name + ')'">
+                                    </nz-option>
+                                </nz-select>
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        <nz-form-item>
+                            <nz-form-label>Application Source</nz-form-label>
+                            <nz-form-control>
+                                <nz-select formControlName="source">
+                                    <nz-option nzValue="Direct" nzLabel="Direct"></nz-option>
+                                    <nz-option nzValue="LinkedIn" nzLabel="LinkedIn"></nz-option>
+                                    <nz-option nzValue="Referral" nzLabel="Referral"></nz-option>
+                                    <nz-option nzValue="Indeed" nzLabel="Indeed"></nz-option>
+                                    <nz-option nzValue="Other" nzLabel="Other"></nz-option>
+                                </nz-select>
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        <nz-form-item>
+                            <nz-form-label>Expected Salary</nz-form-label>
+                            <nz-form-control>
+                                <nz-input-number formControlName="expectedSalary" [nzMin]="0" [nzStep]="100"
+                                    class="w-full"></nz-input-number>
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        <nz-form-item>
+                            <nz-form-label>Available From</nz-form-label>
+                            <nz-form-control>
+                                <nz-date-picker formControlName="availableFrom" class="w-full"></nz-date-picker>
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        <nz-form-item>
+                            <nz-form-label>Notice Period (Days)</nz-form-label>
+                            <nz-form-control>
+                                <nz-input-number formControlName="noticePeriodDays" [nzMin]="0"
+                                    class="w-full"></nz-input-number>
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        <nz-form-item>
+                            <nz-form-control>
+                                <label nz-checkbox formControlName="willingToRelocate">Willing to Relocate</label>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </nz-card>
+
+                    <nz-card nzTitle="Internal Notes">
+                        <nz-form-item>
+                            <nz-form-control>
+                                <textarea nz-input formControlName="notes" rows="6"
+                                    placeholder="Any internal notes or comments..."></textarea>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </nz-card>
+                </div>
+            </div>
+
+            <!-- Action Footer -->
+            <div class="footer-actions mt-6 flex justify-end">
+                <nz-space>
+                    <button *nzSpaceItem nz-button (click)="router.navigate(['../'], { relativeTo: route })"
+                        [disabled]="submitting()">Cancel</button>
+                    <button *nzSpaceItem nz-button nzType="primary" [nzLoading]="submitting()" (click)="submit()">
+                        {{ isEdit() ? 'Update' : 'Submit Application' }}
+                    </button>
+                </nz-space>
+            </div>
+        </form>
+    </nz-spin>
+</div>

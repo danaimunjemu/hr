@@ -1,86 +1,137 @@
-import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal, computed, AfterViewInit, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ErCaseService } from '../../services/er-case.service';
-import { ErCase } from '../../models/er-case.model';
+import { ErCase, CaseStatus, Priority } from '../../models/er-case.model';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { Chart } from '@antv/g2';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-case-list',
   standalone: false,
-  template: `
-    <div class="page-header">
-      <h1 class="text-2xl font-bold">Employee Relations Cases</h1>
-      <button nz-button nzType="primary" routerLink="create">
-        <span nz-icon nzType="plus"></span> Create Case
-      </button>
-    </div>
-
-    <nz-card>
-      <nz-table #basicTable [nzData]="cases()" [nzLoading]="loading()">
-        <thead>
-          <tr>
-            <th>Case Number</th>
-            <th>Title</th>
-            <th>Status</th>
-            <th>Priority</th>
-            <th>Assigned To</th>
-            <th>Created On</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let data of basicTable.data">
-            <td><a [routerLink]="['view', data.id]">{{ data.caseNumber }}</a></td>
-            <td>{{ data.title }}</td>
-            <td><nz-tag [nzColor]="getStatusColor(data.status)">{{ data.status }}</nz-tag></td>
-            <td><nz-tag [nzColor]="getPriorityColor(data.priority)">{{ data.priority }}</nz-tag></td>
-            <td>{{ data.assignedToUser?.firstName }} {{ data.assignedToUser?.lastName }}</td>
-            <td>{{ data.createdOn | date }}</td>
-            <td>
-              <a [routerLink]="['view', data.id]">View</a>
-              <nz-divider nzType="vertical"></nz-divider>
-              <a [routerLink]="['edit', data.id]">Edit</a>
-              <nz-divider nzType="vertical"></nz-divider>
-              <a nz-popconfirm nzPopconfirmTitle="Delete this case?" (nzOnConfirm)="deleteCase(data.id)" class="text-red-500">Delete</a>
-            </td>
-          </tr>
-        </tbody>
-      </nz-table>
-    </nz-card>
-  `,
-  styles: [`
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-  `]
+  templateUrl: './case-list.component.html',
+  styleUrls: ['./case-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CaseListComponent implements OnInit {
+export class CaseListComponent implements OnInit, AfterViewInit {
+  @ViewChild('chartContainer') chartContainer!: ElementRef;
+
   cases: WritableSignal<ErCase[]> = signal([]);
   loading: WritableSignal<boolean> = signal(true);
+
+  // Filters
+  searchQuery = signal<string>('');
+  statusFilter = signal<CaseStatus | 'ALL'>('ALL');
+  priorityFilter = signal<Priority | 'ALL'>('ALL');
+
+  // Computed signals for stats
+  stats = computed(() => {
+    const all = this.cases();
+    return {
+      total: all.length,
+      open: all.filter(c => c.status === 'OPEN' || c.status === 'IN_PROGRESS' || c.status === 'TRIAGE').length,
+      closed: all.filter(c => c.status === 'CLOSED').length,
+      highPriority: all.filter(c => c.priority === 'HIGH').length
+    };
+  });
+
+  // Computed signal for filtered list
+  filteredCases = computed(() => {
+    let list = this.cases();
+    const query = this.searchQuery().toLowerCase();
+    const status = this.statusFilter();
+    const priority = this.priorityFilter();
+
+    if (query) {
+      list = list.filter(c => c.title.toLowerCase().includes(query) || c.caseNumber?.toLowerCase().includes(query));
+    }
+
+    if (status !== 'ALL') {
+      list = list.filter(c => c.status === status);
+    }
+
+    if (priority !== 'ALL') {
+      list = list.filter(c => c.priority === priority);
+    }
+
+    return list;
+  });
+
+  chart: Chart | null = null;
 
   constructor(
     private caseService: ErCaseService,
     private message: NzMessageService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadCases();
   }
 
+  ngAfterViewInit(): void {
+    this.renderChart();
+  }
+
   loadCases(): void {
     this.loading.set(true);
-    this.caseService.getCases().subscribe({
-      next: (data) => {
-        this.cases.set(data);
+    this.caseService.getCases()
+      .pipe(finalize(() => {
         this.loading.set(false);
-      },
-      error: () => {
-        this.message.error('Failed to load cases');
-        this.loading.set(false);
+        // Delay chart render to ensure container is ready and data is set
+        setTimeout(() => this.renderChart(), 100);
+      }))
+      .subscribe({
+        next: (data) => this.cases.set(data),
+        error: () => this.message.error('Failed to load cases')
+      });
+  }
+
+  renderChart(): void {
+    if (!this.chartContainer || this.cases().length === 0) return;
+
+    if (this.chart) {
+      this.chart.destroy();
+    }
+
+    // Prepare data: count cases per day
+    const dateMap = new Map<string, number>();
+    this.cases().forEach(c => {
+      if (c.createdOn) {
+        const date = new Date(c.createdOn).toLocaleDateString();
+        dateMap.set(date, (dateMap.get(date) || 0) + 1);
       }
     });
+
+    const chartData = Array.from(dateMap.entries())
+      .map(([date, count]) => ({ date, count }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    this.chart = new Chart({
+      container: this.chartContainer.nativeElement,
+      autoFit: true,
+      height: 300,
+    });
+
+    this.chart
+      .line()
+      .data(chartData)
+      .encode('x', 'date')
+      .encode('y', 'count')
+      .encode('shape', 'smooth')
+      .label({
+        text: 'count',
+        style: {
+          dy: -10,
+        },
+      });
+
+    this.chart
+      .point()
+      .data(chartData)
+      .encode('x', 'date')
+      .encode('y', 'count')
+      .tooltip(false);
+
+    this.chart.render();
   }
 
   deleteCase(id: number): void {

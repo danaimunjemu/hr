@@ -1,8 +1,10 @@
 import { Component, OnInit, signal, computed, AfterViewInit, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Chart } from '@antv/g2';
 import { JobVacancyService } from '../../job-vacancies/services/job-vacancy.service';
-import { JobVacancy } from '../../job-vacancies/models/job-vacancy.model';
-import { finalize } from 'rxjs';
+import { JobVacancy, JobVacancyStatus } from '../../job-vacancies/models/job-vacancy.model';
+import { CandidateService } from '../../candidates/services/candidate.service';
+import { Candidate } from '../../candidates/models/candidate.model';
+import { finalize, forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-recruitment-page',
@@ -18,15 +20,21 @@ export class RecruitmentPageComponent implements OnInit, AfterViewInit {
   error = signal<string | null>(null);
 
   // Stats Signals
-  stats = signal({
-    totalJobs: 12,
-    totalApplicants: 145,
-    pendingInterviews: 24,
-    hiresThisMonth: 5
+  activeJobsCount = computed(() => this.vacancies().filter(v => v.status === JobVacancyStatus.APPROVED).length);
+
+  stats = computed(() => {
+    const candidateList = this.candidateList();
+    return {
+      totalJobs: this.activeJobsCount(),
+      totalApplicants: candidateList.length,
+      pendingInterviews: candidateList.filter(c => c.status === 'Interview').length,
+      hiresThisMonth: candidateList.filter(c => c.status === 'Hired').length // Simplified
+    };
   });
 
   // Vacancies List (Real Data)
-  vacancies = signal<any[]>([]);
+  vacancies = signal<JobVacancy[]>([]);
+  candidateList = signal<Candidate[]>([]);
 
   // Sample Job Data (Keep for now if needed elsewhere, but user asked for table from GET)
   jobs = signal([
@@ -35,23 +43,19 @@ export class RecruitmentPageComponent implements OnInit, AfterViewInit {
     { id: 3, title: 'Marketing Manager', location: 'London', type: 'Full-time', applicants: 62, interviews: 12 }
   ]);
 
-  // Recent Candidates
-  candidates = signal([
-    {
-      name: 'Alice Cooper',
-      position: 'Senior Frontend Engineer',
-      status: 'Interview',
-      appliedDate: '2 hours ago',
-      avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
-    },
-    {
-      name: 'Bob Marley',
-      position: 'Product Designer',
-      status: 'Review',
-      appliedDate: '5 hours ago',
-      avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
-    }
-  ]);
+  // Recent Candidates (Real Data)
+  recentCandidates = computed(() => {
+    return this.candidateList()
+      .slice(0, 5)
+      .map(c => ({
+        id: c.id,
+        name: `${c.firstName} ${c.lastName}`,
+        position: c.jobVacancy?.position.name || 'Unknown',
+        status: c.status,
+        appliedDate: c.applicationDate,
+        avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
+      }));
+  });
 
   // Upcoming Interviews (Signals)
   interviews = signal([
@@ -62,16 +66,33 @@ export class RecruitmentPageComponent implements OnInit, AfterViewInit {
 
   chart: Chart | null = null;
 
-  constructor(private jobVacancyService: JobVacancyService) { }
+  constructor(
+    private jobVacancyService: JobVacancyService,
+    private candidateService: CandidateService
+  ) { }
 
   ngOnInit(): void {
-    this.loadVacancies();
-    // Simulate other API loading
-    setTimeout(() => {
-      this.loading.set(false);
-      // Give Angular time to render the chart container
-      setTimeout(() => this.renderChart(), 100);
-    }, 1000);
+    this.loadDashboardData();
+  }
+
+  loadDashboardData(): void {
+    this.loading.set(true);
+    forkJoin({
+      vacancies: this.jobVacancyService.getAll(),
+      candidates: this.candidateService.getAll()
+    }).pipe(
+      finalize(() => {
+        this.loading.set(false);
+        // Give Angular time to render the chart container
+        setTimeout(() => this.renderChart(), 100);
+      })
+    ).subscribe({
+      next: (res) => {
+        this.vacancies.set(res.vacancies);
+        this.candidateList.set(res.candidates);
+      },
+      error: () => this.error.set('Failed to load recruitment data')
+    });
   }
 
   ngAfterViewInit(): void {
@@ -162,13 +183,11 @@ export class RecruitmentPageComponent implements OnInit, AfterViewInit {
     });
   }
 
-  getJobVacancyStatusColor(status: string): string {
+  getJobVacancyStatusColor(status: any): string {
     switch (status) {
-      case 'ACTIVE': return 'success';
-      case 'CLOSED': return 'default';
-      case 'ON_HOLD': return 'warning';
-      case 'FULFILLED': return 'blue';
-      case 'PENDING_APPROVAL': return 'processing';
+      case JobVacancyStatus.PENDING: return 'gold';
+      case JobVacancyStatus.APPROVED: return 'green';
+      case JobVacancyStatus.DECLINED: return 'red';
       default: return 'default';
     }
   }

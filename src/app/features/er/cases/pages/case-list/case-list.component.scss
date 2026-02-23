@@ -1,0 +1,78 @@
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    .header-title {
+        h1 {
+            margin-bottom: 4px;
+            color: #1f2937;
+        }
+
+        p {
+            margin: 0;
+        }
+    }
+}
+
+.dashboard-content {
+    .chart-container {
+        height: 300px;
+        width: 100%;
+    }
+
+    .filter-container {
+        background: #fff;
+        border-radius: 8px;
+    }
+
+    .table-card {
+        .ant-table-thead>tr>th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #475569;
+        }
+    }
+
+    // Statistic card enhancements
+    nz-card {
+        border-radius: 12px;
+        transition: all 0.3s ease;
+
+        &:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+    }
+
+    .mt-4 {
+        margin-top: 16px;
+    }
+
+    .mt-6 {
+        margin-top: 24px;
+    }
+
+    .w-full {
+        width: 100%;
+    }
+}
+
+:host {
+    ::ng-deep {
+        .ant-statistic-title {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .ant-statistic-content {
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+        .ant-tag {
+            border-radius: 4px;
+            padding: 0 8px;
+        }
+    }
+}

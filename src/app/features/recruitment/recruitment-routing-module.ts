@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: 'job-vacancies',
     loadChildren: () => import('./job-vacancies/job-vacancy.routes').then(m => m.JOB_VACANCY_ROUTES)
+  },
+  {
+    path: 'candidates',
+    loadChildren: () => import('./candidates/candidate.routes').then(m => m.CANDIDATE_ROUTES)
   }
 ];
 

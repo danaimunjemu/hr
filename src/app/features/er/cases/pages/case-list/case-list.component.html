@@ -1,0 +1,147 @@
+<div class="page-header">
+    <div class="header-title">
+        <h1 class="text-2xl font-bold">ER Cases Dashboard</h1>
+        <p class="text-gray-500">Overview of Employee Relations cases and trends.</p>
+    </div>
+    <button nz-button nzType="primary" routerLink="create">
+        <span nz-icon nzType="plus"></span> Create Case
+    </button>
+</div>
+
+<div class="dashboard-content">
+    <!-- Stats Row -->
+    <div nz-row [nzGutter]="16">
+        <div nz-col [nzSpan]="6">
+            <nz-card>
+                <nz-statistic [nzValue]="stats().total" [nzTitle]="'Total Cases'" [nzPrefix]="totalIcon"></nz-statistic>
+                <ng-template #totalIcon><span nz-icon nzType="file-text" class="text-blue-500"></span></ng-template>
+            </nz-card>
+        </div>
+        <div nz-col [nzSpan]="6">
+            <nz-card>
+                <nz-statistic [nzValue]="stats().open" [nzTitle]="'Open Cases'" [nzPrefix]="openIcon"></nz-statistic>
+                <ng-template #openIcon><span nz-icon nzType="clock-circle" class="text-orange-500"></span></ng-template>
+            </nz-card>
+        </div>
+        <div nz-col [nzSpan]="6">
+            <nz-card>
+                <nz-statistic [nzValue]="stats().highPriority" [nzTitle]="'High Priority'" [nzPrefix]="priorityIcon">
+                </nz-statistic>
+                <ng-template #priorityIcon><span nz-icon nzType="alert" class="text-red-500"></span></ng-template>
+            </nz-card>
+        </div>
+        <div nz-col [nzSpan]="6">
+            <nz-card>
+                <nz-statistic [nzValue]="stats().closed" [nzTitle]="'Closed Cases'"
+                    [nzPrefix]="closedIcon"></nz-statistic>
+                <ng-template #closedIcon><span nz-icon nzType="check-circle"
+                        class="text-green-500"></span></ng-template>
+            </nz-card>
+        </div>
+    </div>
+
+    <!-- Chart Row -->
+    <nz-card nzTitle="Case Trends (Count per Day)" class="mt-4">
+        <div #chartContainer class="chart-container"></div>
+        <div *ngIf="cases().length === 0" class="text-center py-10 text-gray-400">
+            <span nz-icon nzType="bar-chart" class="text-3xl mb-2"></span>
+            <p>No data available for chart</p>
+        </div>
+    </nz-card>
+
+    <!-- Filter Row -->
+    <nz-card class="mt-4 filter-container">
+        <div nz-row [nzGutter]="16" nzAlign="middle">
+            <div nz-col [nzSpan]="8">
+                <nz-input-group [nzPrefix]="searchIcon">
+                    <input type="text" nz-input placeholder="Search by title or case number..."
+                        [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" />
+                </nz-input-group>
+                <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+            </div>
+            <div nz-col [nzSpan]="6">
+                <nz-select class="w-full" [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)"
+                    nzPlaceHolder="Filter by Status">
+                    <nz-option nzValue="ALL" nzLabel="All Statuses"></nz-option>
+                    <nz-option nzValue="OPEN" nzLabel="Open"></nz-option>
+                    <nz-option nzValue="IN_PROGRESS" nzLabel="In Progress"></nz-option>
+                    <nz-option nzValue="TRIAGE" nzLabel="Triage"></nz-option>
+                    <nz-option nzValue="CLOSED" nzLabel="Closed"></nz-option>
+                </nz-select>
+            </div>
+            <div nz-col [nzSpan]="6">
+                <nz-select class="w-full" [ngModel]="priorityFilter()" (ngModelChange)="priorityFilter.set($event)"
+                    nzPlaceHolder="Filter by Priority">
+                    <nz-option nzValue="ALL" nzLabel="All Priorities"></nz-option>
+                    <nz-option nzValue="HIGH" nzLabel="High"></nz-option>
+                    <nz-option nzValue="MEDIUM" nzLabel="Medium"></nz-option>
+                    <nz-option nzValue="LOW" nzLabel="Low"></nz-option>
+                </nz-select>
+            </div>
+            <div nz-col [nzSpan]="4" class="text-right">
+                <button nz-button nzType="default"
+                    (click)="searchQuery.set(''); statusFilter.set('ALL'); priorityFilter.set('ALL')">
+                    Reset Filters
+                </button>
+            </div>
+        </div>
+    </nz-card>
+
+    <!-- Table Row -->
+    <nz-card class="mt-4 table-card">
+        <nz-table #basicTable [nzData]="filteredCases()" [nzLoading]="loading()" [nzBordered]="true" nzSize="middle">
+            <thead>
+                <tr>
+                    <th>Case Number</th>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Assigned To</th>
+                    <th>Created On</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of basicTable.data">
+                    <td>
+                        <a [routerLink]="['view', data.id]" class="font-semibold text-blue-600">
+                            {{ data.caseNumber || 'N/A' }}
+                        </a>
+                    </td>
+                    <td>{{ data.title }}</td>
+                    <td>
+                        <nz-tag [nzColor]="getStatusColor(data.status)">{{ data.status }}</nz-tag>
+                    </td>
+                    <td>
+                        <nz-tag [nzColor]="getPriorityColor(data.priority)">{{ data.priority }}</nz-tag>
+                    </td>
+                    <td>
+                        <div class="flex items-center" *ngIf="data.assignedToUser; else unassigned">
+                            <nz-avatar nzSize="small" nzIcon="user" class="mr-2"></nz-avatar>
+                            <span>{{ data.assignedToUser.firstName }} {{ data.assignedToUser.lastName }}</span>
+                        </div>
+                        <ng-template #unassigned><span class="text-gray-400 italic">Unassigned</span></ng-template>
+                    </td>
+                    <td>{{ data.createdOn | date:'mediumDate' }}</td>
+                    <td>
+                        <nz-space>
+                            <button *nzSpaceItem nz-button nzType="link" [routerLink]="['view', data.id]"
+                                nzTooltipTitle="View Details" nz-tooltip>
+                                <span nz-icon nzType="eye"></span>
+                            </button>
+                            <button *nzSpaceItem nz-button nzType="link" [routerLink]="['edit', data.id]"
+                                nzTooltipTitle="Edit Case" nz-tooltip>
+                                <span nz-icon nzType="edit"></span>
+                            </button>
+                            <button *nzSpaceItem nz-button nzType="link" nzDanger nz-popconfirm
+                                nzPopconfirmTitle="Delete this case?" (nzOnConfirm)="deleteCase(data.id)"
+                                nzTooltipTitle="Delete Case" nz-tooltip>
+                                <span nz-icon nzType="delete"></span>
+                            </button>
+                        </nz-space>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </nz-card>
+</div>
