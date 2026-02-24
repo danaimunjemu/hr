@@ -1,8 +1,8 @@
 // Force router rebuild
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import {MainLayout} from './shared/components/layout/main-layout/main-layout';
-import {NotFound} from './core/pages/not-found/not-found';
+import { MainLayout } from './shared/components/layout/main-layout/main-layout';
+import { NotFound } from './core/pages/not-found/not-found';
 import { ErWorkspaceComponent } from './features/er/er-workspace/er-workspace.component';
 
 const routes: Routes = [
@@ -49,12 +49,12 @@ const routes: Routes = [
           import('./features/offboarding/offboarding-module').then((m) => m.OffboardingModule),
         canActivate: [],
       },
-      {
-        path: 'time-and-leave',
-        loadChildren: () =>
-          import('./features/time-and-leave/time-and-leave-module').then((m) => m.TimeAndLeaveModule),
-        canActivate: [],
-      },
+      // {
+      //   path: 'time-and-leave',
+      //   loadChildren: () =>
+      //     import('./features/time-and-leave/time-and-leave-module').then((m) => m.TimeAndLeaveModule),
+      //   canActivate: [],
+      // },
       {
         path: 'time-and-leave-user',
         loadChildren: () =>
@@ -105,12 +105,12 @@ const routes: Routes = [
           import('./features/settings/settings-module').then((m) => m.SettingsModule),
         canActivate: [],
       },
-      {
-        path: 'performance',
-        loadChildren: () =>
-          import('./features/performance/performance-module').then((m) => m.PerformanceModule),
-        canActivate: [],
-      }
+      // {
+      //   path: 'performance',
+      //   loadChildren: () =>
+      //     import('./features/performance/performance-module').then((m) => m.PerformanceModule),
+      //   canActivate: [],
+      // }
     ],
   },
   { path: '**', component: NotFound },

@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SettingsPage } from './pages/settings-page/settings-page';
+import { SettingsDashboardComponent } from './pages/settings-dashboard/settings-dashboard';
 import { AllCompanies } from './pages/all-companies/all-companies';
 import { ViewCompany } from './pages/view-company/view-company';
 import { CreateCompany } from './pages/create-company/create-company';
@@ -61,6 +62,23 @@ import { EditWorkScheduleRule } from './pages/work-schedule-rules/edit-work-sche
 const routes: Routes = [
   {
     path: '',
+    component: SettingsDashboardComponent,
+    data: { breadcrumb: 'Settings' }
+  },
+  {
+    path: 'performance',
+    loadChildren: () =>
+      import('../../features/performance/performance-module').then((m) => m.PerformanceModule),
+    canActivate: [],
+  },
+  {
+    path: 'time-and-leave',
+    loadChildren: () =>
+      import('../../features/time-and-leave/time-and-leave-module').then((m) => m.TimeAndLeaveModule),
+    canActivate: [],
+  },
+  {
+    path: 'master-data',
     component: SettingsPage,
     data: { breadcrumb: 'Employee Master Data' },
     children: [

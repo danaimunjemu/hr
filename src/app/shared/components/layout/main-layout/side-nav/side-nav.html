@@ -81,8 +81,16 @@
       <div class="flex flex-row">
         <nz-icon>
           <span class="nerd-sider-menu-icon" nzTooltipTitle="Organogram" nzTooltipPlacement="right" nz-tooltip>
+            <!-- <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
+              <path fill="currentColor"
+                d="M6 2a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h1v2.5c0 .69.56 1.25 1.25 1.25h2.5V14h-4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2c0-.69-.56-1.25-1.25-1.25H8v-1.5h8v1.5h-1.75c-.69 0-1.25.56-1.25 1.25v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-4v-2.25h2.5c.69 0 1.25-.56 1.25-1.25V8h1a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h1v2h-6V8h1a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm0 2h2v2H6zm10 0h2v2h-2zM6 16h2v2H6zm10 0h2v2h-2z" />
+            </svg> -->
             <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
-              <path fill="currentColor" d="M6 2a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h1v2.5c0 .69.56 1.25 1.25 1.25h2.5V14h-4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2c0-.69-.56-1.25-1.25-1.25H8v-1.5h8v1.5h-1.75c-.69 0-1.25.56-1.25 1.25v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-4v-2.25h2.5c.69 0 1.25-.56 1.25-1.25V8h1a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h1v2h-6V8h1a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm0 2h2v2H6zm10 0h2v2h-2zM6 16h2v2H6zm10 0h2v2h-2z" />
+              <path fill="currentColor"
+                d="M3.464 20.536C4.93 22 7.286 22 12 22s7.071 0 8.535-1.465C22 19.072 22 16.714 22 12s0-7.071-1.465-8.536C19.072 2 16.714 2 12 2S4.929 2 3.464 3.464C2 4.93 2 7.286 2 12s0 7.071 1.464 8.535"
+                opacity="0.5" />
+              <path fill="currentColor"
+                d="M8 8.25a.75.75 0 0 1 .75.75v2.25h2.5V9a.75.75 0 0 1 1.5 0v2.25H13c.476 0 .796 0 1.043-.017c.241-.017.358-.046.435-.078c.307-.127.55-.37.677-.677c.032-.077.061-.194.078-.435c.017-.247.017-.567.017-1.043a.75.75 0 0 1 1.5 0v.025c0 .445 0 .816-.02 1.12a2.8 2.8 0 0 1-.19.907a2.75 2.75 0 0 1-1.488 1.489c-.29.12-.59.167-.907.188c-.304.021-.675.021-1.12.021h-.275V15a.75.75 0 0 1-1.5 0v-2.25h-2.5V15a.75.75 0 0 1-1.5 0V9A.75.75 0 0 1 8 8.25" />
             </svg>
           </span>
         </nz-icon>
@@ -104,18 +112,22 @@
         <span class="nerd-sider-menu-text">Employee Offboarding</span>
       </div>
     </li> -->
-<li nz-menu-item routerLink="/app/offboarding/organo" routerLinkActive="ant-menu-item-selected"
+    <li nz-menu-item routerLink="/app/offboarding/organo" routerLinkActive="ant-menu-item-selected"
       [ngClass]="{ 'collapsed-side-li': isCollapsed }">
       <div class="flex flex-row">
         <nz-icon>
-          <span class="nerd-sider-menu-icon" nzTooltipTitle="Employee Offboarding" nzTooltipPlacement="right" nz-tooltip>
+          <span class="nerd-sider-menu-icon" nzTooltipTitle="Employee Offboarding" nzTooltipPlacement="right"
+            nz-tooltip>
             <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
-              <path fill="currentColor" d="M14 3h-4C6.229 3 4.343 3 3.172 4.172S2 7.229 2 11s0 5.657 1.172 6.828S6.229 19 10 19h4c3.771 0 5.657 0 6.828-1.172S22 14.771 22 11s0-5.657-1.172-6.828S17.771 3 14 3" opacity="0.5" />
-              <path fill="currentColor" d="M8.97 8.47a.75.75 0 0 1 1.06 0L12 10.44l1.97-1.97a.75.75 0 1 1 1.06 1.06L13.06 11.5l1.97 1.97a.75.75 0 1 1-1.06 1.06L12 12.56l-1.97 1.97a.75.75 0 0 1-1.06-1.06L10.94 11.5L8.97 9.53a.75.75 0 0 1 0-1.06" />
+              <path fill="currentColor"
+                d="M14 3h-4C6.229 3 4.343 3 3.172 4.172S2 7.229 2 11s0 5.657 1.172 6.828S6.229 19 10 19h4c3.771 0 5.657 0 6.828-1.172S22 14.771 22 11s0-5.657-1.172-6.828S17.771 3 14 3"
+                opacity="0.5" />
+              <path fill="currentColor"
+                d="M8.97 8.47a.75.75 0 0 1 1.06 0L12 10.44l1.97-1.97a.75.75 0 1 1 1.06 1.06L13.06 11.5l1.97 1.97a.75.75 0 1 1-1.06 1.06L12 12.56l-1.97 1.97a.75.75 0 0 1-1.06-1.06L10.94 11.5L8.97 9.53a.75.75 0 0 1 0-1.06" />
             </svg>
           </span>
         </nz-icon>
-        <span class="nerd-sider-menu-text">Organo</span>
+        <span class="nerd-sider-menu-text">Offboarding</span>
       </div>
     </li>
     <!-- <li nz-menu-item routerLink="/app/onboarding" routerLinkActive="ant-menu-item-selected"
@@ -151,23 +163,6 @@
           </span>
         </nz-icon>
         <span class="nerd-sider-menu-text">Time & Leave</span>
-      </div>
-    </li>
-
-    <li nz-menu-item routerLink="/app/performance-user" routerLinkActive="ant-menu-item-selected"
-      [ngClass]="{ 'collapsed-side-li': isCollapsed }">
-      <div class="flex flex-row">
-        <nz-icon>
-          <span class="nerd-sider-menu-icon" nzTooltipTitle="Performance" nzTooltipPlacement="right" nz-tooltip>
-            <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
-              <path fill="currentColor" d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2s10 4.477 10 10"
-                opacity="0.5" />
-              <path fill="currentColor"
-                d="m10.413 8.498l.164-.294C11.21 7.068 11.527 6.5 12 6.5s.79.568 1.423 1.704l.164.294c.18.323.27.484.41.59c.14.107.316.147.665.226l.318.072c1.23.278 1.845.417 1.991.888c.147.47-.273.96-1.111 1.941l-.217.254c-.238.278-.357.418-.41.59c-.055.172-.037.358 0 .73l.032.338c.127 1.308.19 1.962-.193 2.253c-.383.29-.958.026-2.11-.504l-.298-.138c-.327-.15-.49-.226-.664-.226c-.173 0-.337.076-.664.226l-.298.138c-1.152.53-1.727.795-2.11.504c-.383-.29-.32-.945-.193-2.253l.032-.338c.037-.372.055-.558 0-.73c-.053-.172-.172-.312-.41-.59l-.217-.254c-.838-.98-1.258-1.47-1.111-1.941c.146-.47.76-.61 1.99-.888l.319-.072c.35-.08.524-.119.665-.225c.14-.107.23-.268.41-.59" />
-            </svg>
-          </span>
-        </nz-icon>
-        <span class="nerd-sider-menu-text">Performance</span>
       </div>
     </li>
 
@@ -241,6 +236,8 @@
         </div>
       </li> -->
 
+    <nz-divider nzPlain nzText="Talent" [nzOrientation]="isCollapsed ? 'center' : 'left'" />
+
     <li nz-menu-item routerLink="/app/recruitment" routerLinkActive="ant-menu-item-selected"
       [ngClass]="{ 'collapsed-side-li': isCollapsed }">
       <div class="flex flex-row">
@@ -259,6 +256,23 @@
           </span>
         </nz-icon>
         <span class="nerd-sider-menu-text">Recruitment</span>
+      </div>
+    </li>
+
+    <li nz-menu-item routerLink="/app/performance-user" routerLinkActive="ant-menu-item-selected"
+      [ngClass]="{ 'collapsed-side-li': isCollapsed }">
+      <div class="flex flex-row">
+        <nz-icon>
+          <span class="nerd-sider-menu-icon" nzTooltipTitle="Performance" nzTooltipPlacement="right" nz-tooltip>
+            <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2s10 4.477 10 10"
+                opacity="0.5" />
+              <path fill="currentColor"
+                d="m10.413 8.498l.164-.294C11.21 7.068 11.527 6.5 12 6.5s.79.568 1.423 1.704l.164.294c.18.323.27.484.41.59c.14.107.316.147.665.226l.318.072c1.23.278 1.845.417 1.991.888c.147.47-.273.96-1.111 1.941l-.217.254c-.238.278-.357.418-.41.59c-.055.172-.037.358 0 .73l.032.338c.127 1.308.19 1.962-.193 2.253c-.383.29-.958.026-2.11-.504l-.298-.138c-.327-.15-.49-.226-.664-.226c-.173 0-.337.076-.664.226l-.298.138c-1.152.53-1.727.795-2.11.504c-.383-.29-.32-.945-.193-2.253l.032-.338c.037-.372.055-.558 0-.73c-.053-.172-.172-.312-.41-.59l-.217-.254c-.838-.98-1.258-1.47-1.111-1.941c.146-.47.76-.61 1.99-.888l.319-.072c.35-.08.524-.119.665-.225c.14-.107.23-.268.41-.59" />
+            </svg>
+          </span>
+        </nz-icon>
+        <span class="nerd-sider-menu-text">Performance</span>
       </div>
     </li>
 
@@ -294,9 +308,27 @@
         </div>
       </li> -->
 
-    <nz-divider nzPlain nzText="Settings" [nzOrientation]="isCollapsed ? 'center' : 'left'" />
+    <!-- <nz-divider nzPlain nzText="Settings" [nzOrientation]="isCollapsed ? 'center' : 'left'" />
 
-    <li nz-menu-item routerLink="/app/settings" routerLinkActive="ant-menu-item-selected"
+    <li nz-menu-item routerLink="/app/settings" [routerLinkActiveOptions]="{exact: true}"
+      routerLinkActive="ant-menu-item-selected" [ngClass]="{ 'collapsed-side-li': isCollapsed }">
+      <div class="flex flex-row">
+        <nz-icon>
+          <span class="nerd-sider-menu-icon" nzTooltipTitle="Settings Dashboard" nzTooltipPlacement="right" nz-tooltip>
+            <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
+              <path fill="currentColor"
+                d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2s10 4.477 10 10m-1.5 0a8.5 8.5 0 1 0-17 0a8.5 8.5 0 0 0 17 0"
+                opacity="0.5" />
+              <path fill="currentColor"
+                d="M12 18a6 6 0 1 0 0-12a6 6 0 0 0 0 12m0-1.5a4.5 4.5 0 1 1 0-9a4.5 4.5 0 0 1 0 9" />
+            </svg>
+          </span>
+        </nz-icon>
+        <span class="nerd-sider-menu-text">Settings Dashboard</span>
+      </div>
+    </li>
+
+    <li nz-menu-item routerLink="/app/settings/master-data" routerLinkActive="ant-menu-item-selected"
       [ngClass]="{ 'collapsed-side-li': isCollapsed }">
       <div class="flex flex-row">
         <nz-icon>
@@ -350,7 +382,7 @@
         </nz-icon>
         <span class="nerd-sider-menu-text">Performance Setting</span>
       </div>
-    </li>
+    </li> -->
 
     <nz-divider nzPlain nzText="Support" [nzOrientation]="isCollapsed ? 'center' : 'left'" />
     <li nz-menu-item routerLink="/app/chatbot" routerLinkActive="ant-menu-item-selected"

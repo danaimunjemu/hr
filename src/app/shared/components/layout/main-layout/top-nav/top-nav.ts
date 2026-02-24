@@ -91,35 +91,12 @@ export class TopNav implements OnInit {
         { label: 'All Employees', link: '/app/employees/all' },
       ]
     },
-    'time-and-leave': {
-      title: 'Time and Leave Setup',
-      items: [
-        { label: 'Work Contract', link: '/app/time-and-leave/work-contract' },
-        { label: 'Schedule Rule', link: '/app/time-and-leave/work-schedule-rule' },
-        { label: 'Shift Definition', link: '/app/time-and-leave/shift-definition' },
-        { label: 'Shift Assignment', link: '/app/time-and-leave/shift-assignment' },
-        { label: 'Overtime Rule', link: '/app/time-and-leave/overtime-rule' },
-        { label: 'Holiday Calendar', link: '/app/time-and-leave/holiday-calendar' }
-      ]
-    },
-    'performance': {
-      title: 'Performance',
-      items: [
-        { label: 'Cycle', link: '/app/performance/performance-cycle' },
-        { label: 'Goal Template', link: '/app/performance/goal-template' },
-        { label: 'Goal Settings', link: '/app/performance/goal-settings' },
-        { label: 'Review 360', link: '/app/performance/review-360-setup' }
-      ]
-    },
     'settings': {
       title: 'Settings',
       items: [
-        { label: 'Companies', link: '/app/settings/companies' },
-        { label: 'Cost Centers', link: '/app/settings/cost-centers' },
-        { label: 'Employee Groups', link: '/app/settings/employee-groups' },
-        { label: 'Sub Groups', link: '/app/settings/employee-sub-groups' },
-        { label: 'Ethnic Groups', link: '/app/settings/ethnic-groups' },
-        { label: 'Grades', link: '/app/settings/grades' }
+        { label: 'Performance', link: '/app/settings/performance' },
+        { label: 'Time and Leave', link: '/app/settings/time-and-leave/' },
+        { label: 'Employee Master Data', link: '/app/settings/master-data/' }
       ]
     },
     'onboarding': {

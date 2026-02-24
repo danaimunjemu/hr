@@ -18,7 +18,8 @@
   <!-- Using signal() for immediate reactivity without async pipe -->
   <nz-card *ngIf="employee() && !loading()">
     <nz-descriptions nzTitle="Personal Details" nzBordered [nzColumn]="2" class="mb-6">
-      <nz-descriptions-item nzTitle="Full Name">{{ employee()?.firstName }} {{ employee()?.lastName }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Full Name">{{ employee()?.firstName }} {{ employee()?.lastName
+        }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Gender">
         <nz-tag [nzColor]="'blue'">{{ employee()?.gender }}</nz-tag>
       </nz-descriptions-item>
@@ -51,7 +52,8 @@
       <nz-descriptions-item nzTitle="Date Joined">{{ employee()?.dateJoined | date }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Confirmation Date">{{ employee()?.confirmationDate | date }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Termination Date">{{ employee()?.terminationDate | date }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Superior">{{ employee()?.superior }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Superior">{{ employee()?.superior.firstName + ' ' + employee()?.superior.lastName
+        }}</nz-descriptions-item>
     </nz-descriptions>
 
     <nz-descriptions nzTitle="Company & Position" nzBordered [nzColumn]="2" class="mb-6">
@@ -62,7 +64,8 @@
       <nz-descriptions-item nzTitle="Ethnic Group">{{ employee()?.ethnicGroup?.name }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Grade">{{ employee()?.grade?.name }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Job Description">{{ employee()?.jobDescription?.name }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Organizational Unit">{{ employee()?.organizationalUnit?.name }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Organizational Unit">{{ employee()?.organizationalUnit?.name
+        }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Personnel Area">{{ employee()?.personnelArea?.name }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Personnel Sub Area">{{ employee()?.personnelSubArea?.name }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Position">{{ employee()?.position?.name }}</nz-descriptions-item>
@@ -73,7 +76,8 @@
 
     <nz-descriptions nzTitle="Bank Details" nzBordered [nzColumn]="2">
       <nz-descriptions-item nzTitle="Bank Name">{{ employee()?.bankDetail?.bankName }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Account Number">{{ employee()?.bankDetail?.bankAccountNumber }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Account Number">{{ employee()?.bankDetail?.bankAccountNumber
+        }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Branch Code">{{ employee()?.bankDetail?.bankBranchCode }}</nz-descriptions-item>
     </nz-descriptions>
   </nz-card>

@@ -1,0 +1,24 @@
+<div class="settings-dashboard-container">
+    <div class="header-section">
+        <h1 class="dashboard-title">Settings Dashboard</h1>
+        <p class="dashboard-subtitle">Configure and manage your organization's system parameters</p>
+    </div>
+
+    <div class="dashboard-grid" nz-row [nzGutter]="[24, 24]">
+        <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8" *ngFor="let module of settingsModules">
+            <nz-card class="settings-card" [nzHoverable]="true" (click)="navigateTo(module.route)">
+                <div class="card-content">
+                    <div class="icon-wrapper" [style.background-color]="module.color + '15'">
+                        <span nz-icon [nzType]="module.icon" [style.color]="module.color"></span>
+                    </div>
+                    <h3 class="module-title">{{ module.title }}</h3>
+                    <p class="module-description">{{ module.description }}</p>
+                    <div class="card-footer">
+                        <span class="action-text">Configure</span>
+                        <span nz-icon nzType="arrow-right" class="action-icon"></span>
+                    </div>
+                </div>
+            </nz-card>
+        </div>
+    </div>
+</div>

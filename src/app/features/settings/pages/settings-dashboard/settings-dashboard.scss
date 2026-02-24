@@ -1,0 +1,95 @@
+.settings-dashboard-container {
+    padding: 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - 64px);
+
+    .header-section {
+        margin-bottom: 48px;
+        text-align: center;
+
+        .dashboard-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #141414;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .dashboard-subtitle {
+            font-size: 16px;
+            color: #8c8c8c;
+        }
+    }
+
+    .settings-card {
+        height: 100%;
+        border-radius: 16px;
+        border: 1px solid #f0f0f0;
+        transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+        overflow: hidden;
+
+        &:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+            border-color: #e6f7ff;
+
+            .action-icon {
+                transform: translateX(4px);
+            }
+        }
+
+        .card-content {
+            padding: 8px;
+        }
+
+        .icon-wrapper {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+
+            span {
+                font-size: 28px;
+            }
+        }
+
+        .module-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #262626;
+            margin-bottom: 12px;
+        }
+
+        .module-description {
+            font-size: 14px;
+            color: #595959;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            height: 60px;
+            overflow: hidden;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 16px;
+            border-top: 1px solid #f5f5f5;
+
+            .action-text {
+                font-size: 14px;
+                font-weight: 500;
+                color: #1890ff;
+            }
+
+            .action-icon {
+                color: #1890ff;
+                transition: transform 0.3s;
+            }
+        }
+    }
+}

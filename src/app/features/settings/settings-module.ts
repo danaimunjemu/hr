@@ -60,6 +60,7 @@ import { ViewWorkScheduleRule } from './pages/work-schedule-rules/view-work-sche
 import { CreateWorkScheduleRule } from './pages/work-schedule-rules/create-work-schedule-rule';
 import { EditWorkScheduleRule } from './pages/work-schedule-rules/edit-work-schedule-rule';
 import { SettingsPage } from './pages/settings-page/settings-page';
+import { SettingsDashboardComponent } from './pages/settings-dashboard/settings-dashboard';
 import { AntDesignModules } from '../../core/modules/antdesign.module';
 
 @NgModule({
@@ -120,7 +121,8 @@ import { AntDesignModules } from '../../core/modules/antdesign.module';
     ViewWorkScheduleRule,
     CreateWorkScheduleRule,
     EditWorkScheduleRule,
-    SettingsPage
+    SettingsPage,
+    SettingsDashboardComponent
   ],
   imports: [
     CommonModule,
