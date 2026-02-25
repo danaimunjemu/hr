@@ -1,0 +1,93 @@
+<div class="p-6">
+    <nz-breadcrumb class="mb-4">
+        <nz-breadcrumb-item>
+            <a routerLink="/app/leave-management">Dashboard</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+            <a routerLink="/app/leave-management/requests">Requests</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>{{ isEditMode() ? 'Edit' : 'New' }} Request</nz-breadcrumb-item>
+    </nz-breadcrumb>
+
+    <h1 class="text-2xl font-bold mb-6 text-gray-800">{{ isEditMode() ? 'Edit' : 'New' }} Leave Request</h1>
+
+    <nz-card [nzLoading]="loading()">
+        <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()" nzLayout="vertical">
+            <div nz-row [nzGutter]="24">
+                <div nz-col [nzSpan]="12">
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Leave Type</nz-form-label>
+                        <nz-form-control nzErrorTip="Please select a leave type">
+                            <nz-select formControlName="leaveType" nzPlaceHolder="Select leave type">
+                                <nz-option *ngFor="let type of leaveTypes()" [nzValue]="type"
+                                    [nzLabel]="type.name"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+
+            <div nz-row [nzGutter]="24">
+                <div nz-col [nzSpan]="12">
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Start Date</nz-form-label>
+                        <nz-form-control nzErrorTip="Please select a start date">
+                            <nz-date-picker formControlName="startDate" class="w-full"></nz-date-picker>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="12">
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Portion</nz-form-label>
+                        <nz-form-control>
+                            <nz-radio-group formControlName="startDayPortion">
+                                <label nz-radio nzValue="FULL_DAY">Full Day</label>
+                                <label nz-radio nzValue="MORNING">Morning</label>
+                                <label nz-radio nzValue="AFTERNOON">Afternoon</label>
+                            </nz-radio-group>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+
+            <div nz-row [nzGutter]="24">
+                <div nz-col [nzSpan]="12">
+                    <nz-form-item>
+                        <nz-form-label nzRequired>End Date</nz-form-label>
+                        <nz-form-control nzErrorTip="Please select an end date">
+                            <nz-date-picker formControlName="endDate" class="w-full"></nz-date-picker>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="12">
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Portion</nz-form-label>
+                        <nz-form-control>
+                            <nz-radio-group formControlName="endDayPortion">
+                                <label nz-radio nzValue="FULL_DAY">Full Day</label>
+                                <label nz-radio nzValue="MORNING">Morning</label>
+                                <label nz-radio nzValue="AFTERNOON">Afternoon</label>
+                            </nz-radio-group>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+
+            <nz-form-item>
+                <nz-form-label nzRequired>Reason / Comments</nz-form-label>
+                <nz-form-control nzErrorTip="Please provide a reason">
+                    <textarea nz-input formControlName="reason" rows="4"
+                        placeholder="Enter reason for leave"></textarea>
+                </nz-form-control>
+            </nz-form-item>
+
+            <div class="mt-6 flex justify-end space-x-2">
+                <button nz-button nzType="default" type="button"
+                    routerLink="/app/leave-management/requests">Cancel</button>
+                <button nz-button nzType="primary" [nzLoading]="submitting()" type="submit">
+                    {{ isEditMode() ? 'Update' : 'Save as Draft' }}
+                </button>
+            </div>
+        </form>
+    </nz-card>
+</div>

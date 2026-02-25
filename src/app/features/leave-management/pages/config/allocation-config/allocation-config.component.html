@@ -1,0 +1,38 @@
+<div class="p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Allocation Policies</h1>
+        <button nz-button nzType="primary">
+            <span nz-icon nzType="plus"></span> Create Policy
+        </button>
+    </div>
+
+    <nz-table #policyTable [nzData]="policies()" [nzLoading]="loading()">
+        <thead>
+            <tr>
+                <th>Policy Name</th>
+                <th>Trigger</th>
+                <th>Mode</th>
+                <th>Value</th>
+                <th>Pro-rata</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of policyTable.data">
+                <td class="font-bold">{{ data.name }}</td>
+                <td>{{ data.triggerType }}</td>
+                <td>{{ data.allocationMode }}</td>
+                <td>{{ data.allocationValue }}</td>
+                <td>{{ data.prorationMode !== 'NONE' ? 'Yes' : 'No' }}</td>
+                <td>
+                    <nz-switch [ngModel]="data.active" (click)="togglePolicy(data)"></nz-switch>
+                </td>
+                <td>
+                    <a (click)="runAllocation(data.id!)" class="text-green-600 mr-2">Run</a>
+                    <a>Edit</a>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</div>

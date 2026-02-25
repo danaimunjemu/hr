@@ -1,0 +1,84 @@
+<div class="p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Leave Type Configuration</h1>
+        <button nz-button nzType="primary" (click)="showModal()">
+            <span nz-icon nzType="plus"></span> Add Leave Type
+        </button>
+    </div>
+
+    <nz-table #typeTable [nzData]="leaveTypes()" [nzLoading]="loading()">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Compliance</th>
+                <th>Entitlement</th>
+                <th>Documentation</th>
+                <th>Negative Bal.</th>
+                <th>Carry Over</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of typeTable.data">
+                <td class="font-bold">{{ data.name }}</td>
+                <td><nz-tag>{{ data.leaveComplianceType }}</nz-tag></td>
+                <td>{{ data.defaultDaysPerYear }} days</td>
+                <td>{{ data.requiresDocumentation ? 'Required' : 'Optional' }}</td>
+                <td>{{ data.allowNegativeBalance ? 'Yes' : 'No' }}</td>
+                <td>{{ data.carryOverAllowed ? 'Up to ' + data.maxCarryOverDays + ' days' : 'No' }}</td>
+                <td>
+                    <a (click)="showModal(data)">Edit</a>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+
+    <nz-modal [nzVisible]="isModalVisible()" [nzTitle]="editingId ? 'Edit Leave Type' : 'Add Leave Type'"
+        (nzOnCancel)="handleCancel()" (nzOnOk)="submitForm()">
+        <ng-container *nzModalContent>
+            <form nz-form [formGroup]="validateForm" nzLayout="vertical">
+                <nz-form-item>
+                    <nz-form-label nzRequired>Type Name</nz-form-label>
+                    <nz-form-control>
+                        <input nz-input formControlName="name" placeholder="e.g. Annual Leave" />
+                    </nz-form-control>
+                </nz-form-item>
+
+                <div nz-row [nzGutter]="16">
+                    <div nz-col [nzSpan]="12">
+                        <nz-form-item>
+                            <nz-form-label nzRequired>Compliance Type</nz-form-label>
+                            <nz-form-control>
+                                <nz-select formControlName="leaveComplianceType">
+                                    <nz-option nzValue="STATUTORY" nzLabel="Statutory"></nz-option>
+                                    <nz-option nzValue="NON_STATUTORY" nzLabel="Non-Statutory"></nz-option>
+                                </nz-select>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="12">
+                        <nz-form-item>
+                            <nz-form-label nzRequired>Default Days/Year</nz-form-label>
+                            <nz-form-control>
+                                <nz-input-number formControlName="defaultDaysPerYear" class="w-full"></nz-input-number>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                </div>
+
+                <div class="space-y-2 mt-4">
+                    <label nz-checkbox formControlName="requiresDocumentation">Requires Documentation</label><br>
+                    <label nz-checkbox formControlName="allowNegativeBalance">Allow Negative Balance</label><br>
+                    <label nz-checkbox formControlName="carryOverAllowed">Allow Carry Over</label>
+                </div>
+
+                <nz-form-item *ngIf="validateForm.get('carryOverAllowed')?.value" class="mt-4">
+                    <nz-form-label>Max Carry Over Days</nz-form-label>
+                    <nz-form-control>
+                        <nz-input-number formControlName="maxCarryOverDays" class="w-full"></nz-input-number>
+                    </nz-form-control>
+                </nz-form-item>
+            </form>
+        </ng-container>
+    </nz-modal>
+</div>

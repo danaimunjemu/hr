@@ -1,0 +1,35 @@
+<div class="p-6">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">My Leave Balances</h1>
+        <p class="text-gray-500">Current entitlements and usage for the active cycle</p>
+    </div>
+
+    <nz-table #balanceTable [nzData]="balances()" [nzLoading]="loading()">
+        <thead>
+            <tr>
+                <th>Leave Type</th>
+                <th>Cycle Code</th>
+                <th>Cycle Dates</th>
+                <th>Entitlement</th>
+                <th>Taken</th>
+                <th>Pending</th>
+                <th>Available</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of balanceTable.data">
+                <td class="font-bold text-blue-600">{{ data.leaveType.name }}</td>
+                <td>{{ data.cycleCode }}</td>
+                <td class="text-xs">
+                    {{ data.cycleStartDate | date }} - {{ data.cycleEndDate | date }}
+                </td>
+                <td>{{ data.entitlement + data.carryOver + data.accrued }}</td>
+                <td>{{ data.taken }}</td>
+                <td>{{ data.pending }}</td>
+                <td class="font-bold" [ngStyle]="getAvailableStyles(data.availableBalance)">
+                    {{ data.availableBalance }}
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</div>

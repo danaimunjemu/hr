@@ -12,7 +12,13 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'timesheet-submission', pathMatch: 'full' },
       { path: 'timesheet-submission', component: TimesheetSubmissionComponent },
-      { path: 'leave-requests', component: LeaveRequestsComponent },
+      // { path: 'leave-requests', component: LeaveRequestsComponent },
+      {
+        path: 'leave-management',
+        loadChildren: () =>
+          import('../../../features/leave-management/leave-management.module').then((m) => m.LeaveManagementModule),
+        canActivate: [],
+      },
       { path: 'reports', component: ReportsComponent }
     ]
   }

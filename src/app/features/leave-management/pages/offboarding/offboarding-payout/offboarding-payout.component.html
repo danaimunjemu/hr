@@ -1,0 +1,42 @@
+<div class="p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Offboarding Payouts</h1>
+        <button nz-button nzType="primary">
+            <span nz-icon nzType="plus"></span> New Payout Run
+        </button>
+    </div>
+
+    <nz-table #payoutTable [nzData]="payoutRuns()" [nzLoading]="loading()">
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Termination Date</th>
+                <th>Days for Payout</th>
+                <th>Total Amount</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of payoutTable.data">
+                <td class="font-bold">
+                    {{ data.employee.firstName }} {{ data.employee.lastName }}
+                </td>
+                <td>{{ data.employeeTermination?.terminationDate | date }}</td>
+                <td>{{ data.totalLeaveDaysForPayout }}</td>
+                <td class="text-green-600 font-bold font-mono">
+                    {{ data.totalPayoutAmount | currency }}
+                </td>
+                <td>
+                    <nz-tag [nzColor]="data.status === 'FINALIZED' ? 'success' : 'processing'">
+                        {{ data.status }}
+                    </nz-tag>
+                </td>
+                <td>
+                    <a *ngIf="data.status !== 'FINALIZED'" (click)="finalizeRun(data.id!)" class="mr-2">Finalize</a>
+                    <a>View Details</a>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</div>

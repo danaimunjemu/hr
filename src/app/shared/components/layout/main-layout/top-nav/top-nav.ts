@@ -115,7 +115,7 @@ export class TopNav implements OnInit {
       title: 'Time and Leave',
       items: [
         { label: 'Timesheet', link: '/app/time-and-leave-user/timesheet-submission' },
-        { label: 'Leave Requests', link: '/app/time-and-leave-user/leave-requests' },
+        { label: 'Leave Requests', link: '/app/time-and-leave-user/leave-management' },
         { label: 'Reports', link: '/app/time-and-leave-user/reports' }
       ]
     }

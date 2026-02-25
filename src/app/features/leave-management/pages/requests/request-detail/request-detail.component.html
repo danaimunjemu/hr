@@ -1,0 +1,120 @@
+<div class="p-6">
+    <nz-breadcrumb class="mb-4">
+        <nz-breadcrumb-item>
+            <a routerLink="/app/leave-management">Dashboard</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+            <a routerLink="/app/leave-management/requests">Requests</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>Request Details</nz-breadcrumb-item>
+    </nz-breadcrumb>
+
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Leave Request Details</h1>
+        <nz-space>
+            <ng-container *ngIf="canApproveLM()">
+                <button nz-button nzType="primary" (click)="approveLM()" [nzLoading]="actionLoading()">
+                    <span nz-icon nzType="check"></span> Approve (LM)
+                </button>
+                <button nz-button nzType="primary" nzDanger (click)="rejectLM()" [nzLoading]="actionLoading()">
+                    <span nz-icon nzType="close"></span> Reject (LM)
+                </button>
+            </ng-container>
+
+            <ng-container *ngIf="canApproveHR()">
+                <button nz-button nzType="primary" (click)="approveHR()" [nzLoading]="actionLoading()">
+                    <span nz-icon nzType="check"></span> Approve (HR)
+                </button>
+                <button nz-button nzType="primary" nzDanger (click)="rejectHR()" [nzLoading]="actionLoading()">
+                    <span nz-icon nzType="close"></span> Reject (HR)
+                </button>
+            </ng-container>
+
+            <button *ngIf="canReverse()" nz-button nzType="default" (click)="reverse()" [nzLoading]="actionLoading()">
+                <span nz-icon nzType="reload"></span> Reverse
+            </button>
+        </nz-space>
+    </div>
+
+    <nz-spin [nzSpinning]="loading()">
+        <div *ngIf="request() as r" nz-row [nzGutter]="24">
+            <!-- Main Content -->
+            <div nz-col [nzSpan]="16">
+                <nz-card nzTitle="Request Information">
+                    <nz-descriptions [nzColumn]="2" nzLayout="vertical">
+                        <nz-descriptions-item nzTitle="Employee">
+                            {{ r.employee.firstName }} {{ r.employee.lastName }}
+                        </nz-descriptions-item>
+                        <nz-descriptions-item nzTitle="Leave Type">
+                            {{ r.leaveType.name }}
+                        </nz-descriptions-item>
+                        <nz-descriptions-item nzTitle="Start Date">
+                            {{ r.startDate | date }} ({{ r.startDayPortion }})
+                        </nz-descriptions-item>
+                        <nz-descriptions-item nzTitle="End Date">
+                            {{ r.endDate | date }} ({{ r.endDayPortion }})
+                        </nz-descriptions-item>
+                        <nz-descriptions-item nzTitle="Total Days">
+                            {{ r.totalDays }} days
+                        </nz-descriptions-item>
+                        <nz-descriptions-item nzTitle="Status">
+                            <nz-tag [nzColor]="getStatusColor(r.status)">{{ r.status }}</nz-tag>
+                        </nz-descriptions-item>
+                    </nz-descriptions>
+
+                    <nz-divider></nz-divider>
+
+                    <nz-descriptions [nzColumn]="1" nzLayout="vertical">
+                        <nz-descriptions-item nzTitle="Reason / Comments">
+                            <p class="whitespace-pre-wrap text-gray-700">{{ r.anomalyIndicators || 'No comments
+                                provided.' }}</p>
+                        </nz-descriptions-item>
+                    </nz-descriptions>
+                </nz-card>
+
+                <nz-card nzTitle="Leave Cycle" class="mt-4">
+                    <nz-descriptions [nzColumn]="3">
+                        <nz-descriptions-item nzTitle="Cycle Code">{{ r.cycleCode }}</nz-descriptions-item>
+                        <nz-descriptions-item nzTitle="Cycle Start">{{ r.cycleStartDate | date }}</nz-descriptions-item>
+                        <nz-descriptions-item nzTitle="Cycle End">{{ r.cycleEndDate | date }}</nz-descriptions-item>
+                    </nz-descriptions>
+                </nz-card>
+            </div>
+
+            <!-- Sidebar / Workflow -->
+            <div nz-col [nzSpan]="8">
+                <nz-card nzTitle="Approval Workflow">
+                    <nz-timeline>
+                        <nz-timeline-item [nzColor]="getStatusColor(r.lineManagerApprovalStatus)">
+                            <div class="font-semibold">Line Manager Approval</div>
+                            <div>Status: <nz-tag [nzColor]="getStatusColor(r.lineManagerApprovalStatus)">{{
+                                    r.lineManagerApprovalStatus }}</nz-tag></div>
+                        </nz-timeline-item>
+
+                        <nz-timeline-item [nzColor]="getStatusColor(r.hrApprovalStatus)">
+                            <div class="font-semibold">HR Approval</div>
+                            <div>Status: <nz-tag [nzColor]="getStatusColor(r.hrApprovalStatus)">{{ r.hrApprovalStatus
+                                    }}</nz-tag></div>
+                        </nz-timeline-item>
+
+                        <nz-timeline-item
+                            [nzColor]="r.status === 'APPROVED' ? 'green' : (r.status === 'REJECTED' ? 'red' : 'blue')">
+                            <div class="font-semibold">Final Status</div>
+                            <div>Status: <nz-tag [nzColor]="getStatusColor(r.status)">{{ r.status }}</nz-tag></div>
+                        </nz-timeline-item>
+                    </nz-timeline>
+                </nz-card>
+
+                <nz-card *ngIf="r.reversedBy" nzTitle="Reversal Information" class="mt-4 border-red-200 bg-red-50">
+                    <nz-descriptions [nzColumn]="1" nzLayout="vertical">
+                        <nz-descriptions-item nzTitle="Reversed By">{{ r.reversedBy }}</nz-descriptions-item>
+                        <nz-descriptions-item nzTitle="Reversal Date">{{ r.reversedDate | date:'medium'
+                            }}</nz-descriptions-item>
+                        <nz-descriptions-item nzTitle="Reversal Comments">{{ r.reversalComments
+                            }}</nz-descriptions-item>
+                    </nz-descriptions>
+                </nz-card>
+            </div>
+        </div>
+    </nz-spin>
+</div>
