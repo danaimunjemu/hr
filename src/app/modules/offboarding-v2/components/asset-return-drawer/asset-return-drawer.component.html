@@ -1,0 +1,40 @@
+<nz-drawer [nzVisible]="visible" nzTitle="Asset Return" [nzWidth]="420" (nzOnClose)="close()">
+  <ng-container *nzDrawerContent>
+    <form nz-form nzLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
+      <nz-form-item>
+        <nz-form-label nzRequired>Return Status</nz-form-label>
+        <nz-form-control>
+          <nz-select formControlName="returnStatus">
+            <nz-option *ngFor="let status of statuses" [nzLabel]="status" [nzValue]="status"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>Return Date</nz-form-label>
+        <nz-form-control nzErrorTip="Required">
+          <input nz-input type="date" formControlName="returnDate" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>Condition on Return</nz-form-label>
+        <nz-form-control nzErrorTip="Required">
+          <input nz-input formControlName="conditionOnReturn" placeholder="Good / Damaged" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>Remarks</nz-form-label>
+        <nz-form-control>
+          <textarea nz-input rows="3" formControlName="remarks"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+      <div class="actions">
+        <button nz-button type="button" (click)="close()">Cancel</button>
+        <button nz-button nzType="primary" [disabled]="form.invalid || saving" [nzLoading]="saving">Save</button>
+      </div>
+    </form>
+  </ng-container>
+</nz-drawer>

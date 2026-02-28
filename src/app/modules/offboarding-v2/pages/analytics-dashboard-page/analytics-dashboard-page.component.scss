@@ -1,0 +1,27 @@
+.metric-row {
+  margin-bottom: 12px;
+}
+
+.bar-list {
+  display: grid;
+  grid-template-columns: 90px 1fr 24px;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.bar-wrap {
+  background: #f0f0f0;
+  height: 8px;
+  border-radius: 4px;
+}
+
+.bar {
+  background: #8c8c8c;
+  height: 8px;
+  border-radius: 4px;
+}
+
+.ranking-card {
+  margin-top: 12px;
+}

@@ -1,0 +1,127 @@
+<nz-page-header nzTitle="Offboarding v2" nzSubtitle="Initiation"></nz-page-header>
+
+<nz-card nzSize="small" class="section-card">
+  <form nz-form nzLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
+    <div nz-row [nzGutter]="12">
+      <div nz-col [nzXs]="24" [nzMd]="8">
+        <nz-form-item>
+          <nz-form-label nzRequired>Employee</nz-form-label>
+          <nz-form-control nzErrorTip="Employee is required">
+            <nz-select
+              formControlName="employeeId"
+              nzShowSearch
+              nzAllowClear
+              [nzOptionFilterProp]="'nzLabel'"
+              nzPlaceHolder="Select employee"
+            >
+              <nz-option
+                *ngFor="let item of employees"
+                [nzLabel]="optionLabel(item)"
+                [nzValue]="item.employeeId"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzXs]="24" [nzMd]="8">
+        <nz-form-item>
+          <nz-form-label nzRequired>Initiator</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="initiator">
+              <nz-option *ngFor="let item of initiatorOptions" [nzLabel]="item.label" [nzValue]="item.value"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzXs]="24" [nzMd]="8">
+        <nz-form-item>
+          <nz-form-label nzRequired>Exit Type</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="exitType">
+              <nz-option *ngFor="let item of exitTypes" [nzLabel]="item.label" [nzValue]="item.value"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="12">
+      <div nz-col [nzXs]="24" [nzMd]="8">
+        <nz-form-item>
+          <nz-form-label nzRequired>Last Working Date</nz-form-label>
+          <nz-form-control nzErrorTip="Required">
+            <input nz-input type="date" formControlName="lastWorkingDate" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzXs]="24" [nzMd]="8">
+        <nz-form-item>
+          <nz-form-label>Notice Start</nz-form-label>
+          <nz-form-control>
+            <input nz-input type="date" formControlName="noticePeriodStart" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzXs]="24" [nzMd]="8">
+        <nz-form-item>
+          <nz-form-label>Notice End</nz-form-label>
+          <nz-form-control>
+            <input nz-input type="date" formControlName="noticePeriodEnd" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="12">
+      <div nz-col [nzXs]="24" [nzMd]="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Reason</nz-form-label>
+          <nz-form-control nzErrorTip="Reason is required">
+            <textarea nz-input rows="3" formControlName="reason"></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzXs]="24" [nzMd]="12">
+        <nz-form-item>
+          <nz-form-label>Comments</nz-form-label>
+          <nz-form-control>
+            <textarea nz-input rows="3" formControlName="comments"></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <nz-form-item>
+      <nz-form-label>Exit Interview Requested</nz-form-label>
+      <nz-form-control>
+        <label nz-checkbox formControlName="exitInterviewRequested">Yes</label>
+      </nz-form-control>
+    </nz-form-item>
+
+    <div class="actions">
+      <button nz-button nzType="primary" [disabled]="form.invalid || !employee || submitting" [nzLoading]="submitting">
+        Create Offboarding Case
+      </button>
+    </div>
+  </form>
+</nz-card>
+
+<nz-card nzSize="small" nzTitle="Employee Snapshot" class="section-card">
+  <nz-spin [nzSpinning]="loadingEmployee">
+    <ng-container *ngIf="employee; else emptyEmployee">
+      <nz-descriptions nzSize="small" [nzColumn]="2" nzBordered>
+        <nz-descriptions-item nzTitle="Employee ID">{{ employee.employeeId }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Full Name">{{ employee.fullName }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Department">{{ employee.department }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Job Title">{{ employee.jobTitle }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Manager">{{ employee.manager }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Employee Type">{{ employee.employeeType }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Start Date">{{ employee.startDate }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Years of Service">{{ employee.yearsOfService }}</nz-descriptions-item>
+      </nz-descriptions>
+    </ng-container>
+    <ng-template #emptyEmployee>
+      <nz-empty nzNotFoundContent="Select an employee to load details"></nz-empty>
+    </ng-template>
+  </nz-spin>
+</nz-card>

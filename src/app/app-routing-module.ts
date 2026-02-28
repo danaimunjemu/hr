@@ -38,6 +38,12 @@ const routes: Routes = [
         canActivate: [],
       },
       {
+        path: 'organogram-v2',
+        loadChildren: () =>
+          import('./modules/organogram-v2/organogram-v2.module').then((m) => m.OrganogramV2Module),
+        canActivate: [],
+      },
+      {
         path: 'onboarding',
         loadChildren: () =>
           import('./features/onboarding/onboarding-module').then((m) => m.OnboardingModule),
@@ -47,6 +53,12 @@ const routes: Routes = [
         path: 'offboarding',
         loadChildren: () =>
           import('./features/offboarding/offboarding-module').then((m) => m.OffboardingModule),
+        canActivate: [],
+      },
+      {
+        path: 'offboarding-v2',
+        loadChildren: () =>
+          import('./modules/offboarding-v2/offboarding-v2.module').then((m) => m.OffboardingV2Module),
         canActivate: [],
       },
       // {
@@ -121,3 +133,5 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
+
+

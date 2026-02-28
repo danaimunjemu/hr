@@ -1,0 +1,46 @@
+<nz-page-header nzTitle="Analytics" nzSubtitle="Offboarding v2">
+  <nz-page-header-extra>
+    <button nz-button (click)="back()">Back to Case</button>
+  </nz-page-header-extra>
+</nz-page-header>
+
+<div *ngIf="data as analytics">
+  <div nz-row [nzGutter]="12" class="metric-row">
+    <div nz-col [nzXs]="24" [nzMd]="6">
+      <nz-card nzSize="small"><nz-statistic nzTitle="Monthly Exits" [nzValue]="analytics.monthlyExits"></nz-statistic></nz-card>
+    </div>
+    <div nz-col [nzXs]="24" [nzMd]="6">
+      <nz-card nzSize="small"><nz-statistic nzTitle="Turnover Rate %" [nzValue]="analytics.turnoverRate"></nz-statistic></nz-card>
+    </div>
+  </div>
+
+  <div nz-row [nzGutter]="12">
+    <div nz-col [nzXs]="24" [nzMd]="12">
+      <nz-card nzSize="small" nzTitle="Turnover per Role">
+        <div class="bar-list" *ngFor="let item of analytics.byRole">
+          <span>{{ item.label }}</span>
+          <div class="bar-wrap"><div class="bar" [style.width]="barWidth(item.value, maxValue(analytics.byRole))"></div></div>
+          <span>{{ item.value }}</span>
+        </div>
+      </nz-card>
+    </div>
+    <div nz-col [nzXs]="24" [nzMd]="12">
+      <nz-card nzSize="small" nzTitle="Turnover per Department">
+        <div class="bar-list" *ngFor="let item of analytics.byDepartment">
+          <span>{{ item.label }}</span>
+          <div class="bar-wrap"><div class="bar" [style.width]="barWidth(item.value, maxValue(analytics.byDepartment))"></div></div>
+          <span>{{ item.value }}</span>
+        </div>
+      </nz-card>
+    </div>
+  </div>
+
+  <nz-card nzSize="small" nzTitle="Department Turnover Ranking" class="ranking-card">
+    <nz-table #rankTable [nzData]="analytics.departmentRanking" nzSize="small" [nzFrontPagination]="false">
+      <thead><tr><th>Department</th><th>Exits</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let row of rankTable.data"><td>{{ row.label }}</td><td>{{ row.value }}</td></tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+</div>

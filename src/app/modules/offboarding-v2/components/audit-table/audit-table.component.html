@@ -1,0 +1,26 @@
+<nz-card nzSize="small" nzTitle="Audit Trail" class="compact-card">
+  <nz-table #auditTable [nzData]="events" nzSize="small" [nzFrontPagination]="true" [nzPageSize]="6">
+    <thead>
+      <tr>
+        <th>Timestamp</th>
+        <th>Actor</th>
+        <th>Action</th>
+        <th>Entity</th>
+        <th>System</th>
+        <th>Access Revoked</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let event of auditTable.data">
+        <td>{{ event.timestamp | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
+        <td>{{ event.actor }}</td>
+        <td>{{ event.action }}</td>
+        <td>{{ event.entity }}</td>
+        <td>{{ event.systemName || '-' }}</td>
+        <td>{{ event.accessRevoked === undefined ? '-' : (event.accessRevoked ? 'Yes' : 'No') }}</td>
+        <td>{{ event.notes || '-' }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>

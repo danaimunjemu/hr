@@ -1,0 +1,37 @@
+<nz-drawer [nzVisible]="visible" nzTitle="Asset Acknowledgement" [nzWidth]="420" (nzOnClose)="close()">
+  <ng-container *nzDrawerContent>
+    <form nz-form nzLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
+      <nz-form-item>
+        <nz-form-label nzRequired>Employee Confirmation</nz-form-label>
+        <nz-form-control nzErrorTip="Required">
+          <nz-select formControlName="employeeConfirmed" nzPlaceHolder="Select">
+            <nz-option [nzValue]="true" nzLabel="Confirmed"></nz-option>
+            <nz-option [nzValue]="false" nzLabel="Dispute"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>Dispute Reason</nz-form-label>
+        <nz-form-control nzErrorTip="Required when disputed">
+          <textarea nz-input rows="3" formControlName="disputeReason"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>Evidence Upload</nz-form-label>
+        <nz-form-control>
+          <nz-upload nzType="select" [nzBeforeUpload]="beforeUpload" [nzMultiple]="false">
+            <button nz-button type="button">Select Evidence</button>
+          </nz-upload>
+          <div class="hint" *ngIf="form.controls.evidenceFilePath.value">{{ form.controls.evidenceFilePath.value }}</div>
+        </nz-form-control>
+      </nz-form-item>
+
+      <div class="actions">
+        <button nz-button type="button" (click)="close()">Cancel</button>
+        <button nz-button nzType="primary" [disabled]="form.invalid || saving" [nzLoading]="saving">Save</button>
+      </div>
+    </form>
+  </ng-container>
+</nz-drawer>

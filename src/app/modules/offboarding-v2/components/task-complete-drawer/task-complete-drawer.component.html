@@ -1,0 +1,80 @@
+<nz-drawer
+  [nzVisible]="visible"
+  [nzTitle]="task?.taskName || 'Complete Task'"
+  [nzWidth]="420"
+  (nzOnClose)="close()"
+>
+  <ng-container *nzDrawerContent>
+    <div class="task-summary" *ngIf="task">
+      <div class="summary-head">
+        <strong>{{ task.taskName }}</strong>
+        <nz-tag [nzColor]="isOverdueTask() ? 'error' : 'processing'">
+          {{ isOverdueTask() ? ('Overdue ' + overdueDays() + 'd') : 'On Track' }}
+        </nz-tag>
+      </div>
+      <div class="summary-meta">Owner: {{ task.taskOwner || task.taskOwnerId }} | Deadline: {{ task.taskDeadline || '-' }}</div>
+      <nz-alert
+        *ngIf="isOverdueTask()"
+        nzType="warning"
+        nzShowIcon
+        nzMessage="Deadline has passed"
+        nzDescription="Please capture completion context and include a short comment."
+      ></nz-alert>
+    </div>
+
+    <form nz-form nzLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
+      <nz-form-item>
+        <nz-form-label nzRequired>Completion Date</nz-form-label>
+        <nz-form-control nzErrorTip="Required">
+          <input nz-input type="date" formControlName="completionDate" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>Task Owner ID</nz-form-label>
+        <nz-form-control nzErrorTip="Required">
+          <input nz-input type="number" formControlName="taskOwnerId" [readOnly]="true" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item *ngIf="showTechnicalFields()">
+        <nz-form-label>System Name</nz-form-label>
+        <nz-form-control nzErrorTip="Required for IT/system tasks">
+          <input nz-input formControlName="systemName" placeholder="e.g. AD, VPN" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item *ngIf="showTechnicalFields()">
+        <nz-form-label>Access Revoked</nz-form-label>
+        <nz-form-control nzErrorTip="Required for IT/system tasks">
+          <nz-select formControlName="accessRevoked" nzPlaceHolder="Select">
+            <nz-option [nzValue]="true" nzLabel="Yes"></nz-option>
+            <nz-option [nzValue]="false" nzLabel="No"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>Evidence Upload</nz-form-label>
+        <nz-form-control>
+          <nz-upload nzType="select" [nzBeforeUpload]="beforeUpload" [nzMultiple]="false">
+            <button nz-button type="button">Select Evidence</button>
+          </nz-upload>
+          <div class="hint" *ngIf="form.controls.evidenceFilePath.value">{{ form.controls.evidenceFilePath.value }}</div>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzRequired]="isOverdueTask()">Comment</nz-form-label>
+        <nz-form-control [nzErrorTip]="commentErrorTip">
+          <textarea nz-input rows="3" formControlName="comment"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+      <div class="actions">
+        <button nz-button type="button" (click)="close()">Cancel</button>
+        <button nz-button nzType="primary" [disabled]="form.invalid || saving" [nzLoading]="saving">Save</button>
+      </div>
+    </form>
+  </ng-container>
+</nz-drawer>
