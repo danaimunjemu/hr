@@ -7,6 +7,7 @@ import {
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CookiesService } from '../storage/cookies.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class HttpTokenInterceptor implements HttpInterceptor {
@@ -14,17 +15,25 @@ export class HttpTokenInterceptor implements HttpInterceptor {
   constructor(private cookiesService: CookiesService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    let req = request;
+
+    // Rewrite requests targeting the old hardcoded localhost URL to use the environment API URL
+    if (req.url.startsWith('http://localhost:8090/api')) {
+      req = req.clone({
+        url: req.url.replace('http://localhost:8090/api', environment.apiUrl)
+      });
+    }
+
     const token = this.cookiesService.getCookie('token');
 
     if (token) {
-      const authReq = request.clone({
+      req = req.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`
         }
       });
-      return next.handle(authReq);
     }
 
-    return next.handle(request);
+    return next.handle(req);
   }
 }

@@ -19,6 +19,32 @@ export interface BankDetail {
   bankName: string;
   bankAccountNumber: string;
   bankBranchCode: string;
+  accountType?: string;
+}
+
+export interface CompanyLocation {
+  id: number;
+  createdOn: string;
+  updatedOn: string;
+  deletedOn: string;
+  name: string;
+  code: string;
+}
+
+export interface DepartmentOfLabour {
+  id: number;
+  createdOn: string;
+  updatedOn: string;
+  deletedOn: string;
+  name: string;
+}
+
+export interface OccupationalLevel {
+  id: number;
+  createdOn: string;
+  updatedOn: string;
+  deletedOn: string;
+  name: string;
 }
 
 export interface Company {
@@ -213,6 +239,23 @@ export interface PersonnelFile {
   expiryDate: string;
 }
 
+export interface EmployeeAssetNote {
+  id: number;
+  assetType: string;
+  description: string;
+  serialNumber: string;
+  issueDate: string;
+  returnDate?: string | null;
+  returned?: boolean;
+}
+
+export interface CreateEmployeeAssetRequest {
+  assetType: string;
+  description: string;
+  serialNumber: string;
+  issueDate: string;
+}
+
 export interface Employee {
   id: number;
   createdOn: string;
@@ -222,9 +265,14 @@ export interface Employee {
   employeeNumber: string;
   firstName: string;
   lastName: string;
+  middleName?: string;
+  preferredName?: string;
+  title?: string;
+  initials?: string;
   email: string;
   workPhone: string;
   mobilePhone: string;
+  homePhone?: string;
   gender: string;
   maritalStatus: string;
   nationality: string;
@@ -233,14 +281,18 @@ export interface Employee {
   dateJoined: string;
   confirmationDate?: string;
   terminationDate?: string;
+  lastWorkDate?: string;
   bankDetail?: BankDetail;
   employmentStatus: string;
+  employmentType?: string;
+  lifecycleStage?: string;
   superior?: any;
+  hrManager?: any;
   subordinates?: string[];
   company?: Company;
+  companyLocation?: CompanyLocation;
   costCenter?: CostCenter;
   group?: Group;
-  employmentType?: string;
   subGroup?: SubGroup;
   ethnicGroup?: EthnicGroup;
   grade?: Grade;
@@ -252,6 +304,31 @@ export interface Employee {
   psGroup?: PsGroup;
   workContract?: WorkContract;
   workScheduleRule?: WorkScheduleRule;
+  subOrganizationalUnit?: { id: number; name: string };
+  departmentOfLabour?: DepartmentOfLabour;
+  occupationalLevel?: OccupationalLevel;
+  taxNumber?: string;
+  taxIdValidated?: boolean;
+  taxOutstanding?: boolean;
+  paymentMethod?: string;
+  positionCode?: string;
+  shiftType?: string;
+  category?: string;
+  departmentCode?: string;
+  regionalCouncil?: string;
+  jobCategory?: string;
+  jobCategory2?: string;
+  divisionalReport?: string;
+  comsDivision?: string;
+  commissionEarner?: boolean;
+  carriesTarget?: boolean;
+  bbbeeLevel?: string;
+  cellAllowance?: string;
+  petrolAllowance?: string;
+  petrolCard?: string;
+  adslAllowance?: string;
+  vobiBele?: string;
+  ctc?: string;
   personnelFiles?: PersonnelFile[];
   user?: {
     id: number;
@@ -320,5 +397,27 @@ export class EmployeesService {
         return throwError(() => new Error('Failed to register user.'));
       })
     );
+  }
+
+  getUnreturnedEmployeeAssets(employeeId: number): Observable<EmployeeAssetNote[]> {
+    return this.http
+      .get<EmployeeAssetNote[]>(`${this.API_URL}/employee-asset-notes/employee/${employeeId}/unreturned`)
+      .pipe(
+        catchError(error => {
+          console.error(`Error fetching unreturned assets for employee ${employeeId}`, error);
+          return throwError(() => new Error('Failed to fetch employee assets.'));
+        })
+      );
+  }
+
+  addEmployeeAssets(employeeId: number, payload: CreateEmployeeAssetRequest[]): Observable<EmployeeAssetNote[]> {
+    return this.http
+      .post<EmployeeAssetNote[]>(`${this.API_URL}/employee-asset-notes/employee/${employeeId}/assets`, payload)
+      .pipe(
+        catchError(error => {
+          console.error(`Error adding assets for employee ${employeeId}`, error);
+          return throwError(() => new Error('Failed to add employee assets.'));
+        })
+      );
   }
 }

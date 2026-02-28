@@ -1,0 +1,103 @@
+<nz-page-header nzTitle="Employee Assets" nzBackIcon (nzBack)="back()">
+  <nz-breadcrumb nz-page-header-breadcrumb>
+    <nz-breadcrumb-item><a routerLink="/app/employees/all">Employees</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item>Assets</nz-breadcrumb-item>
+  </nz-breadcrumb>
+
+  <nz-page-header-extra>
+    <button nz-button nzType="primary" (click)="openAddAssetsForm()">
+      <span nz-icon nzType="plus"></span>
+      Add Asset
+    </button>
+  </nz-page-header-extra>
+</nz-page-header>
+
+<div class="assets-page">
+  @if (error()) {
+    <nz-alert nzType="error" [nzMessage]="error()!" nzShowIcon></nz-alert>
+  }
+
+  @if (showAddAssetsForm()) {
+    <nz-card nzSize="small" class="add-assets-card" nzTitle="Add Assets">
+      <form [formGroup]="assetBatchForm">
+        <div class="field-labels">
+          <span>Asset Type</span>
+          <span>Description</span>
+          <span>Serial Number</span>
+          <span>Issue Date</span>
+          <span>Action</span>
+        </div>
+
+        <div formArrayName="assets" class="asset-rows">
+          @for (row of assetRows.controls; track $index) {
+            <div class="asset-row" [formGroupName]="$index">
+              <nz-select formControlName="assetType" nzPlaceHolder="Asset Type" class="asset-field">
+                @for (option of assetTypeOptions; track option) {
+                  <nz-option [nzLabel]="option" [nzValue]="option"></nz-option>
+                }
+              </nz-select>
+
+              <input nz-input formControlName="description" placeholder="Description" class="asset-field" />
+              <input nz-input formControlName="serialNumber" placeholder="Serial Number" class="asset-field" />
+              <input nz-input type="date" formControlName="issueDate" class="asset-field date-field" />
+
+              <button
+                nz-button
+                nzType="default"
+                nzDanger
+                type="button"
+                [disabled]="assetRows.length === 1"
+                (click)="removeAssetRow($index)"
+              >
+                <span nz-icon nzType="delete"></span>
+              </button>
+            </div>
+          }
+        </div>
+
+        <div class="asset-form-actions">
+          <button nz-button nzType="dashed" type="button" (click)="addAssetRow()">
+            <span nz-icon nzType="plus"></span>
+            Add Row
+          </button>
+
+          <span class="action-spacer"></span>
+
+          <button nz-button type="button" (click)="cancelAddAssets()">Cancel</button>
+          <button nz-button nzType="primary" [nzLoading]="saving()" type="button" (click)="submitAssets()">
+            Save Assets
+          </button>
+        </div>
+      </form>
+    </nz-card>
+  }
+
+  <nz-card nzSize="small">
+    <nz-table [nzData]="assets()" [nzLoading]="loading()" [nzPageSize]="10" [nzShowSizeChanger]="false">
+      <thead>
+        <tr>
+          <th>Asset Type</th>
+          <th>Description</th>
+          <th>Serial Number</th>
+          <th>Issue Date</th>
+          <th>Returned</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (asset of assets(); track asset.id) {
+          <tr>
+            <td>{{ asset.assetType || '-' }}</td>
+            <td>{{ asset.description || '-' }}</td>
+            <td>{{ asset.serialNumber || '-' }}</td>
+            <td>{{ asset.issueDate || '-' }}</td>
+            <td>
+              <nz-tag [nzColor]="asset.returned ? 'success' : 'warning'">
+                {{ asset.returned ? 'Yes' : 'No' }}
+              </nz-tag>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </nz-table>
+  </nz-card>
+</div>

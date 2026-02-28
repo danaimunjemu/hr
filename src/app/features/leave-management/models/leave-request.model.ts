@@ -26,6 +26,8 @@ export interface LeaveRequest {
     reversedDate?: string;
     reversalComments?: string;
     documentPath?: string;
+    balanceBeforeRequest?: number;
+    balanceAfterRequest?: number;
     createdOn?: string;
     updatedOn?: string;
 }
