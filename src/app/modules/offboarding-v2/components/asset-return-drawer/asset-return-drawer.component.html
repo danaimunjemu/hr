@@ -2,10 +2,11 @@
   <ng-container *nzDrawerContent>
     <form nz-form nzLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
       <nz-form-item>
-        <nz-form-label nzRequired>Return Status</nz-form-label>
+        <nz-form-label nzRequired>Returned</nz-form-label>
         <nz-form-control>
-          <nz-select formControlName="returnStatus">
-            <nz-option *ngFor="let status of statuses" [nzLabel]="status" [nzValue]="status"></nz-option>
+          <nz-select formControlName="returned">
+            <nz-option [nzValue]="true" nzLabel="Yes"></nz-option>
+            <nz-option [nzValue]="false" nzLabel="No"></nz-option>
           </nz-select>
         </nz-form-control>
       </nz-form-item>

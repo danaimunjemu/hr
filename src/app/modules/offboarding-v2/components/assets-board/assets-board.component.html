@@ -2,7 +2,6 @@
   <nz-table #assetTable [nzData]="assets" nzSize="small" [nzFrontPagination]="false">
     <thead>
       <tr>
-        <th>Asset ID</th>
         <th>Type</th>
         <th>Description</th>
         <th>Serial #</th>
@@ -16,20 +15,19 @@
     </thead>
     <tbody>
       <tr *ngFor="let asset of assetTable.data">
-        <td>{{ asset.assetId }}</td>
         <td>{{ asset.assetType }}</td>
         <td>{{ asset.description }}</td>
         <td>{{ asset.serialNumber }}</td>
         <td>{{ asset.issueDate }}</td>
         <td>
-          <nz-tag [nzColor]="asset.returnStatus === 'NOT_RETURNED' ? 'error' : 'success'">{{ asset.returnStatus }}</nz-tag>
+          <nz-tag [nzColor]="isReturned(asset) ? 'success' : 'error'">{{ returnStatusLabel(asset) }}</nz-tag>
         </td>
         <td>{{ asset.returnDate || '-' }}</td>
         <td>{{ asset.conditionOnReturn || '-' }}</td>
         <td>
           <span *ngIf="asset.employeeConfirmed === true">Confirmed</span>
           <span *ngIf="asset.employeeConfirmed === false">Disputed</span>
-          <span *ngIf="asset.employeeConfirmed === undefined">Pending</span>
+          <span *ngIf="asset.employeeConfirmed == null">Pending</span>
         </td>
         <td>
           <button nz-button nzType="link" (click)="openReturnDrawer(asset)">Return</button>
@@ -43,6 +41,7 @@
 <app-asset-return-drawer
   [visible]="returnDrawerVisible"
   [asset]="selectedAsset"
+  [offboardingId]="offboardingId"
   [saving]="savingAssetId === selectedAsset?.assetNoteId"
   (closed)="closeDrawers()"
   (submitted)="onReturn($event)"

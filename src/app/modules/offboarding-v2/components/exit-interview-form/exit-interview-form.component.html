@@ -1,6 +1,15 @@
 <nz-card nzSize="small" nzTitle="Exit Interview" class="compact-card">
   <form nz-form nzLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
-    <nz-form-item>
+    <nz-alert
+      *ngIf="submitted"
+      nzType="success"
+      nzShowIcon
+      [nzMessage]="'Interview already submitted'"
+      [nzDescription]="submittedOn() ? ('Submitted on ' + (submittedOn()! | date: 'yyyy-MM-dd')) : null"
+      style="margin-bottom: 12px;"
+    ></nz-alert>
+
+    <nz-form-item *ngIf="!submitted">
       <nz-form-label>Would you like to provide feedback?</nz-form-label>
       <nz-form-control>
         <nz-select formControlName="provideFeedback">
@@ -96,6 +105,8 @@
       </div>
     </div>
 
-    <button nz-button nzType="primary" [disabled]="saving" [nzLoading]="saving">Submit Interview</button>
+    <button *ngIf="!submitted" nz-button nzType="primary" [disabled]="saving" [nzLoading]="saving">
+      Submit Interview
+    </button>
   </form>
 </nz-card>

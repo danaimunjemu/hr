@@ -2,12 +2,11 @@ import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, S
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import {
   AssetReturnPayload,
-  AssetReturnStatus,
   OffboardingAsset
 } from '../../models/offboarding-asset.model';
 
 interface AssetReturnForm {
-  returnStatus: FormControl<AssetReturnStatus>;
+  returned: FormControl<boolean>;
   returnDate: FormControl<string>;
   conditionOnReturn: FormControl<string>;
   remarks: FormControl<string | null>;
@@ -23,20 +22,19 @@ export class AssetReturnDrawerComponent implements OnChanges {
   @Input() visible = false;
   @Input() saving = false;
   @Input() asset: OffboardingAsset | null = null;
+  @Input() offboardingId = 0;
 
   @Output() closed = new EventEmitter<void>();
   @Output() submitted = new EventEmitter<AssetReturnPayload>();
 
   readonly form: FormGroup<AssetReturnForm>;
 
-  readonly statuses: AssetReturnStatus[] = ['RETURNED', 'RETURNED_DAMAGED', 'NOT_RETURNED'];
-
   constructor(
     fb: FormBuilder,
     private readonly cdr: ChangeDetectorRef
   ) {
     this.form = fb.group<AssetReturnForm>({
-      returnStatus: fb.nonNullable.control('RETURNED', [Validators.required]),
+      returned: fb.nonNullable.control(true, [Validators.required]),
       returnDate: fb.nonNullable.control(new Date().toISOString().slice(0, 10), [Validators.required]),
       conditionOnReturn: fb.nonNullable.control('', [Validators.required]),
       remarks: fb.control<string | null>(null)
@@ -61,10 +59,11 @@ export class AssetReturnDrawerComponent implements OnChanges {
     }
     const value = this.form.getRawValue();
     this.submitted.emit({
-      returnStatus: value.returnStatus,
+      returned: value.returned,
       returnDate: value.returnDate,
       conditionOnReturn: value.conditionOnReturn,
-      remarks: value.remarks || undefined
+      remarks: value.remarks || undefined,
+      offboardingId: this.offboardingId
     });
     this.cdr.detectChanges();
   }

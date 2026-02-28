@@ -337,7 +337,8 @@ export class OffboardingV2MockStore {
 
     const updated: OffboardingAsset = {
       ...match.asset,
-      returnStatus: payload.returnStatus,
+      returnStatus: payload.returned ? 'RETURNED' : 'NOT_RETURNED',
+      returned: payload.returned,
       returnDate: payload.returnDate,
       conditionOnReturn: payload.conditionOnReturn,
       remarks: payload.remarks
@@ -358,7 +359,7 @@ export class OffboardingV2MockStore {
         actor: 'HR',
         action: 'ASSET_RETURN',
         entity: 'ASSET',
-        notes: `${updated.assetId} updated to ${updated.returnStatus}`
+        notes: `${updated.assetId} updated to ${updated.returned ? 'RETURNED' : 'NOT_RETURNED'}`
       });
     }
 

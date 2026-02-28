@@ -20,6 +20,7 @@ export interface OffboardingAsset {
   serialNumber: string;
   issueDate: string;
   returnStatus: AssetReturnStatus;
+  returned?: boolean;
   returnDate?: string;
   conditionOnReturn?: string;
   remarks?: string;
@@ -29,10 +30,11 @@ export interface OffboardingAsset {
 }
 
 export interface AssetReturnPayload {
-  returnStatus: AssetReturnStatus;
+  returned: boolean;
   returnDate: string;
   conditionOnReturn: string;
   remarks?: string;
+  offboardingId: number;
 }
 
 export interface AssetAcknowledgePayload {

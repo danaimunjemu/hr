@@ -146,7 +146,7 @@ export class OffboardingV2FacadeService {
       '/employee-asset-notes/employee/{employeeId}/unreturned',
       this.api.getPendingAssets(employeeId),
       () => this.mock.getAssets(employeeId)
-    );
+    ).pipe(map((items) => this.normalizeAssets(items, employeeId)));
   }
 
   returnAsset(assetNoteId: string, payload: AssetReturnPayload): Observable<OffboardingAsset> {
@@ -166,6 +166,34 @@ export class OffboardingV2FacadeService {
       this.api.acknowledgeAsset(assetNoteId, payload),
       () => this.mock.acknowledgeAsset(assetNoteId, payload)
     );
+  }
+
+  private normalizeAssets(items: OffboardingAsset[], fallbackEmployeeId: string): OffboardingAsset[] {
+    type RawAsset = OffboardingAsset & {
+      id?: string | number;
+      employee?: { id?: string | number };
+      returned?: boolean | null;
+    };
+
+    return (items as RawAsset[]).map((item, index) => {
+      const resolvedAssetNoteId = String(item.assetNoteId || item.id || `${fallbackEmployeeId}-A-${index + 1}`);
+      const resolvedEmployeeId = String(item.employeeId || item.employee?.id || fallbackEmployeeId || '');
+      const returned =
+        typeof item.returned === 'boolean'
+          ? item.returned
+          : item.returnStatus
+            ? item.returnStatus !== 'NOT_RETURNED'
+            : false;
+
+      return {
+        ...item,
+        assetNoteId: resolvedAssetNoteId,
+        employeeId: resolvedEmployeeId,
+        assetId: String(item.assetId || item.serialNumber || resolvedAssetNoteId),
+        returnStatus: returned ? 'RETURNED' : 'NOT_RETURNED',
+        returned
+      };
+    });
   }
 
   getWorkflowStatus(offboardingId: string): Observable<WorkflowStatus> {

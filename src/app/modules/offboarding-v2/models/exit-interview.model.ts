@@ -11,6 +11,7 @@ export interface ExitInterviewResponse {
   improvementAreas?: string;
   considerReturning?: boolean;
   submittedAt?: string;
+  submittedDate?: string;
 }
 
 export interface ExitInterviewSubmitPayload {

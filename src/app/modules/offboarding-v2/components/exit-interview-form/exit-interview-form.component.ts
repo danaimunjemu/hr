@@ -55,6 +55,13 @@ export class ExitInterviewFormComponent implements OnChanges {
     if (changes['saving'] || changes['submitted']) {
       this.cdr.detectChanges();
     }
+
+    if (this.submitted) {
+      this.form.disable({ emitEvent: false });
+    } else {
+      this.form.enable({ emitEvent: false });
+    }
+
     if (!this.model) {
       return;
     }
@@ -74,6 +81,10 @@ export class ExitInterviewFormComponent implements OnChanges {
   }
 
   submit(): void {
+    if (this.submitted) {
+      return;
+    }
+
     const value = this.form.getRawValue();
     if (!value.provideFeedback) {
       this.save.emit({ skipped: true });
@@ -109,5 +120,9 @@ export class ExitInterviewFormComponent implements OnChanges {
       considerReturning: value.considerReturning ?? undefined
     });
     this.cdr.detectChanges();
+  }
+
+  submittedOn(): string | null {
+    return this.model?.submittedDate || this.model?.submittedAt || null;
   }
 }

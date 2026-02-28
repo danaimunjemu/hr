@@ -38,13 +38,16 @@
           (completeTask)="completeTask($event)"
         ></app-tasks-board>
       </nz-tab>
+      <!--
       <nz-tab nzTitle="Workflow">
         <app-workflow-steps [workflow]="data.workflow"></app-workflow-steps>
       </nz-tab>
+      -->
       <nz-tab nzTitle="Assets">
         <app-assets-board
           [assets]="data.assets"
           [savingAssetId]="savingAssetId"
+          [offboardingId]="+data.caseData.offboardingId || 0"
           (returnAsset)="returnAsset($event)"
           (acknowledgeAsset)="acknowledgeAsset($event)"
         ></app-assets-board>
@@ -61,7 +64,7 @@
         <app-audit-table [events]="data.events"></app-audit-table>
       </nz-tab>
       <nz-tab *ngIf="isHR" nzTitle="Analytics"></nz-tab>
-      <nz-tab nzTitle="Final Leave Balance"></nz-tab>
+      <!-- <nz-tab nzTitle="Final Leave Balance"></nz-tab> -->
     </nz-tabs>
   </ng-container>
 </nz-spin>

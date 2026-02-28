@@ -17,4 +17,23 @@ export class AuditTableComponent implements OnChanges {
       this.cdr.detectChanges();
     }
   }
+
+  displayOccurredAt(event: OffboardingEvent): string {
+    return event.occurredAt || event.timestamp;
+  }
+
+  displayEventType(event: OffboardingEvent): string {
+    return event.eventType || event.action || '-';
+  }
+
+  displayDescription(event: OffboardingEvent): string {
+    return event.description || event.notes || '-';
+  }
+
+  displayPerformedBy(event: OffboardingEvent): string {
+    const firstName = event.performedBy?.firstName?.trim() || '';
+    const lastName = event.performedBy?.lastName?.trim() || '';
+    const fullName = `${firstName} ${lastName}`.trim();
+    return fullName || event.actor || '-';
+  }
 }

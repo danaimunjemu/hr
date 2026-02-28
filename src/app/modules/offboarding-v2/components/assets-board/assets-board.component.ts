@@ -14,6 +14,7 @@ import {
 export class AssetsBoardComponent implements OnChanges {
   @Input() assets: OffboardingAsset[] = [];
   @Input() savingAssetId: string | null = null;
+  @Input() offboardingId = 0;
 
   @Output() returnAsset = new EventEmitter<{ assetId: string; payload: AssetReturnPayload }>();
   @Output() acknowledgeAsset = new EventEmitter<{
@@ -31,6 +32,18 @@ export class AssetsBoardComponent implements OnChanges {
     if (changes['assets'] || changes['savingAssetId']) {
       this.cdr.detectChanges();
     }
+  }
+
+  isReturned(asset: OffboardingAsset): boolean {
+    const withReturned = asset as OffboardingAsset & { returned?: boolean | null };
+    if (typeof withReturned.returned === 'boolean') {
+      return withReturned.returned;
+    }
+    return asset.returnStatus !== 'NOT_RETURNED';
+  }
+
+  returnStatusLabel(asset: OffboardingAsset): string {
+    return this.isReturned(asset) ? 'RETURNED' : 'NOT RETURNED';
   }
 
   openReturnDrawer(asset: OffboardingAsset): void {
@@ -56,7 +69,10 @@ export class AssetsBoardComponent implements OnChanges {
     if (!this.selectedAsset) {
       return;
     }
-    this.returnAsset.emit({ assetId: this.selectedAsset.assetNoteId, payload });
+    this.returnAsset.emit({
+      assetId: this.selectedAsset.assetNoteId,
+      payload: { ...payload, offboardingId: this.offboardingId }
+    });
     this.cdr.detectChanges();
   }
 

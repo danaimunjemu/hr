@@ -62,7 +62,7 @@ export class OffboardingCasePageComponent implements OnInit, OnDestroy {
   ) {}
 
   get tabKeys(): string[] {
-    return ['overview', 'tasks', 'workflow', 'assets', 'interview', 'audit', ...(this.isHR ? ['analytics'] : []), 'final-leave'];
+    return ['overview', 'tasks', 'assets', 'interview', 'audit', ...(this.isHR ? ['analytics'] : [])];
   }
 
   ngOnInit(): void {
@@ -104,9 +104,6 @@ export class OffboardingCasePageComponent implements OnInit, OnDestroy {
     if (key === 'analytics') {
       this.router.navigate(['/app/offboarding-v2/case', this.offboardingId, 'analytics']);
       return;
-    }
-    if (key === 'final-leave') {
-      this.router.navigate(['/app/offboarding-v2/case', this.offboardingId, 'final-leave']);
     }
   }
 
