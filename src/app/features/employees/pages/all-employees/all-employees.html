@@ -141,6 +141,7 @@
                 <ul nz-menu>
                   <li [routerLink]="['/app/employees/view', data.id]" nz-menu-item>View</li>
                   <li [routerLink]="['/app/employees/edit', data.id]" nz-menu-item>Edit</li>
+                  <li [routerLink]="['/app/employees/assets', data.id]" nz-menu-item>Assets</li>
                   <li nz-menu-item>Disable</li>
                   @if (!data.user || !data.user.enabled) {
                     <li

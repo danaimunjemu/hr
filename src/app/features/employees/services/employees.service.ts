@@ -239,6 +239,23 @@ export interface PersonnelFile {
   expiryDate: string;
 }
 
+export interface EmployeeAssetNote {
+  id: number;
+  assetType: string;
+  description: string;
+  serialNumber: string;
+  issueDate: string;
+  returnDate?: string | null;
+  returned?: boolean;
+}
+
+export interface CreateEmployeeAssetRequest {
+  assetType: string;
+  description: string;
+  serialNumber: string;
+  issueDate: string;
+}
+
 export interface Employee {
   id: number;
   createdOn: string;
@@ -380,5 +397,27 @@ export class EmployeesService {
         return throwError(() => new Error('Failed to register user.'));
       })
     );
+  }
+
+  getUnreturnedEmployeeAssets(employeeId: number): Observable<EmployeeAssetNote[]> {
+    return this.http
+      .get<EmployeeAssetNote[]>(`${this.API_URL}/employee-asset-notes/employee/${employeeId}/unreturned`)
+      .pipe(
+        catchError(error => {
+          console.error(`Error fetching unreturned assets for employee ${employeeId}`, error);
+          return throwError(() => new Error('Failed to fetch employee assets.'));
+        })
+      );
+  }
+
+  addEmployeeAssets(employeeId: number, payload: CreateEmployeeAssetRequest[]): Observable<EmployeeAssetNote[]> {
+    return this.http
+      .post<EmployeeAssetNote[]>(`${this.API_URL}/employee-asset-notes/employee/${employeeId}/assets`, payload)
+      .pipe(
+        catchError(error => {
+          console.error(`Error adding assets for employee ${employeeId}`, error);
+          return throwError(() => new Error('Failed to add employee assets.'));
+        })
+      );
   }
 }
