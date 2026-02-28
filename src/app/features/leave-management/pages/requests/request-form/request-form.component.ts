@@ -100,7 +100,7 @@ export class RequestFormComponent implements OnInit {
                 .subscribe({
                     next: () => {
                         this.message.success('Leave request saved successfully');
-                        this.router.navigate(['/app/leave-management/requests']);
+                        this.router.navigate(['/app/time-and-leave-user/leave-management/requests']);
                     },
                     error: (err: any) => {
                         this.message.error(err.error?.message || 'Failed to save leave request');

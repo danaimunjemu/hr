@@ -15,6 +15,7 @@
                     <th>End Date</th>
                     <th>Days</th>
                     <th>Status</th>
+                    <th>Risk</th>
                     <th>LM Approval</th>
                     <th>HR Approval</th>
                     <th>Actions</th>
@@ -28,6 +29,9 @@
                     <td>{{ data.totalDays }}</td>
                     <td>
                         <nz-tag [nzColor]="getStatusColor(data.status)">{{ data.status }}</nz-tag>
+                    </td>
+                    <td>
+                        <nz-tag [nzColor]="getRiskColor(data.riskClassification)">{{ data.riskClassification }}</nz-tag>
                     </td>
                     <td>
                         <nz-tag [nzColor]="getStatusColor(data.lineManagerApprovalStatus)">{{

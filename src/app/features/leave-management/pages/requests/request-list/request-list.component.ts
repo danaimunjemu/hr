@@ -45,6 +45,15 @@ export class RequestListComponent implements OnInit {
         }
     }
 
+    getRiskColor(risk: string): string {
+        switch (risk) {
+            case 'HIGH': return 'error';
+            case 'MEDIUM': return 'warning';
+            case 'LOW': return 'success';
+            default: return 'default';
+        }
+    }
+
     submitRequest(id: number): void {
         this.requestService.submit(id).subscribe({
             next: () => {
