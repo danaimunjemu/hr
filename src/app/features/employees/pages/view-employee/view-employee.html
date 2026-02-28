@@ -6,7 +6,6 @@
 </nz-page-header>
 
 <div class="p-6">
-  <!-- 3️⃣ Bind directly to signals using parenthesis syntax -->
   <div *ngIf="loading()" class="flex justify-center items-center h-64">
     <nz-spin nzSize="large"></nz-spin>
   </div>
@@ -15,70 +14,186 @@
     <nz-alert [nzType]="'error'" [nzMessage]="error()" nzShowIcon></nz-alert>
   </div>
 
-  <!-- Using signal() for immediate reactivity without async pipe -->
   <nz-card *ngIf="employee() && !loading()">
-    <nz-descriptions nzTitle="Personal Details" nzBordered [nzColumn]="2" class="mb-6">
-      <nz-descriptions-item nzTitle="Full Name">{{ employee()?.firstName }} {{ employee()?.lastName
-        }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Gender">
-        <nz-tag [nzColor]="'blue'">{{ employee()?.gender }}</nz-tag>
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Date of Birth">{{ employee()?.dateOfBirth | date }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Marital Status">{{ employee()?.maritalStatus }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Nationality">{{ employee()?.nationality }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="National ID">{{ employee()?.nationalId }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Employee Number">{{ employee()?.employeeNumber }}</nz-descriptions-item>
-    </nz-descriptions>
+    <nz-tabs>
 
-    <nz-descriptions nzTitle="Contact Information" nzBordered [nzColumn]="2" class="mb-6">
-      <nz-descriptions-item nzTitle="Email">{{ employee()?.email }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Work Phone">{{ employee()?.workPhone }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Mobile Phone">{{ employee()?.mobilePhone }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Physical Address">
-        {{ employee()?.address?.physicalAddress }}
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Postal Address">
-        {{ employee()?.address?.postalAddress }}
-      </nz-descriptions-item>
-    </nz-descriptions>
+      <!-- ==================== TAB 1: Personal & Contact Information ==================== -->
+      <nz-tab nzTitle="Personal & Contact Information">
+        <nz-descriptions nzTitle="Personal Details" nzBordered [nzColumn]="2" class="mb-6">
+          <nz-descriptions-item nzTitle="Legal Entity">{{ employee()?.company?.name }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Employee ID">{{ employee()?.employeeNumber }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Title">{{ employee()?.title }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Initials">{{ employee()?.initials }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="First Name">{{ employee()?.firstName }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Middle Name(s)">{{ employee()?.middleName }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Last Name">{{ employee()?.lastName }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Preferred Name">{{ employee()?.preferredName }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="National ID / Passport">{{ employee()?.nationalId }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Nationality">{{ employee()?.nationality }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Date of Birth">{{ employee()?.dateOfBirth | date }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Gender">
+            <nz-tag [nzColor]="'blue'">{{ employee()?.gender }}</nz-tag>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Race">{{ employee()?.ethnicGroup?.name }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Partnership Status">{{ employee()?.maritalStatus }}</nz-descriptions-item>
+        </nz-descriptions>
 
-    <nz-descriptions nzTitle="Employment Details" nzBordered [nzColumn]="2" class="mb-6">
-      <nz-descriptions-item nzTitle="Status">
-        <nz-tag [nzColor]="employee()?.employmentStatus === 'ACTIVE' ? 'success' : 'error'">
-          {{ employee()?.employmentStatus }}
-        </nz-tag>
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Type">{{ employee()?.employmentType }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Date Joined">{{ employee()?.dateJoined | date }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Confirmation Date">{{ employee()?.confirmationDate | date }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Termination Date">{{ employee()?.terminationDate | date }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Superior">{{ employee()?.superior.firstName + ' ' + employee()?.superior.lastName
-        }}</nz-descriptions-item>
-    </nz-descriptions>
+        <nz-descriptions nzTitle="Contact Information" nzBordered [nzColumn]="2" class="mb-6">
+          <nz-descriptions-item nzTitle="Mobile Telephone">{{ employee()?.mobilePhone }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Home Telephone">{{ employee()?.homePhone }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Email">{{ employee()?.email }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Work Phone">{{ employee()?.workPhone }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Work Address">{{ employee()?.address?.physicalAddress }}</nz-descriptions-item>
+        </nz-descriptions>
 
-    <nz-descriptions nzTitle="Company & Position" nzBordered [nzColumn]="2" class="mb-6">
-      <nz-descriptions-item nzTitle="Company">{{ employee()?.company?.name }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Cost Center">{{ employee()?.costCenter?.name }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Group">{{ employee()?.group?.name }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Sub Group">{{ employee()?.subGroup?.name }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Ethnic Group">{{ employee()?.ethnicGroup?.name }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Grade">{{ employee()?.grade?.name }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Job Description">{{ employee()?.jobDescription?.name }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Organizational Unit">{{ employee()?.organizationalUnit?.name
-        }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Personnel Area">{{ employee()?.personnelArea?.name }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Personnel Sub Area">{{ employee()?.personnelSubArea?.name }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Position">{{ employee()?.position?.name }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="PS Group">{{ employee()?.psGroup?.name }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Work Contract">{{ employee()?.workContract?.name }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Work Schedule">{{ employee()?.workScheduleRule?.name }}</nz-descriptions-item>
-    </nz-descriptions>
+        <nz-descriptions nzTitle="Tax Information" nzBordered [nzColumn]="2">
+          <nz-descriptions-item nzTitle="Tax Number">{{ employee()?.taxNumber }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Tax ID Format Validated">
+            <nz-tag [nzColor]="employee()?.taxIdValidated ? 'success' : 'warning'">
+              {{ employee()?.taxIdValidated ? 'Validated' : 'Not Validated' }}
+            </nz-tag>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Tax No. Outstanding">
+            <nz-tag [nzColor]="employee()?.taxOutstanding ? 'error' : 'success'">
+              {{ employee()?.taxOutstanding ? 'Yes' : 'No' }}
+            </nz-tag>
+          </nz-descriptions-item>
+        </nz-descriptions>
+      </nz-tab>
 
-    <nz-descriptions nzTitle="Bank Details" nzBordered [nzColumn]="2">
-      <nz-descriptions-item nzTitle="Bank Name">{{ employee()?.bankDetail?.bankName }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Account Number">{{ employee()?.bankDetail?.bankAccountNumber
-        }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Branch Code">{{ employee()?.bankDetail?.bankBranchCode }}</nz-descriptions-item>
-    </nz-descriptions>
+      <!-- ==================== TAB 2: Employment & Organisational Information ==================== -->
+      <nz-tab nzTitle="Employment & Organisational">
+        <nz-descriptions nzTitle="Employment Status" nzBordered [nzColumn]="2" class="mb-6">
+          <nz-descriptions-item nzTitle="Company">{{ employee()?.company?.name }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Employee Type">{{ employee()?.employmentType }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Employee Status">
+            <nz-tag [nzColor]="employee()?.employmentStatus === 'ACTIVE' ? 'success' : 'error'">
+              {{ employee()?.employmentStatus }}
+            </nz-tag>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Lifecycle Stage">{{ employee()?.lifecycleStage }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Start Date">{{ employee()?.dateJoined | date }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Confirmation Date">{{ employee()?.confirmationDate | date }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Last Work Day">{{ employee()?.lastWorkDate | date }}</nz-descriptions-item>
+        </nz-descriptions>
+
+        <nz-descriptions nzTitle="Organisational Placement" nzBordered [nzColumn]="2" class="mb-6">
+          <nz-descriptions-item nzTitle="Category">{{ employee()?.category }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Department">{{ employee()?.organizationalUnit?.name }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Sub-Department">{{ employee()?.subOrganizationalUnit?.name }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Department Code">{{ employee()?.departmentCode }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Cost Center">{{ employee()?.costCenter?.name }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Group">{{ employee()?.group?.name }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Sub Group">{{ employee()?.subGroup?.name }}</nz-descriptions-item>
+        </nz-descriptions>
+
+        <nz-descriptions nzTitle="Position & Grading" nzBordered [nzColumn]="2" class="mb-6">
+          <nz-descriptions-item nzTitle="Position Code">{{ employee()?.positionCode }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Position">{{ employee()?.position?.name }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Job Description">{{ employee()?.jobDescription?.name }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Grade">{{ employee()?.grade?.name }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Job Category">{{ employee()?.jobCategory }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Job Category 2">{{ employee()?.jobCategory2 }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="BBBEE Occupational Level">{{ employee()?.bbbeeLevel }}</nz-descriptions-item>
+        </nz-descriptions>
+
+        <nz-descriptions nzTitle="Reporting & Management" nzBordered [nzColumn]="2" class="mb-6">
+          <nz-descriptions-item nzTitle="Manager">
+            <span *ngIf="employee()?.superior">{{ employee()?.superior?.firstName }} {{ employee()?.superior?.lastName }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="HR Manager">
+            <span *ngIf="employee()?.hrManager">{{ employee()?.hrManager?.firstName }} {{ employee()?.hrManager?.lastName }}</span>
+          </nz-descriptions-item>
+        </nz-descriptions>
+
+        <nz-descriptions nzTitle="Location & Divisions" nzBordered [nzColumn]="2" class="mb-6">
+          <nz-descriptions-item nzTitle="Primary Location">{{ employee()?.companyLocation?.name }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Personnel Area">{{ employee()?.personnelArea?.name }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Personnel Sub Area">{{ employee()?.personnelSubArea?.name }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Regional Council">{{ employee()?.regionalCouncil }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Divisional Report">{{ employee()?.divisionalReport }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Coms Division">{{ employee()?.comsDivision }}</nz-descriptions-item>
+        </nz-descriptions>
+
+        <nz-descriptions nzTitle="Work Configuration" nzBordered [nzColumn]="2">
+          <nz-descriptions-item nzTitle="Shift Type">{{ employee()?.shiftType }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Work Contract">{{ employee()?.workContract?.name }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Work Schedule">{{ employee()?.workScheduleRule?.name }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Commission Earner">
+            <nz-tag [nzColor]="employee()?.commissionEarner ? 'blue' : 'default'">
+              {{ employee()?.commissionEarner ? 'Yes' : 'No' }}
+            </nz-tag>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Carries Target">
+            <nz-tag [nzColor]="employee()?.carriesTarget ? 'blue' : 'default'">
+              {{ employee()?.carriesTarget ? 'Yes' : 'No' }}
+            </nz-tag>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Department of Labour">{{ employee()?.departmentOfLabour?.name }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Occupational Level">{{ employee()?.occupationalLevel?.name }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="PS Group">{{ employee()?.psGroup?.name }}</nz-descriptions-item>
+        </nz-descriptions>
+      </nz-tab>
+
+      <!-- ==================== TAB 3: Compensation, Banking & Allowances ==================== -->
+      <nz-tab nzTitle="Compensation, Banking & Allowances">
+        <nz-descriptions nzTitle="Payment & Banking" nzBordered [nzColumn]="2" class="mb-6">
+          <nz-descriptions-item nzTitle="Payment Method">{{ employee()?.paymentMethod }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Bank">{{ employee()?.bankDetail?.bankName }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Branch">{{ employee()?.bankDetail?.bankBranchCode }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Account Type">{{ employee()?.bankDetail?.accountType }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Bank Account Number">{{ employee()?.bankDetail?.bankAccountNumber }}</nz-descriptions-item>
+        </nz-descriptions>
+
+        <nz-descriptions nzTitle="Compensation & Allowances" nzBordered [nzColumn]="2">
+          <nz-descriptions-item nzTitle="CTC">{{ employee()?.ctc }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Cell Allowance">{{ employee()?.cellAllowance }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Petrol Allowance">{{ employee()?.petrolAllowance }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Petrol Card">{{ employee()?.petrolCard }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="ADSL Allowance">{{ employee()?.adslAllowance }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Vobi/Bele">{{ employee()?.vobiBele }}</nz-descriptions-item>
+        </nz-descriptions>
+      </nz-tab>
+
+      <!-- ==================== TAB 4: Employee Lifecycle, History & Assets ==================== -->
+      <nz-tab nzTitle="Lifecycle, History & Assets">
+        <nz-descriptions nzTitle="Performance & Career History" nzBordered [nzColumn]="2" class="mb-6">
+          <nz-descriptions-item nzTitle="Performance History"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Grading History"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Promotion History"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Position History"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Department Transfer History"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+        </nz-descriptions>
+
+        <nz-descriptions nzTitle="Leave Management" nzBordered [nzColumn]="2" class="mb-6">
+          <nz-descriptions-item nzTitle="Leave Days Balance"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Leave History"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+        </nz-descriptions>
+
+        <nz-descriptions nzTitle="Disciplinary & Compliance" nzBordered [nzColumn]="2" class="mb-6">
+          <nz-descriptions-item nzTitle="Disciplinary Record"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Warning Letters"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Warning Issue Date"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Warning Expiry Date"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Active Disciplinary Actions"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+        </nz-descriptions>
+
+        <nz-descriptions nzTitle="Training & Development" nzBordered [nzColumn]="2" class="mb-6">
+          <nz-descriptions-item nzTitle="Training Scheduled"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Training Completed"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Certifications Obtained"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+        </nz-descriptions>
+
+        <nz-descriptions nzTitle="Assets & Financial Obligations" nzBordered [nzColumn]="2">
+          <nz-descriptions-item nzTitle="Assets Issued"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Asset Issue Date"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Asset Return Status"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Active Loans"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Loan Balance"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Loan Repayment Status"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
+        </nz-descriptions>
+      </nz-tab>
+
+    </nz-tabs>
   </nz-card>
 </div>

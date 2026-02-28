@@ -1,7 +1,8 @@
 <nz-page-header nzTitle="All Employees" nzBackIcon>
   <nz-page-header-extra>
         <nz-space [nzSize]="8">
-                <button *nzSpaceItem nz-button nzType="dashed" routerLink="/app/onboarding/batches"> <i nz-icon nzType="cloud-upload"></i>Bulk</button>
+                <button *nzSpaceItem nz-button nzType="default" (click)="exportToExcel()"> <i nz-icon nzType="download"></i>Export Excel</button>
+        <button *nzSpaceItem nz-button nzType="dashed" routerLink="/app/onboarding/batches"> <i nz-icon nzType="cloud-upload"></i>Bulk</button>
 
       <button *nzSpaceItem nz-button nzType="primary"  routerLink="/app/onboarding"> <span nz-icon nzType="plus"></span>
       New Employee</button>
@@ -114,7 +115,7 @@
             <td>{{ data.employeeNumber }}</td>
             <td>{{ employeeName(data) }}</td>
             <td>{{ data.email }}</td>
-            <td>{{ data.jobDescription?.name || '-' }}</td>
+            <td>{{ data.position?.name || '-' }}</td>
             <td>{{ data.organizationalUnit?.name || '-' }}</td>
             <td>
               <nz-tag style="border: none;" [nzColor]="data.employmentStatus === 'ACTIVE' ? 'success' : 'error'">
