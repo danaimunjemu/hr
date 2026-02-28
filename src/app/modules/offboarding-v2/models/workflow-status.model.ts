@@ -16,8 +16,18 @@ export interface WorkflowNode {
 }
 
 export interface WorkflowStatus {
-  offboardingId: string;
-  nodes: WorkflowNode[];
+  offboardingId?: string;
+  offboardingStatus?: string;
+  totalTasks?: number;
+  completedTasks?: number;
+  assetRecoveryStatus?: {
+    totalAssets?: number;
+    notReturnedCount?: number;
+    returnedDamagedCount?: number;
+    notConfirmedCount?: number;
+    disputedCount?: number;
+  };
+  nodes?: WorkflowNode[];
   readyForCompletion: boolean;
   currentStatus: 'INITIATED' | 'IN_PROGRESS' | 'BLOCKED' | 'READY_FOR_COMPLETION' | 'COMPLETED';
 }

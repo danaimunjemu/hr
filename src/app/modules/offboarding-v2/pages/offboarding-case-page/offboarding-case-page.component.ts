@@ -65,6 +65,11 @@ export class OffboardingCasePageComponent implements OnInit, OnDestroy {
     return ['overview', 'tasks', 'assets', 'interview', 'audit', ...(this.isHR ? ['analytics'] : [])];
   }
 
+  get isCompleted(): boolean {
+    const status = this.vm?.caseData?.offboardingStatus || this.vm?.caseData?.status;
+    return status === 'COMPLETED';
+  }
+
   ngOnInit(): void {
     this.userContext.isHR$.pipe(takeUntil(this.destroy$)).subscribe((isHR) => {
       this.isHR = isHR;
@@ -164,6 +169,10 @@ export class OffboardingCasePageComponent implements OnInit, OnDestroy {
   }
 
   attemptComplete(): void {
+    if (this.isCompleted) {
+      return;
+    }
+
     this.completing = true;
     this.facade
       .attemptComplete(this.offboardingId)

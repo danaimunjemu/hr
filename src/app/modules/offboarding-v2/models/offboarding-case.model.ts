@@ -34,6 +34,8 @@ export interface EmployeeSnapshot {
 export interface OffboardingCase {
   id:string;
   offboardingId: string;
+  offboardingRecordId?: number;
+  offboardingStatus?: string;
   caseId: string;
   employeeId: string;
   initiator: InitiatorType;
@@ -53,6 +55,7 @@ export interface OffboardingCase {
 export interface OffboardingCaseSummary {
   id:string;
   offboardingId: string;
+  offboardingRecordId?: number;
   caseId: string;
   employeeId: string;
   employeeName: string;

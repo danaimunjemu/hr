@@ -272,19 +272,23 @@ export class OffboardingV2FacadeService {
     const raw = item as OffboardingCase & {
       id?: string | number;
       employee?: { id?: string | number; employeeId?: string | number };
+      offboardingStatus?: string;
     };
     const resolvedId = String(item.offboardingId || item.caseId || raw.id || '');
     const resolvedEmployeeId = String(
       item.employeeId || raw.employee?.employeeId || raw.employee?.id || ''
     );
+    const numericOffboardingId = Number(raw.id ?? item.id);
     return {
       ...item,
       id: resolvedId,
       offboardingId: resolvedId,
+      offboardingRecordId: Number.isNaN(numericOffboardingId) ? undefined : numericOffboardingId,
+      offboardingStatus: String(raw.offboardingStatus || item.status || 'INITIATED'),
       caseId: String(item.caseId || resolvedId),
       employeeId: resolvedEmployeeId,
       offboardingType: (item.offboardingType || 'RESIGNATION') as OffboardingType,
-      status: (item.status || 'INITIATED') as OffboardingStatus,
+      status: (raw.offboardingStatus || item.status || 'INITIATED') as OffboardingStatus,
       lastWorkingDate: item.lastWorkingDate || (item as { exitDate?: string }).exitDate || '',
       employee: {
         ...item.employee,
@@ -302,6 +306,9 @@ export class OffboardingV2FacadeService {
         offboardingId: String(
           item.offboardingId || item.caseId || item.id || (item as { id?: string | number }).id || ''
         ),
+        offboardingRecordId: Number.isNaN(Number((item as { id?: string | number }).id))
+          ? undefined
+          : Number((item as { id?: string | number }).id),
         caseId: String(
           item.caseId || item.offboardingId || item.id || (item as { id?: string | number }).id || ''
         ),
