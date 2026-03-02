@@ -1,0 +1,112 @@
+<nz-card nzSize="small" nzTitle="Exit Interview" class="compact-card">
+  <form nz-form nzLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
+    <nz-alert
+      *ngIf="submitted"
+      nzType="success"
+      nzShowIcon
+      [nzMessage]="'Interview already submitted'"
+      [nzDescription]="submittedOn() ? ('Submitted on ' + (submittedOn()! | date: 'yyyy-MM-dd')) : null"
+      style="margin-bottom: 12px;"
+    ></nz-alert>
+
+    <nz-form-item *ngIf="!submitted">
+      <nz-form-label>Would you like to provide feedback?</nz-form-label>
+      <nz-form-control>
+        <nz-select formControlName="provideFeedback">
+          <nz-option [nzValue]="true" nzLabel="Yes"></nz-option>
+          <nz-option [nzValue]="false" nzLabel="Skip"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <div *ngIf="form.controls.provideFeedback.value">
+      <div nz-row [nzGutter]="12">
+        <div nz-col [nzXs]="24" [nzMd]="12">
+          <nz-form-item>
+            <nz-form-label nzRequired>Reason for Leaving</nz-form-label>
+            <nz-form-control nzErrorTip="Required">
+              <textarea nz-input rows="3" formControlName="reasonForLeaving"></textarea>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzXs]="24" [nzMd]="12">
+          <nz-form-item>
+            <nz-form-label>Company Did Well</nz-form-label>
+            <nz-form-control>
+              <textarea nz-input rows="3" formControlName="companyDidWell"></textarea>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div nz-row [nzGutter]="12">
+        <div nz-col [nzXs]="24" [nzMd]="6">
+          <nz-form-item>
+            <nz-form-label nzRequired>Manager</nz-form-label>
+            <nz-form-control nzErrorTip="Required">
+              <nz-select formControlName="managerRating">
+                <nz-option *ngFor="let rating of ratings" [nzLabel]="rating" [nzValue]="rating"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzXs]="24" [nzMd]="6">
+          <nz-form-item>
+            <nz-form-label nzRequired>Environment</nz-form-label>
+            <nz-form-control nzErrorTip="Required">
+              <nz-select formControlName="workEnvironmentRating">
+                <nz-option *ngFor="let rating of ratings" [nzLabel]="rating" [nzValue]="rating"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzXs]="24" [nzMd]="6">
+          <nz-form-item>
+            <nz-form-label nzRequired>Career Growth</nz-form-label>
+            <nz-form-control nzErrorTip="Required">
+              <nz-select formControlName="careerGrowthRating">
+                <nz-option *ngFor="let rating of ratings" [nzLabel]="rating" [nzValue]="rating"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzXs]="24" [nzMd]="6">
+          <nz-form-item>
+            <nz-form-label nzRequired>Recommend Company</nz-form-label>
+            <nz-form-control nzErrorTip="Required">
+              <nz-select formControlName="recommendCompanyRating">
+                <nz-option *ngFor="let rating of ratings" [nzLabel]="rating" [nzValue]="rating"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div nz-row [nzGutter]="12">
+        <div nz-col [nzXs]="24" [nzMd]="12">
+          <nz-form-item>
+            <nz-form-label>Improvement Areas</nz-form-label>
+            <nz-form-control>
+              <textarea nz-input rows="3" formControlName="improvementAreas"></textarea>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzXs]="24" [nzMd]="12">
+          <nz-form-item>
+            <nz-form-label>Consider Returning?</nz-form-label>
+            <nz-form-control>
+              <nz-select formControlName="considerReturning">
+                <nz-option [nzValue]="true" nzLabel="Yes"></nz-option>
+                <nz-option [nzValue]="false" nzLabel="No"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </div>
+
+    <button *ngIf="!submitted" nz-button nzType="primary" [disabled]="saving" [nzLoading]="saving">
+      Submit Interview
+    </button>
+  </form>
+</nz-card>

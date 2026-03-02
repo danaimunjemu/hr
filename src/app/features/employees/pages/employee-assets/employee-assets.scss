@@ -1,0 +1,64 @@
+:host {
+  display: block;
+}
+
+.assets-page {
+  padding: 0 24px 24px;
+  display: grid;
+  gap: 16px;
+}
+
+.add-assets-card {
+  width: 100%;
+}
+
+.asset-rows {
+  display: grid;
+  gap: 10px;
+}
+
+.field-labels {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) minmax(160px, 1fr) minmax(120px, 1fr) 160px auto;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #595959;
+}
+
+.asset-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) minmax(160px, 1fr) minmax(120px, 1fr) 160px auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.asset-field {
+  width: 100%;
+}
+
+.date-field {
+  min-width: 130px;
+}
+
+.asset-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.action-spacer {
+  flex: 1;
+}
+
+@media (max-width: 980px) {
+  .field-labels {
+    display: none;
+  }
+
+  .asset-row {
+    grid-template-columns: 1fr;
+  }
+}

@@ -18,7 +18,7 @@ export const serverErrorsInterceptor: HttpInterceptorFn = (req: HttpRequest<unkn
       console.log("Error caught")
       console.log(Object.keys(err))
       console.log(Object.values(err))
-      if (err.url !== 'http://localhost:4200/') {
+      if (err.url !== window.location.origin + '/') {
         errorService.handleError(err);
         console.warn("Global error that occurred", err);
       }

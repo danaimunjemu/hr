@@ -1,0 +1,56 @@
+<nz-card nzSize="small" nzTitle="Assets Recovery" class="compact-card">
+  <nz-table #assetTable [nzData]="assets" nzSize="small" [nzFrontPagination]="false">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Serial #</th>
+        <th>Issue Date</th>
+        <th>Return Status</th>
+        <th>Return Date</th>
+        <th>Condition</th>
+        <th>Acknowledgement</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let asset of assetTable.data">
+        <td>{{ asset.assetType }}</td>
+        <td>{{ asset.description }}</td>
+        <td>{{ asset.serialNumber }}</td>
+        <td>{{ asset.issueDate }}</td>
+        <td>
+          <nz-tag [nzColor]="isReturned(asset) ? 'success' : 'error'">{{ returnStatusLabel(asset) }}</nz-tag>
+        </td>
+        <td>{{ asset.returnDate || '-' }}</td>
+        <td>{{ asset.conditionOnReturn || '-' }}</td>
+        <td>
+          <span *ngIf="asset.employeeConfirmed === true">Confirmed</span>
+          <span *ngIf="asset.employeeConfirmed === false">Disputed</span>
+          <span *ngIf="asset.employeeConfirmed == null">Pending</span>
+        </td>
+        <td>
+          <button nz-button nzType="link" (click)="openReturnDrawer(asset)">Return</button>
+          <button nz-button nzType="link" (click)="openAckDrawer(asset)">Acknowledge</button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+
+<app-asset-return-drawer
+  [visible]="returnDrawerVisible"
+  [asset]="selectedAsset"
+  [offboardingId]="offboardingId"
+  [saving]="savingAssetId === selectedAsset?.assetNoteId"
+  (closed)="closeDrawers()"
+  (submitted)="onReturn($event)"
+></app-asset-return-drawer>
+
+<app-asset-ack-drawer
+  [visible]="ackDrawerVisible"
+  [asset]="selectedAsset"
+  [saving]="savingAssetId === selectedAsset?.assetNoteId"
+  (closed)="closeDrawers()"
+  (submitted)="onAck($event)"
+></app-asset-ack-drawer>

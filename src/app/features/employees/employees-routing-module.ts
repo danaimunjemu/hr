@@ -4,13 +4,15 @@ import { AllEmployees } from './pages/all-employees/all-employees';
 import { ViewEmployee } from './pages/view-employee/view-employee';
 import { EditEmployee } from './pages/edit-employee/edit-employee';
 import { NewEmployee } from './pages/new-employee/new-employee';
+import { EmployeeAssets } from './pages/employee-assets/employee-assets';
 
 const routes: Routes = [
   { path: '', redirectTo: 'all', pathMatch: 'full' },
   { path: 'all', component: AllEmployees },
   { path: 'new', component: NewEmployee },
   { path: 'view/:id', component: ViewEmployee },
-  { path: 'edit/:id', component: EditEmployee }
+  { path: 'edit/:id', component: EditEmployee },
+  { path: 'assets/:id', component: EmployeeAssets }
 ];
 
 @NgModule({

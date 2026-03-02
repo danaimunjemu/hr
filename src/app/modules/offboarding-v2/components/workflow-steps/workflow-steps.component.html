@@ -1,0 +1,24 @@
+<nz-card nzSize="small" nzTitle="Workflow Status" class="compact-card">
+  <nz-steps
+    nzSize="small"
+    [nzCurrent]="currentIndex()"
+    nzDirection="horizontal"
+    *ngIf="(workflow?.nodes?.length || 0) > 0; else emptyWorkflow"
+  >
+    <nz-step
+      *ngFor="let node of (workflow?.nodes || [])"
+      [nzTitle]="node.label"
+      [nzStatus]="stepStatus(node.status)"
+    ></nz-step>
+  </nz-steps>
+  <ng-template #emptyWorkflow>
+    <nz-tag nzColor="default">No workflow data</nz-tag>
+  </ng-template>
+
+  <div class="legend">
+    <nz-tag nzColor="default">PENDING</nz-tag>
+    <nz-tag nzColor="processing">IN_PROGRESS</nz-tag>
+    <nz-tag nzColor="success">DONE</nz-tag>
+    <nz-tag nzColor="error">BLOCKED</nz-tag>
+  </div>
+</nz-card>

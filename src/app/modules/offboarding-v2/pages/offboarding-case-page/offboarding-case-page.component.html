@@ -1,0 +1,99 @@
+<nz-page-header
+  nzTitle="Offboarding Case"
+  nzSubtitle="Offboarding v2"
+  nzBackIcon="arrow-left"
+  (nzBack)="goToRequests()"
+>
+  <nz-page-header-extra>
+    <button nz-button (click)="goToInitiate()">Create New Case</button>
+    <button nz-button nzType="primary" [nzLoading]="completing" [disabled]="isCompleted" (click)="attemptComplete()">
+      Attempt Completion
+    </button>
+  </nz-page-header-extra>
+</nz-page-header>
+
+<nz-spin [nzSpinning]="loading">
+  <ng-container *ngIf="vm as data">
+    <app-case-header-card [caseData]="data.caseData"></app-case-header-card>
+
+    <nz-tabs nzSize="small" class="case-tabs" (nzSelectChange)="onTabChange($event.index ?? 0)">
+      <nz-tab nzTitle="Overview">
+        <nz-card nzSize="small" class="section-card">
+          <nz-descriptions nzSize="small" [nzColumn]="2" nzBordered>
+            <nz-descriptions-item nzTitle="Status">
+              <nz-tag nzColor="processing">{{ data.caseData.offboardingStatus || data.caseData.status }}</nz-tag>
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Exit Interview Requested">
+              {{ data.caseData.exitInterviewRequested ? 'Yes' : 'No' }}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Reason">{{ data.caseData.reason }}</nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Comments">{{ data.caseData.comments || '-' }}</nz-descriptions-item>
+          </nz-descriptions>
+
+          <nz-descriptions nzSize="small" [nzColumn]="2" nzBordered style="margin-top: 12px;">
+            <nz-descriptions-item nzTitle="Total Tasks">
+              {{ data.workflow.totalTasks ?? '-' }}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Completed Tasks">
+              {{ data.workflow.completedTasks ?? '-' }}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Total Assets">
+              {{ data.workflow.assetRecoveryStatus?.totalAssets ?? '-' }}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Not Returned Assets">
+              {{ data.workflow.assetRecoveryStatus?.notReturnedCount ?? '-' }}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Returned Damaged Assets">
+              {{ data.workflow.assetRecoveryStatus?.returnedDamagedCount ?? '-' }}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Not Confirmed Assets">
+              {{ data.workflow.assetRecoveryStatus?.notConfirmedCount ?? '-' }}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Disputed Assets">
+              {{ data.workflow.assetRecoveryStatus?.disputedCount ?? '-' }}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Ready For Completion">
+              <nz-tag [nzColor]="data.workflow.readyForCompletion ? 'success' : 'warning'">
+                {{ data.workflow.readyForCompletion ? 'Yes' : 'No' }}
+              </nz-tag>
+            </nz-descriptions-item>
+          </nz-descriptions>
+        </nz-card>
+      </nz-tab>
+      <nz-tab nzTitle="Tasks">
+        <app-tasks-board
+          [tasks]="data.tasks"
+          [savingTaskId]="savingTaskId"
+          (completeTask)="completeTask($event)"
+        ></app-tasks-board>
+      </nz-tab>
+      <!--
+      <nz-tab nzTitle="Workflow">
+        <app-workflow-steps [workflow]="data.workflow"></app-workflow-steps>
+      </nz-tab>
+      -->
+      <nz-tab nzTitle="Assets">
+        <app-assets-board
+          [assets]="data.assets"
+          [savingAssetId]="savingAssetId"
+          [offboardingId]="data.caseData.offboardingRecordId ?? 0"
+          (returnAsset)="returnAsset($event)"
+          (acknowledgeAsset)="acknowledgeAsset($event)"
+        ></app-assets-board>
+      </nz-tab>
+      <nz-tab nzTitle="Exit Interview">
+        <app-exit-interview-form
+          [model]="data.exitInterview"
+          [submitted]="data.exitInterview.submitted"
+          [saving]="savingInterview"
+          (save)="submitInterview($event)"
+        ></app-exit-interview-form>
+      </nz-tab>
+      <nz-tab nzTitle="Audit Trail">
+        <app-audit-table [events]="data.events"></app-audit-table>
+      </nz-tab>
+      <nz-tab *ngIf="isHR" nzTitle="Analytics"></nz-tab>
+      <!-- <nz-tab nzTitle="Final Leave Balance"></nz-tab> -->
+    </nz-tabs>
+  </ng-container>
+</nz-spin>

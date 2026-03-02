@@ -1,0 +1,20 @@
+<nz-card nzSize="small" nzTitle="Audit Trail" class="compact-card">
+  <nz-table #auditTable [nzData]="events" nzSize="small" [nzFrontPagination]="true" [nzPageSize]="6">
+    <thead>
+      <tr>
+        <th>Occurred At</th>
+        <th>Event Type</th>
+        <th>Description</th>
+        <th>Performed By</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let event of auditTable.data">
+        <td>{{ displayOccurredAt(event) | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
+        <td>{{ displayEventType(event) }}</td>
+        <td>{{ displayDescription(event) }}</td>
+        <td>{{ displayPerformedBy(event) }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>

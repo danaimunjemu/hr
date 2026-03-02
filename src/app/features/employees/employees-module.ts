@@ -8,6 +8,7 @@ import { AllEmployees } from './pages/all-employees/all-employees';
 import { ViewEmployee } from './pages/view-employee/view-employee';
 import { EditEmployee } from './pages/edit-employee/edit-employee';
 import { NewEmployee } from './pages/new-employee/new-employee';
+import { EmployeeAssets } from './pages/employee-assets/employee-assets';
 import { AntDesignModules } from '../../core/modules/antdesign.module';
 import { ErModule } from '../er/er.module';
 
@@ -17,7 +18,8 @@ import { ErModule } from '../er/er.module';
     AllEmployees,
     ViewEmployee,
     EditEmployee,
-    NewEmployee
+    NewEmployee,
+    EmployeeAssets
   ],
   imports: [
     CommonModule,

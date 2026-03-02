@@ -1,0 +1,85 @@
+<nz-card nzSize="small" nzTitle="Tasks" class="compact-card">
+  <div class="stats-row">
+    <nz-statistic nzTitle="All" [nzValue]="totalCount" [nzValueStyle]="{ 'font-size': '18px' }"></nz-statistic>
+    <nz-statistic nzTitle="Overdue" [nzValue]="overdueCount" [nzValueStyle]="{ 'font-size': '18px', color: '#cf1322' }"></nz-statistic>
+  </div>
+
+  <nz-table #taskTable [nzData]="tasks" nzSize="small" [nzFrontPagination]="false">
+    <thead>
+      <tr>
+        <th>Task</th>
+        <th
+          nzCustomFilter
+          [nzFilters]="ownerFilters"
+          [nzFilterFn]="ownerFilterFn"
+        >
+          Owner
+        </th>
+        <th
+          nzCustomFilter
+          [nzFilters]="departmentFilters"
+          [nzFilterFn]="departmentFilterFn"
+        >
+          Department
+        </th>
+        <th>Deadline</th>
+        <th
+          nzCustomFilter
+          [nzFilters]="[
+            { text: 'Open', value: 'OPEN', byDefault: false },
+            { text: 'Completed', value: 'COMPLETED', byDefault: false }
+          ]"
+          [nzFilterFn]="statusFilterFn"
+        >
+          Status
+        </th>
+        <th>Completion Date</th>
+        <th>Evidence</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let task of taskTable.data" [class.overdue-row]="isOverdue(task)">
+        <td>{{ task.taskName }}</td>
+        <td>
+          <a
+            *ngIf="task.taskOwnerEmployeeId"
+            class="owner-link"
+            [routerLink]="['/app/employees/view', task.taskOwnerEmployeeId]"
+          >
+            <span class="owner-pill">{{ task.taskOwner }}</span>
+          </a>
+          <span class="owner-pill" *ngIf="!task.taskOwnerEmployeeId">{{ task.taskOwner || 'Unassigned' }}</span>
+        </td>
+        <td>{{ task.department }}</td>
+        <td>
+          <nz-tag [nzColor]="deadlineTone(task)">{{ task.taskDeadline || '-' }}</nz-tag>
+          <span class="overdue-note" *ngIf="isOverdue(task)">Overdue by {{ overdueDays(task) }}d</span>
+        </td>
+        <td>
+          <nz-tag [nzColor]="task.completionStatus === 'COMPLETED' ? 'success' : 'default'">{{ task.completionStatus }}</nz-tag>
+        </td>
+        <td>{{ task.completionDate || '-' }}</td>
+        <td>{{ task.evidenceFilePath || '-' }}</td>
+        <td>
+          <button
+            nz-button
+            nzType="link"
+            [disabled]="task.completionStatus === 'COMPLETED'"
+            (click)="openCompleteDrawer(task)"
+          >
+            Complete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+
+<app-task-complete-drawer
+  [visible]="drawerVisible"
+  [task]="selectedTask"
+  [saving]="savingTaskId === selectedTask?.taskId"
+  (closed)="closeDrawer()"
+  (submitted)="submitComplete($event)"
+></app-task-complete-drawer>
