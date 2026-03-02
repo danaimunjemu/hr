@@ -105,7 +105,7 @@ export class CaseCreateProcessComponent implements OnInit {
       subjectEmployee: [null, [Validators.required]],
       reporterEmployee: [null, [Validators.required]],
       summary: [''],
-      company: [1] // Default
+      company: [9000] // Default
     });
   }
 

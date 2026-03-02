@@ -32,7 +32,7 @@ export class CaseCreateComponent implements OnInit {
       subjectEmployee: [null, [Validators.required]],
       reporterEmployee: [null, [Validators.required]],
       summary: [null, [Validators.required]],
-      company: [1] // Default or select
+      company: [9000]
     });
   }
 

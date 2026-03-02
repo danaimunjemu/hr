@@ -20,7 +20,7 @@ export class TeamAppraisalListComponent implements OnInit {
   loading: WritableSignal<boolean> = signal(true);
   appraisals: WritableSignal<Appraisal[]> = signal([]);
 
-  constructor(private appraisalService: AppraisalService) {}
+  constructor(private appraisalService: AppraisalService) { }
 
   ngOnInit(): void {
     this.loadData();

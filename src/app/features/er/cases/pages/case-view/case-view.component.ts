@@ -41,6 +41,17 @@ import { EmployeesService, Employee } from '../../../../employees/services/emplo
             <nz-descriptions-item nzTitle="Reporter">
               {{ case.reporterEmployee.firstName }} {{ case.reporterEmployee.lastName }} ({{ case.reporterType }})
             </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Assigned To">
+              <div *ngIf="case.assignedToUser; else unassigned">
+                {{ case.assignedToUser.firstName }} {{ case.assignedToUser.lastName }}
+              </div>
+              <ng-template #unassigned>
+                <div class="flex items-center gap-2">
+                  <span class="text-gray-400 italic">Not Assigned</span>
+                  <button nz-button nzType="link" nzSize="small" (click)="openAssignModal()">Assign Case</button>
+                </div>
+              </ng-template>
+            </nz-descriptions-item>
           </nz-descriptions>
         </nz-card>
 
@@ -51,8 +62,9 @@ import { EmployeesService, Employee } from '../../../../employees/services/emplo
         <nz-tabs class="mt-4">
           <nz-tab nzTitle="Intake">
             <ng-template nz-tab>
-              <div class="mb-3">
+              <div class="mb-3 flex gap-2">
                 <button nz-button nzType="primary" (click)="openIntakeModal()">Add Intake</button>
+                <button *ngIf="case.intake" nz-button (click)="openDocLinkModal('INTAKE')">Link Document</button>
               </div>
               <nz-card nzTitle="Intake" class="mb-4">
                 <div *ngIf="case.intake; else noIntake">
@@ -60,9 +72,6 @@ import { EmployeesService, Employee } from '../../../../employees/services/emplo
                     <nz-descriptions-item nzTitle="Incident Date From">{{ case.intake.incidentDateFrom | date:'medium' }}</nz-descriptions-item>
                     <nz-descriptions-item nzTitle="Incident Date To">{{ (case.intake.incidentDateTo | date:'medium') || 'N/A' }}</nz-descriptions-item>
                     <nz-descriptions-item nzTitle="Location">{{ case.intake.incidentLocation }}</nz-descriptions-item>
-                    <nz-descriptions-item nzTitle="Logged By">
-                      {{ case.intake.loggedBy?.firstName }} {{ case.intake.loggedBy?.lastName }}
-                    </nz-descriptions-item>
                     <nz-descriptions-item nzTitle="Triage Decision">{{ case.intake.triageDecision || 'PENDING' }}</nz-descriptions-item>
                     <nz-descriptions-item nzTitle="Triage Notes">{{ case.intake.triageNotes || 'N/A' }}</nz-descriptions-item>
                   </nz-descriptions>
@@ -80,8 +89,9 @@ import { EmployeesService, Employee } from '../../../../employees/services/emplo
 
           <nz-tab nzTitle="Outcome">
             <ng-template nz-tab>
-              <div class="mb-3">
+              <div class="mb-3 flex gap-2">
                 <button nz-button nzType="primary" (click)="openOutcomeModal()">Add Outcome</button>
+                <button *ngIf="case.outcome" nz-button (click)="openDocLinkModal('OUTCOME')">Link Document</button>
               </div>
               <nz-card nzTitle="Outcome" class="mb-4">
                 <div *ngIf="case.outcome; else noOutcome">
@@ -136,7 +146,7 @@ import { EmployeesService, Employee } from '../../../../employees/services/emplo
                       <td>{{ task.assignedTo?.firstName }} {{ task.assignedTo?.lastName }}</td>
                       <td>{{ task.dueAt | date:'medium' }}</td>
                       <td>
-                        <a [routerLink]="['/employee-relations/tasks/view', task.id]">View</a>
+                        <a [routerLink]="['/app/employee-relations/tasks/view', task.id]">View</a>
                       </td>
                     </tr>
                   </tbody>
@@ -154,6 +164,7 @@ import { EmployeesService, Employee } from '../../../../employees/services/emplo
       [nzFooter]="null"
       (nzOnCancel)="closeIntakeModal()"
     >
+    <ng-container *nzModalContent>
       <form nz-form [formGroup]="intakeForm" nzLayout="vertical">
         <div nz-row [nzGutter]="16">
           <div nz-col [nzSpan]="12">
@@ -176,25 +187,33 @@ import { EmployeesService, Employee } from '../../../../employees/services/emplo
         <div nz-row [nzGutter]="16">
           <div nz-col [nzSpan]="12">
             <nz-form-item>
-              <nz-form-label nzRequired>Location</nz-form-label>
+              <nz-form-label nzRequired>Incident Location</nz-form-label>
               <nz-form-control nzErrorTip="Required">
-                <input nz-input formControlName="incidentLocation" />
+                <input nz-input formControlName="incidentLocation" placeholder="e.g. Johannesburg Office" />
               </nz-form-control>
             </nz-form-item>
           </div>
           <div nz-col [nzSpan]="12">
             <nz-form-item>
-              <nz-form-label nzRequired>Logged By</nz-form-label>
+              <nz-form-label nzRequired>Triage Decision</nz-form-label>
               <nz-form-control nzErrorTip="Required">
-                <nz-select formControlName="loggedBy" nzShowSearch nzAllowClear>
-                  <nz-option *ngFor="let emp of employees()" [nzValue]="emp.id" [nzLabel]="emp.firstName + ' ' + emp.lastName"></nz-option>
+                <nz-select formControlName="triageDecision">
+                  <nz-option nzValue="PROCEED_TO_INVESTIGATION" nzLabel="Proceed to Investigation"></nz-option>
+                  <nz-option nzValue="NO_ACTION" nzLabel="No Action Required"></nz-option>
+                  <nz-option nzValue="INFORMAL_RESOLUTION" nzLabel="Informal Resolution"></nz-option>
                 </nz-select>
               </nz-form-control>
             </nz-form-item>
           </div>
         </div>
         <nz-form-item>
-          <nz-form-label nzRequired>Description</nz-form-label>
+          <nz-form-label>Triage Notes</nz-form-label>
+          <nz-form-control>
+            <textarea nz-input formControlName="triageNotes" rows="2"></textarea>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label nzRequired>Detailed Description</nz-form-label>
           <nz-form-control nzErrorTip="Required">
             <textarea nz-input formControlName="detailedDescription" rows="4"></textarea>
           </nz-form-control>
@@ -204,6 +223,7 @@ import { EmployeesService, Employee } from '../../../../employees/services/emplo
           <button nz-button nzType="primary" [nzLoading]="intakeSaving()" (click)="submitIntake()">Save</button>
         </div>
       </form>
+      </ng-container>
     </nz-modal>
 
     <nz-modal
@@ -212,20 +232,22 @@ import { EmployeesService, Employee } from '../../../../employees/services/emplo
       [nzFooter]="null"
       (nzOnCancel)="closeOutcomeModal()"
     >
+    <ng-container *nzModalContent>
       <form nz-form [formGroup]="outcomeForm" nzLayout="vertical">
         <div nz-row [nzGutter]="16">
           <div nz-col [nzSpan]="12">
             <nz-form-item>
               <nz-form-label nzRequired>Outcome Type</nz-form-label>
               <nz-form-control nzErrorTip="Required">
-                <nz-select formControlName="outcomeType">
-                  <nz-option nzValue="WRITTEN_WARNING" nzLabel="Written Warning"></nz-option>
-                  <nz-option nzValue="VERBAL_WARNING" nzLabel="Verbal Warning"></nz-option>
-                  <nz-option nzValue="DISMISSAL" nzLabel="Dismissal"></nz-option>
-                  <nz-option nzValue="SUSPENSION" nzLabel="Suspension"></nz-option>
-                  <nz-option nzValue="EXONERATED" nzLabel="Exonerated"></nz-option>
-                  <nz-option nzValue="OTHER" nzLabel="Other"></nz-option>
-                </nz-select>
+                <nz-select formControlName="outcomeType" nzPlaceHolder="Select outcome type">
+  <nz-option nzValue="OTHER" nzLabel="Other"></nz-option>
+  <nz-option nzValue="REFERRED" nzLabel="Referred"></nz-option>
+  <nz-option nzValue="DISCIPLINARY_ACTION" nzLabel="Disciplinary Action"></nz-option>
+  <nz-option nzValue="WITHDRAWN" nzLabel="Withdrawn"></nz-option>
+  <nz-option nzValue="RESOLVED_INFORMALLY" nzLabel="Resolved Informally"></nz-option>
+  <nz-option nzValue="POLICY_BREACH_CONFIRMED" nzLabel="Policy Breach Confirmed"></nz-option>
+  <nz-option nzValue="NO_BREACH_FOUND" nzLabel="No Breach Found"></nz-option>
+</nz-select>
               </nz-form-control>
             </nz-form-item>
           </div>
@@ -269,6 +291,7 @@ import { EmployeesService, Employee } from '../../../../employees/services/emplo
           <button nz-button nzType="primary" [nzLoading]="outcomeSaving()" (click)="submitOutcome()">Save</button>
         </div>
       </form>
+      </ng-container>
     </nz-modal>
 
     <nz-modal
@@ -277,6 +300,7 @@ import { EmployeesService, Employee } from '../../../../employees/services/emplo
       [nzFooter]="null"
       (nzOnCancel)="closeTaskModal()"
     >
+    <ng-container *nzModalContent>
       <form nz-form [formGroup]="taskForm" nzLayout="vertical">
         <div nz-row [nzGutter]="16">
           <div nz-col [nzSpan]="12">
@@ -291,13 +315,29 @@ import { EmployeesService, Employee } from '../../../../employees/services/emplo
             <nz-form-item>
               <nz-form-label nzRequired>Type</nz-form-label>
               <nz-form-control nzErrorTip="Required">
-                <nz-select formControlName="taskType">
-                  <nz-option nzValue="INVESTIGATION" nzLabel="Investigation"></nz-option>
-                  <nz-option nzValue="REVIEW" nzLabel="Review"></nz-option>
-                  <nz-option nzValue="MEETING" nzLabel="Meeting"></nz-option>
-                  <nz-option nzValue="DOCUMENTATION" nzLabel="Documentation"></nz-option>
-                  <nz-option nzValue="OTHER" nzLabel="Other"></nz-option>
-                </nz-select>
+                <nz-select formControlName="taskType" nzPlaceHolder="Select task type">
+  <nz-option nzValue="INTERVIEW_COMPLAINANT" nzLabel="Interview Complainant"></nz-option>
+  <nz-option nzValue="ISSUE_DECISION_LETTER" nzLabel="Issue Decision Letter"></nz-option>
+  <nz-option nzValue="COMMUNICATE_OUTCOME" nzLabel="Communicate Outcome"></nz-option>
+  <nz-option nzValue="INVESTIGATION_SUMMARY" nzLabel="Investigation Summary"></nz-option>
+  <nz-option nzValue="REVIEW_OUTCOME" nzLabel="Review Outcome"></nz-option>
+  <nz-option nzValue="COLLECT_EVIDENCE" nzLabel="Collect Evidence"></nz-option>
+  <nz-option nzValue="TRIAGE_ASSESSMENT" nzLabel="Triage Assessment"></nz-option>
+  <nz-option nzValue="INTERVIEW_SUBJECT" nzLabel="Interview Subject"></nz-option>
+  <nz-option nzValue="RECORD_MINUTES" nzLabel="Record Minutes"></nz-option>
+  <nz-option nzValue="COMPLETE_INTAKE" nzLabel="Complete Intake"></nz-option>
+  <nz-option nzValue="ACKNOWLEDGE_CASE" nzLabel="Acknowledge Case"></nz-option>
+  <nz-option nzValue="DRAFT_OUTCOME" nzLabel="Draft Outcome"></nz-option>
+  <nz-option nzValue="CLOSE_CASE" nzLabel="Close Case"></nz-option>
+  <nz-option nzValue="CONDUCT_HEARING" nzLabel="Conduct Hearing"></nz-option>
+  <nz-option nzValue="INTERVIEW_WITNESS" nzLabel="Interview Witness"></nz-option>
+  <nz-option nzValue="REVIEW_EVIDENCE" nzLabel="Review Evidence"></nz-option>
+  <nz-option nzValue="APPROVE_OUTCOME" nzLabel="Approve Outcome"></nz-option>
+  <nz-option nzValue="FOLLOW_UP" nzLabel="Follow Up"></nz-option>
+  <nz-option nzValue="SCHEDULE_HEARING" nzLabel="Schedule Hearing"></nz-option>
+  <nz-option nzValue="SCHEDULE_MEETING" nzLabel="Schedule Meeting"></nz-option>
+  <nz-option nzValue="CONDUCT_MEETING" nzLabel="Conduct Meeting"></nz-option>
+</nz-select>
               </nz-form-control>
             </nz-form-item>
           </div>
@@ -333,6 +373,72 @@ import { EmployeesService, Employee } from '../../../../employees/services/emplo
           <button nz-button nzType="primary" [nzLoading]="taskSaving()" (click)="submitTask()">Save</button>
         </div>
       </form>
+      </ng-container>
+    </nz-modal>
+
+    <nz-modal
+      [nzVisible]="assignModalOpen()"
+      nzTitle="Assign Case"
+      [nzFooter]="null"
+      (nzOnCancel)="closeAssignModal()"
+    >
+    <ng-container *nzModalContent>
+      <form nz-form [formGroup]="assignForm" nzLayout="vertical">
+        <nz-form-item>
+          <nz-form-label nzRequired>Assign To</nz-form-label>
+          <nz-form-control nzErrorTip="Please select an officer">
+            <nz-select formControlName="assignedToUser" nzShowSearch nzAllowClear placeholder="Select an officer">
+              <nz-option *ngFor="let emp of employees()" [nzValue]="emp.id" [nzLabel]="emp.firstName + ' ' + emp.lastName"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label nzRequired>Assignment Notes</nz-form-label>
+          <nz-form-control nzErrorTip="Please provide notes">
+            <textarea nz-input formControlName="notes" rows="4" placeholder="Enter assignment notes..."></textarea>
+          </nz-form-control>
+        </nz-form-item>
+        <div class="flex justify-end gap-2">
+          <button nz-button type="button" (click)="closeAssignModal()">Cancel</button>
+          <button nz-button nzType="primary" [nzLoading]="assignSaving()" (click)="submitAssign()">Assign</button>
+        </div>
+      </form>
+    </ng-container>
+    
+      
+    <nz-modal
+      [(nzVisible)]="docLinkModalOpen"
+      nzTitle="Link Document"
+      (nzOnCancel)="closeDocLinkModal()"
+      (nzOnOk)="submitDocLink()"
+      [nzOkLoading]="docLinkSaving()"
+    >
+      <ng-container *nzModalContent>
+        <form nz-form [formGroup]="docLinkForm" nzLayout="vertical">
+          <nz-form-item>
+            <nz-form-label nzRequired>Document ID</nz-form-label>
+            <nz-form-control>
+              <nz-input-number formControlName="documentId" style="width: 100%"></nz-input-number>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label nzRequired>Visibility</nz-form-label>
+            <nz-form-control>
+              <nz-select formControlName="visibility">
+                <nz-option nzValue="INTERNAL_ONLY" nzLabel="Internal Only"></nz-option>
+                <nz-option nzValue="VISIBLE_TO_SUBJECT" nzLabel="Visible to Subject"></nz-option>
+                <nz-option nzValue="VISIBLE_TO_ALL_PARTIES" nzLabel="Visible to All Parties"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>Notes</nz-form-label>
+            <nz-form-control>
+              <textarea nz-input formControlName="notes" rows="2"></textarea>
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+      </ng-container>
     </nz-modal>
   `,
   styles: [`
@@ -345,13 +451,20 @@ export class CaseViewComponent implements OnInit {
   intakeSaving: WritableSignal<boolean> = signal(false);
   outcomeSaving: WritableSignal<boolean> = signal(false);
   taskSaving: WritableSignal<boolean> = signal(false);
+  assignSaving: WritableSignal<boolean> = signal(false);
   intakeModalOpen: WritableSignal<boolean> = signal(false);
   outcomeModalOpen: WritableSignal<boolean> = signal(false);
   taskModalOpen: WritableSignal<boolean> = signal(false);
+  assignModalOpen: WritableSignal<boolean> = signal(false);
   employees: WritableSignal<Employee[]> = signal([]);
   intakeForm: FormGroup;
   outcomeForm: FormGroup;
   taskForm: FormGroup;
+  assignForm: FormGroup;
+  docLinkForm: FormGroup;
+  docLinkModalOpen = signal(false);
+  docLinkSaving = signal(false);
+  docLinkContext: 'INTAKE' | 'OUTCOME' = 'INTAKE';
 
   constructor(
     private fb: FormBuilder,
@@ -367,7 +480,8 @@ export class CaseViewComponent implements OnInit {
       incidentDateTo: [null],
       incidentLocation: [null, [Validators.required]],
       detailedDescription: [null, [Validators.required]],
-      loggedBy: [null, [Validators.required]]
+      triageDecision: ['PROCEED_TO_INVESTIGATION', [Validators.required]],
+      triageNotes: ['Initial evidence suggests a valid claim.']
     });
 
     this.outcomeForm = this.fb.group({
@@ -384,6 +498,17 @@ export class CaseViewComponent implements OnInit {
       description: [''],
       assignedTo: [null, [Validators.required]],
       dueAt: [null]
+    });
+
+    this.assignForm = this.fb.group({
+      assignedToUser: [null, [Validators.required]],
+      notes: ['', [Validators.required]]
+    });
+
+    this.docLinkForm = this.fb.group({
+      documentId: [null, [Validators.required]],
+      visibility: ['INTERNAL_ONLY', [Validators.required]],
+      notes: ['']
     });
   }
 
@@ -422,13 +547,22 @@ export class CaseViewComponent implements OnInit {
     }
     this.intakeSaving.set(true);
     const val = this.intakeForm.value;
+
+    const formatDate = (date: Date) => {
+      if (!date) return null;
+      const pad = (n: number) => n.toString().padStart(2, '0');
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    };
+
     const payload = {
-      incidentDateFrom: val.incidentDateFrom.toISOString(),
-      incidentDateTo: val.incidentDateTo ? val.incidentDateTo.toISOString() : null,
+      incidentDateFrom: formatDate(val.incidentDateFrom),
+      incidentDateTo: val.incidentDateTo ? formatDate(val.incidentDateTo) : null,
       incidentLocation: val.incidentLocation,
       detailedDescription: val.detailedDescription,
-      loggedBy: { id: val.loggedBy }
+      triageDecision: val.triageDecision,
+      triageNotes: val.triageNotes
     };
+
     this.processService.addIntake(erCase.id, payload).subscribe({
       next: (data) => {
         const updated = { ...erCase, intake: data };
@@ -509,6 +643,42 @@ export class CaseViewComponent implements OnInit {
     });
   }
 
+  submitAssign(): void {
+    const erCase = this.case();
+    if (!erCase) return;
+    if (this.assignForm.invalid) {
+      this.markInvalid(this.assignForm);
+      return;
+    }
+    this.assignSaving.set(true);
+    const val = this.assignForm.value;
+    const payload = {
+      assignedToUser: { id: val.assignedToUser },
+      notes: val.notes
+    };
+    this.processService.assignCase(erCase.id, payload).subscribe({
+      next: (data) => {
+        const updated = { ...erCase, assignedToUser: data.assignedToUser, status: data.status };
+        this.case.set(updated);
+        this.assignSaving.set(false);
+        this.message.success('Case assigned successfully');
+        this.closeAssignModal();
+      },
+      error: () => {
+        this.message.error('Failed to assign case');
+        this.assignSaving.set(false);
+      }
+    });
+  }
+
+  openAssignModal(): void {
+    this.assignModalOpen.set(true);
+  }
+
+  closeAssignModal(): void {
+    this.assignModalOpen.set(false);
+  }
+
   openIntakeModal(): void {
     this.intakeModalOpen.set(true);
   }
@@ -533,13 +703,66 @@ export class CaseViewComponent implements OnInit {
     this.taskModalOpen.set(false);
   }
 
+  openDocLinkModal(context: 'INTAKE' | 'OUTCOME'): void {
+    this.docLinkContext = context;
+    this.docLinkModalOpen.set(true);
+    this.docLinkForm.reset({ visibility: 'INTERNAL_ONLY' });
+  }
+
+  closeDocLinkModal(): void {
+    this.docLinkModalOpen.set(false);
+  }
+
+  submitDocLink(): void {
+    if (this.docLinkForm.invalid) {
+      this.markInvalid(this.docLinkForm);
+      return;
+    }
+
+    const erCase = this.case();
+    if (!erCase) return;
+
+    this.docLinkSaving.set(true);
+    const val = this.docLinkForm.value;
+    const dto = {
+      document: { id: val.documentId },
+      visibility: val.visibility,
+      notes: val.notes
+    };
+
+    let obs;
+    if (this.docLinkContext === 'INTAKE' && erCase.intake?.id) {
+      obs = this.processService.addIntakeDocument(erCase.intake.id, dto);
+    } else if (this.docLinkContext === 'OUTCOME' && erCase.outcome?.id) {
+      obs = this.processService.addOutcomeDocument(erCase.outcome.id, dto);
+    } else {
+      this.message.error('Entity ID not found');
+      this.docLinkSaving.set(false);
+      return;
+    }
+
+    obs.subscribe({
+      next: () => {
+        this.message.success('Document linked successfully');
+        this.docLinkSaving.set(false);
+        this.closeDocLinkModal();
+        this.loadCase(erCase.id!);
+      },
+      error: () => {
+        this.message.error('Failed to link document');
+        this.docLinkSaving.set(false);
+      }
+    });
+  }
+
   private resetIntakeForm(): void {
     this.intakeForm.reset({
       incidentDateFrom: null,
       incidentDateTo: null,
       incidentLocation: null,
       detailedDescription: null,
-      loggedBy: null
+      triageDecision: 'PROCEED_TO_INVESTIGATION',
+      triageNotes: 'Initial evidence suggests a valid claim.'
     });
   }
 

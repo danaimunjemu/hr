@@ -105,6 +105,10 @@ const routes: Routes = [
           import('./features/settings/settings-module').then((m) => m.SettingsModule),
         canActivate: [],
       },
+      {
+        path: 'payroll',
+        loadChildren: () => import('./features/payroll/payroll.module').then(m => m.PayrollModule)
+      },
       // {
       //   path: 'performance',
       //   loadChildren: () =>

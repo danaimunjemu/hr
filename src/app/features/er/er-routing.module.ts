@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ErWorkspaceComponent } from './er-workspace/er-workspace.component';
+import { DisciplinaryAnalyticsPage } from './pages/disciplinary-analytics/disciplinary-analytics.page';
+import { DisciplinaryRecordsPage } from './pages/disciplinary-records/disciplinary-records.page';
+import { HearingsCalendarPage } from './pages/hearings-calendar/hearings-calendar.page';
 
 const routes: Routes = [
   {
@@ -25,6 +28,18 @@ const routes: Routes = [
         loadChildren: () =>
           import('./templates/er-templates.module').then((m) => m.ErTemplatesModule),
         canActivate: [],
+      },
+      {
+        path: 'disciplinary-analytics',
+        component: DisciplinaryAnalyticsPage
+      },
+      {
+        path: 'disciplinary-records',
+        component: DisciplinaryRecordsPage
+      },
+      {
+        path: 'hearings-calendar',
+        component: HearingsCalendarPage
       }
     ]
   }

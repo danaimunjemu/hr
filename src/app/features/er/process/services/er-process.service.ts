@@ -20,7 +20,7 @@ import {
 export class ErProcessService {
   private readonly apiUrl = 'http://localhost:8090/api/er/process';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   createCase(dto: ErCaseDto): Observable<any> {
     return this.http.post(`${this.apiUrl}/cases`, dto);
@@ -30,7 +30,7 @@ export class ErProcessService {
     return this.http.put(`${this.apiUrl}/cases/${caseId}/assign`, dto);
   }
 
-  addIntake(caseId: number, dto: ErCaseIntakeDto): Observable<any> {
+  addIntake(caseId: number, dto: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/cases/${caseId}/intake`, dto);
   }
 
@@ -64,5 +64,19 @@ export class ErProcessService {
 
   addOutcomeDocument(outcomeId: number, dto: ErCaseOutcomeDocumentDto): Observable<any> {
     return this.http.post(`${this.apiUrl}/outcomes/${outcomeId}/documents`, dto);
+  }
+
+  getAllCases(params?: any): Observable<ErCaseDto[]> {
+    return this.http.get<ErCaseDto[]>(`${this.apiUrl}/cases`, { params });
+  }
+
+  getCasesByEmployee(employeeId: number): Observable<ErCaseDto[]> {
+    return this.http.get<ErCaseDto[]>(`${this.apiUrl}/cases`, { params: { employeeId: employeeId.toString() } });
+  }
+
+  getHearingTasks(caseId?: number): Observable<ErCaseTaskDto[]> {
+    const params: any = { taskType: 'HEARING' };
+    if (caseId) params.caseId = caseId.toString();
+    return this.http.get<ErCaseTaskDto[]>(`${this.apiUrl}/tasks`, { params });
   }
 }

@@ -111,6 +111,15 @@ export class TopNav implements OnInit {
       title: 'Reports',
       items: [{ label: 'Reports', link: '/app/reports' }]
     },
+    'employee-relations': {
+      title: 'Employee Relations',
+      items: [
+        { label: 'Cases', link: '/app/employee-relations/cases' },
+        { label: 'Hearings Calendar', link: '/app/employee-relations/hearings-calendar' },
+        { label: 'Analytics', link: '/app/employee-relations/disciplinary-analytics' },
+        { label: 'Disciplinary Records', link: '/app/employee-relations/disciplinary-records' }
+      ]
+    },
     'time-and-leave-user': {
       title: 'Time and Leave',
       items: [

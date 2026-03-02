@@ -9,6 +9,7 @@ import { ViewEmployee } from './pages/view-employee/view-employee';
 import { EditEmployee } from './pages/edit-employee/edit-employee';
 import { NewEmployee } from './pages/new-employee/new-employee';
 import { AntDesignModules } from '../../core/modules/antdesign.module';
+import { ErModule } from '../er/er.module';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { AntDesignModules } from '../../core/modules/antdesign.module';
     CommonModule,
     ReactiveFormsModule,
     EmployeesRoutingModule,
-    AntDesignModules
+    AntDesignModules,
+    ErModule
   ]
 })
 export class EmployeesModule { }
