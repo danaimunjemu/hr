@@ -20,7 +20,7 @@
         <td>{{ asset.serialNumber }}</td>
         <td>{{ asset.issueDate }}</td>
         <td>
-          <nz-tag [nzColor]="isReturned(asset) ? 'success' : 'error'">{{ returnStatusLabel(asset) }}</nz-tag>
+          <nz-tag [nzColor]="isReturned(asset) ? 'success' : 'error'">{{ returnStatusLabel(asset) | capitalize }}</nz-tag>
         </td>
         <td>{{ asset.returnDate || '-' }}</td>
         <td>{{ asset.conditionOnReturn || '-' }}</td>

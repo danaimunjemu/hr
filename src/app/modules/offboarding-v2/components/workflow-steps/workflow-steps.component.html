@@ -16,9 +16,9 @@
   </ng-template>
 
   <div class="legend">
-    <nz-tag nzColor="default">PENDING</nz-tag>
-    <nz-tag nzColor="processing">IN_PROGRESS</nz-tag>
-    <nz-tag nzColor="success">DONE</nz-tag>
-    <nz-tag nzColor="error">BLOCKED</nz-tag>
+    <nz-tag nzColor="default">{{ 'PENDING' | capitalize }}</nz-tag>
+    <nz-tag nzColor="processing">{{ 'IN_PROGRESS' | capitalize }}</nz-tag>
+    <nz-tag nzColor="success">{{ 'DONE' | capitalize }}</nz-tag>
+    <nz-tag nzColor="error">{{ 'BLOCKED' | capitalize }}</nz-tag>
   </div>
 </nz-card>

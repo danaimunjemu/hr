@@ -5,7 +5,7 @@
   </nz-page-header-subtitle>
 
   <nz-page-header-tags *ngIf="record">
-    <nz-tag [nzColor]="statusColor(record.approvalStatus)">{{ record.approvalStatus }}</nz-tag>
+    <nz-tag [nzColor]="statusColor(record.approvalStatus)">{{ record.approvalStatus | capitalize }}</nz-tag>
   </nz-page-header-tags>
 
   <!-- <nz-page-header-extra *ngIf="record">
@@ -34,7 +34,7 @@
               {{ record.employeeNumber || '-' }}
             </nz-descriptions-item>
             <nz-descriptions-item nzTitle="Offboarding Type">
-              {{ record.offboardingType || '-' }}
+              {{ (record.offboardingType || '-') | capitalize }}
             </nz-descriptions-item>
             <nz-descriptions-item nzTitle="Last Working Day">
               {{ record.lastWorkingDay | date: 'mediumDate' }}
@@ -55,7 +55,7 @@
             <div class="approval-row">
               <span>Overall Status</span>
               <nz-tag [nzColor]="statusColor(record.approvalStatus)">
-                {{ record.approvalStatus }}
+                {{ record.approvalStatus | capitalize }}
               </nz-tag>
             </div>
             <div class="approval-row">
@@ -95,7 +95,7 @@
               <div class="timeline-title">{{ event.title }}</div>
               <div class="timeline-meta">{{ event.actor }} · {{ event.timestamp | date: 'medium' }}</div>
               <div class="timeline-status">
-                <nz-tag [nzColor]="statusColor(event.status)">{{ event.status }}</nz-tag>
+                <nz-tag [nzColor]="statusColor(event.status)">{{ event.status | capitalize }}</nz-tag>
               </div>
               <!-- <div class="timeline-user-active" *ngIf="event.userActive !== undefined">User Active: {{ event.userActive ? 'Yes' : 'No' }}</div> -->
               <div class="timeline-comment" *ngIf="event.comment">{{ event.comment }}</div>
@@ -130,8 +130,8 @@
       <nz-form-label nzRequired>Approval Status</nz-form-label>
       <nz-form-control nzErrorTip="Select approval status">
         <nz-radio-group formControlName="approvalStatus">
-          <label nz-radio [nzValue]="'APPROVED'">APPROVED</label>
-          <label nz-radio [nzValue]="'REJECTED'">REJECTED</label>
+          <label nz-radio [nzValue]="'APPROVED'">{{ 'APPROVED' | capitalize }}</label>
+          <label nz-radio [nzValue]="'REJECTED'">{{ 'REJECTED' | capitalize }}</label>
         </nz-radio-group>
       </nz-form-control>
     </nz-form-item>

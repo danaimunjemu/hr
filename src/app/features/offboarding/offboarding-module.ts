@@ -50,6 +50,7 @@ import { OffboardingListPageComponent } from './pages/offboarding-list-page/offb
 import { Organo } from './pages/organo/organo';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CapitalizePipe } from '../onboarding/capitalize-pipe';
 
 @NgModule({
   declarations: [
@@ -139,7 +140,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     NzDatePickerModule,
     NzDividerModule,
     NzTabsModule,
-    SharedModule
+    SharedModule,
+    CapitalizePipe
   ],schemas:[CUSTOM_ELEMENTS_SCHEMA,NO_ERRORS_SCHEMA]
 })
 export class OffboardingModule {}

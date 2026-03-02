@@ -57,7 +57,7 @@
           <span class="overdue-note" *ngIf="isOverdue(task)">Overdue by {{ overdueDays(task) }}d</span>
         </td>
         <td>
-          <nz-tag [nzColor]="task.completionStatus === 'COMPLETED' ? 'success' : 'default'">{{ task.completionStatus }}</nz-tag>
+          <nz-tag [nzColor]="task.completionStatus === 'COMPLETED' ? 'success' : 'default'">{{ task.completionStatus | capitalize }}</nz-tag>
         </td>
         <td>{{ task.completionDate || '-' }}</td>
         <td>{{ task.evidenceFilePath || '-' }}</td>

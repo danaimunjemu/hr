@@ -58,8 +58,7 @@ import { CapitalizePipe } from './capitalize-pipe';
     OnboardingPageComponent,
     BulkOnboarding,
     BatchList,
-    BatchDetail,
-    CapitalizePipe
+    BatchDetail
   ],
   schemas:[CUSTOM_ELEMENTS_SCHEMA,NO_ERRORS_SCHEMA],
   imports: [
@@ -141,7 +140,8 @@ import { CapitalizePipe } from './capitalize-pipe';
     NzDividerModule,
     NzDatePickerModule,
     NzDividerModule,
-    NzTabsModule
+    NzTabsModule,
+    CapitalizePipe
   ]
 })
 export class OnboardingModule { }

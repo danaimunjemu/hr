@@ -27,6 +27,7 @@ export class RequestsListPageComponent implements OnInit, OnDestroy {
 
   loading = true;
   isHR = false;
+  searchTerm = '';
 
   statuses: Array<OffboardingStatus | 'ALL'> = [
     'ALL',
@@ -49,6 +50,29 @@ export class RequestsListPageComponent implements OnInit, OnDestroy {
   ];
 
   rows: OffboardingCaseSummary[] = [];
+
+  get filteredRows(): OffboardingCaseSummary[] {
+    const query = this.searchTerm.trim().toLowerCase();
+    if (!query) {
+      return this.rows;
+    }
+
+    return this.rows.filter((row) => {
+      const haystack = [
+        row.caseId,
+        row.employeeNumber,
+        row.employeeName,
+        row.department,
+        row.offboardingType,
+        row.status,
+        row.lastWorkingDate,
+        row.createdAt
+      ]
+        .map((value) => String(value || '').toLowerCase())
+        .join(' ');
+      return haystack.includes(query);
+    });
+  }
 
   get initiatedCount(): number {
     return this.rows.filter((item) => item.status === 'INITIATED').length;
@@ -127,16 +151,24 @@ export class RequestsListPageComponent implements OnInit, OnDestroy {
     this.router.navigate(['/app/offboarding-v2/analytics']);
   }
 
+  onSearch(term: string): void {
+    this.searchTerm = term;
+  }
+
+  resetFilters(): void {
+    this.searchTerm = '';
+  }
+
   get statusColumnFilters(): Array<{ text: string; value: string }> {
     return this.statuses
       .filter((status) => status !== 'ALL')
-      .map((status) => ({ text: status, value: status }));
+      .map((status) => ({ text: this.toDisplayText(status), value: status }));
   }
 
   get exitTypeColumnFilters(): Array<{ text: string; value: string }> {
     return this.exitTypes
       .filter((type) => type !== 'ALL')
-      .map((type) => ({ text: type, value: type }));
+      .map((type) => ({ text: this.toDisplayText(type), value: type }));
   }
 
   get departmentColumnFilters(): Array<{ text: string; value: string }> {
@@ -167,6 +199,29 @@ export class RequestsListPageComponent implements OnInit, OnDestroy {
     return selectedValues.includes(item.department);
   }
 
+  caseIdSortFn = (a: OffboardingCaseSummary, b: OffboardingCaseSummary): number =>
+    String(a.caseId || '').localeCompare(String(b.caseId || ''));
+
+  employeeSortFn = (a: OffboardingCaseSummary, b: OffboardingCaseSummary): number =>
+    `${a.employeeNumber || ''} ${a.employeeName || ''}`
+      .toLowerCase()
+      .localeCompare(`${b.employeeNumber || ''} ${b.employeeName || ''}`.toLowerCase());
+
+  departmentSortFn = (a: OffboardingCaseSummary, b: OffboardingCaseSummary): number =>
+    String(a.department || '').localeCompare(String(b.department || ''));
+
+  exitTypeSortFn = (a: OffboardingCaseSummary, b: OffboardingCaseSummary): number =>
+    String(a.offboardingType || '').localeCompare(String(b.offboardingType || ''));
+
+  lastWorkingDateSortFn = (a: OffboardingCaseSummary, b: OffboardingCaseSummary): number =>
+    new Date(a.lastWorkingDate || 0).getTime() - new Date(b.lastWorkingDate || 0).getTime();
+
+  statusSortFn = (a: OffboardingCaseSummary, b: OffboardingCaseSummary): number =>
+    String(a.status || '').localeCompare(String(b.status || ''));
+
+  createdOnSortFn = (a: OffboardingCaseSummary, b: OffboardingCaseSummary): number =>
+    new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
+
   statusColor(status: OffboardingStatus): string {
     if (status === 'COMPLETED') {
       return 'success';
@@ -181,5 +236,17 @@ export class RequestsListPageComponent implements OnInit, OnDestroy {
       return 'warning';
     }
     return 'default';
+  }
+
+  private toDisplayText(value: string): string {
+    const normalized = String(value || '')
+      .replace(/[_-]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
+    if (!normalized) {
+      return '';
+    }
+    return normalized.charAt(0).toUpperCase() + normalized.slice(1);
   }
 }

@@ -21,7 +21,19 @@
       <nz-form-item>
         <nz-form-label nzRequired>Condition on Return</nz-form-label>
         <nz-form-control nzErrorTip="Required">
-          <input nz-input formControlName="conditionOnReturn" placeholder="Good / Damaged" />
+          <nz-select formControlName="conditionOnReturn" nzPlaceHolder="Select condition">
+            <nz-option
+              *ngFor="let condition of availableConditionOptions"
+              [nzLabel]="condition"
+              [nzValue]="condition"
+            ></nz-option>
+          </nz-select>
+          <div class="hint" *ngIf="form.controls.returned.value">
+            Returned assets allow: Good, Fair, or Damaged.
+          </div>
+          <div class="hint" *ngIf="!form.controls.returned.value">
+            Not returned assets allow: Lost, Stolen, or N/A.
+          </div>
         </nz-form-control>
       </nz-form-item>
 

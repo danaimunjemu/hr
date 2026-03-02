@@ -4,7 +4,7 @@
       <div class="title">Case {{ caseData.caseId }}</div>
       <div class="subtitle">{{ caseData.employee.fullName }} ({{ caseData.employee.employeeId }})</div>
     </div>
-    <nz-tag [nzColor]="statusColor(caseData.status)">{{ caseData.status }}</nz-tag>
+    <nz-tag [nzColor]="statusColor(caseData.status)">{{ caseData.status | capitalize }}</nz-tag>
   </div>
 
   <nz-descriptions nzSize="small" [nzColumn]="3" nzBordered>
@@ -14,7 +14,7 @@
     <nz-descriptions-item nzTitle="Last Working Date">{{ caseData.lastWorkingDate }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="Notice Start">{{ caseData.noticePeriodStart || '-' }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="Notice End">{{ caseData.noticePeriodEnd || '-' }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="Exit Type">{{ caseData.offboardingType }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="Exit Type">{{ caseData.offboardingType | capitalize }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="Initiator">{{ caseData.initiator }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="Created">{{ caseData.createdAt | date: 'yyyy-MM-dd HH:mm' }}</nz-descriptions-item>
   </nz-descriptions>

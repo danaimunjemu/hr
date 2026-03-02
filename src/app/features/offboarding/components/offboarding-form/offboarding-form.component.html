@@ -26,7 +26,7 @@
         <nz-form-label nzRequired>Offboarding Type</nz-form-label>
         <nz-form-control nzErrorTip="Offboarding type is required">
           <nz-select formControlName="offboardingType" nzPlaceHolder="Select type">
-            <nz-option *ngFor="let type of offboardingTypes" [nzValue]="type" [nzLabel]="type"></nz-option>
+            <nz-option *ngFor="let type of offboardingTypes" [nzValue]="type" [nzLabel]="type | capitalize"></nz-option>
           </nz-select>
         </nz-form-control>
       </nz-form-item>

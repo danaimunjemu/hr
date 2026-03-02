@@ -1,20 +1,499 @@
+::ng-deep nerd-breadcrumb{
+  display: none !important;
+}
+
+::ng-deep .content-container {
+
+    padding: 6px 24px !important;
+
+}
+
 :host {
   display: block;
-  background: linear-gradient(180deg, #f5f8fc 0%, #ffffff 48%);
-  padding: 0 0 10px;
 }
 
-.section-card {
-  margin-bottom: 12px;
-  border-radius: 12px;
-  border: 1px solid #e2e9f3;
-  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+:host ::ng-deep .ant-page-header {
+  padding: 10px 12px 8px;
 }
 
-.case-tabs {
-  background: #ffffff;
-  border: 1px solid #e2e9f3;
-  border-radius: 12px;
-  padding: 8px 10px;
-  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+:host ::ng-deep .ant-page-header-heading {
+  margin-bottom: 6px;
+}
+
+:host ::ng-deep .ant-page-header-content {
+  padding-top: 0;
+}
+
+.compact-tabs {
+  border: 1px solid #dbe3ee;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 18%);
+  padding: 6px 8px;
+}
+
+:host ::ng-deep .compact-tabs .ant-tabs-nav {
+  margin-bottom: 8px;
+}
+
+:host ::ng-deep .compact-tabs .ant-tabs-tab {
+  padding: 6px 10px;
+}
+
+.section-grid {
+  margin-top: 0;
+}
+
+.compact-card {
+  border-radius: 10px;
+  border: 1px solid #e5eaf1;
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.03);
+  margin-bottom: 8px;
+}
+
+.timeline-card {
+  max-height: 520px;
+  overflow: auto;
+}
+
+.timeline-title {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #0f172a;
+}
+
+.timeline-meta {
+  font-size: 11px;
+  color: #64748b;
+  margin: 1px 0 3px;
+}
+
+.timeline-comment {
+  font-size: 11px;
+  color: #334155;
+}
+
+:host ::ng-deep .timeline-card .ant-timeline-item {
+  padding-bottom: 9px;
+}
+
+:host ::ng-deep .timeline-card .ant-comment-inner {
+  padding: 0;
+}
+
+:host ::ng-deep .timeline-card .ant-comment-content {
+  font-size: 11px;
+}
+
+.stats-card {
+  margin-bottom: 8px;
+}
+
+.mini-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 8px;
+  padding: 7px 8px;
+  font-size: 11px;
+  margin-bottom: 6px;
+  border: 1px solid #e8edf5;
+}
+
+.mini-stat:last-child {
+  margin-bottom: 0;
+}
+
+.mini-stat span {
+  color: #64748b;
+}
+
+.mini-stat strong {
+  font-size: 15px;
+  color: #111827;
+}
+
+.metric-total {
+  background: #f8fafc;
+}
+
+.metric-success {
+  background: #f6ffed;
+  border-color: #d9f7be;
+}
+
+.metric-warning {
+  background: #fffbe6;
+  border-color: #ffe58f;
+}
+
+.department-tabs {
+  margin-bottom: 6px;
+}
+
+:host ::ng-deep .department-tabs .ant-tabs-nav {
+  margin-bottom: 6px;
+}
+
+:host ::ng-deep .compact-table .ant-table {
+  font-size: 12px;
+}
+
+:host ::ng-deep .compact-table .ant-table-thead > tr > th {
+  padding: 6px 8px;
+  font-size: 11px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e9edf3;
+}
+
+:host ::ng-deep .compact-table .ant-table-tbody > tr > td {
+  padding: 5px 8px;
+  font-size: 12px;
+}
+
+.drawer-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.helper-text {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.create-case-form {
+  margin-top: 4px;
+}
+
+.form-section-title {
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #344054;
+  text-transform: uppercase;
+}
+
+.form-error {
+  margin-top: 6px;
+  color: #b91c1c;
+  font-size: 12px;
+}
+
+:host ::ng-deep .evidence-upload .ant-upload.ant-upload-drag {
+  border: 1px dashed #9fb7d5;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #f8fbff 0%, #f5f9ff 100%);
+}
+
+:host ::ng-deep .evidence-upload .ant-upload.ant-upload-drag:hover {
+  border-color: #4f7fc1;
+}
+
+:host ::ng-deep .ant-modal .ant-modal-header {
+  border-bottom: 1px solid #edf2f8;
+}
+
+:host ::ng-deep .ant-modal .ant-modal-title {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+@media (max-width: 992px) {
+  .timeline-card {
+    max-height: none;
+  }
+}
+
+
+
+
+/* ========================================
+   NZ-TABLE STYLES (Compact & Scoped)
+   ======================================== */
+
+/* Base table styling */
+:host ::ng-deep .ant-table.ant-table-small {
+  font-size: 12px;
+}
+
+/* Table header */
+:host ::ng-deep .ant-table-thead > tr > th {
+  padding: 6px 8px;
+  background: #f3f4f6;
+  font-weight: 600;
+  font-size: 11px;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+/* Table body cells */
+:host ::ng-deep .ant-table-tbody > tr > td {
+  padding: 2px 8px;
+  font-size: 12px;
+}
+
+/* Table column utilities */
+.actions-col {
+  width: 220px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.actions-cell {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.message-col {
+  max-width: 420px;
+  white-space: normal;
+  line-height: 1.25;
+}
+
+/* Table toolbar */
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Table search input */
+.table-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 260px;
+  max-width: 420px;
+  width: 100%;
+  padding: 0 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+
+  input {
+    border: 0;
+    box-shadow: none;
+    padding: 4px 0;
+    
+    &:focus {
+      box-shadow: none;
+    }
+  }
+}
+
+/* Status select in toolbar */
+.status-select {
+  width: 170px;
+}
+
+/* Table fullscreen mode */
+.table-fullscreen .table-card {
+  position: fixed;
+  inset: 8px;
+  z-index: 1200;
+  margin: 0;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.18);
+}
+
+/* ========================================
+   NZ-DESCRIPTIONS STYLES (Bordered & Compact)
+   ======================================== */
+
+/* Bordered descriptions with gradient background */
+::ng-deep .ant-descriptions-bordered .ant-descriptions-view {
+  background: linear-gradient(90deg, rgba(225, 232, 239, 0.6) 0%, #fbfcfd 100%) !important;
+  border: 1px solid #e7e7e7b8 !important;
+}
+
+/* Description item labels */
+::ng-deep .ant-descriptions-bordered.ant-descriptions-small .ant-descriptions-item-label {
+  color: #41454afa !important;
+  font-weight: 600 !important;
+  border-bottom: 1px solid rgba(179, 179, 179, 0.2784313725) !important;
+  padding: 4px 16px !important;
+  background: transparent !important;
+}
+
+::ng-deep .ant-descriptions-bordered .ant-descriptions-item-label {
+  background-color: transparent !important;
+  color: rgba(0, 0, 0, 0.85) !important;
+  font-weight: normal !important;
+  font-size: 13px !important;
+}
+
+/* Description item content */
+::ng-deep .ant-descriptions-item-content {
+  background: #fff !important;
+  font-size: 13px !important;
+}
+
+/* Small descriptions row padding */
+::ng-deep .ant-descriptions-small .ant-descriptions-row > td {
+  padding-bottom: 8px !important;
+}
+
+/* ========================================
+   SHARED COMPONENT STYLES
+   ======================================== */
+
+/* Tags within tables/descriptions */
+:host ::ng-deep .ant-tag {
+  font-size: 10px;
+  padding: 0 8px;
+}
+
+/* Compact buttons */
+.action-btn {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+}
+
+.compact-continue-btn {
+  height: 28px;
+  line-height: 26px;
+  padding-inline: 8px;
+}
+
+/* Date picker compact style */
+nz-date-picker {
+  .ant-picker {
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .ant-picker-input > input {
+    font-size: 12px;
+  }
+}
+
+/* Progress bar (hide text) */
+::ng-deep .ant-progress-text {
+  display: none !important;
+}
+
+/* ========================================
+   RESPONSIVE ADJUSTMENTS
+   ======================================== */
+
+@media (max-width: 1200px) {
+  .summary-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .table-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toolbar-left,
+  .toolbar-right {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .table-search {
+    max-width: none;
+  }
+}
+
+@media (max-width: 768px) {
+  ::ng-deep .ant-timeline-item-content {
+    .timeline-meta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .content {
+    display: block;
+  }
+
+  .main {
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+  .extra {
+    width: 100%;
+    margin-left: 0;
+    text-align: left;
+  }
+}
+
+/* ========================================
+   ADDITIONAL UTILITIES
+   ======================================== */
+
+/* Page header content padding */
+::ng-deep .ant-page-header-content {
+  padding-top: 0;
+}
+
+/* Tabs spacing */
+::ng-deep .ant-tabs-tab + .ant-tabs-tab {
+  margin: 0 0 0 16px !important;
+}
+
+
+
+/* Basic nz-descriptions styling */
+::ng-deep .ant-descriptions-bordered.ant-descriptions-small .ant-descriptions-item-label {
+  color: #41454afa !important;
+  font-weight: 600 !important;
+  border-bottom: 1px solid rgba(179, 179, 179, 0.2784313725) !important;
+  padding: 4px 16px !important;
+  background: transparent !important;
+}
+
+::ng-deep .ant-descriptions-bordered .ant-descriptions-view {
+  background: linear-gradient(90deg, rgba(225, 232, 239, 0.6) 0%, #fbfcfd 100%) !important;
+  border: 1px solid #e7e7e7b8 !important;
+}
+
+::ng-deep .ant-descriptions-bordered .ant-descriptions-item-label {
+  background-color: transparent !important;
+}
+
+::ng-deep .ant-descriptions-small .ant-descriptions-row > td {
+  padding-bottom: 8px !important;
+}
+
+::ng-deep .ant-descriptions-item-content {
+  background: #fff !important;
+  font-size: 13px !important;
+}
+
+::ng-deep .ant-descriptions-item-label {
+  color: rgba(0, 0, 0, 0.85) !important;
+  font-weight: normal !important;
+  font-size: 13px !important;
 }

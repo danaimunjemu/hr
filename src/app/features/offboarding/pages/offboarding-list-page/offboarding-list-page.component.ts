@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { finalize } from 'rxjs';
@@ -16,20 +16,12 @@ export class OffboardingListPageComponent implements OnInit {
   actionLoadingId: number | null = null;
   records: OffboardingRecord[] = [];
   filteredRecords: OffboardingRecord[] = [];
-
-  filters = {
-    employee: '',
-    status: '',
-    date: null as Date | null
-  };
-
-  statuses: string[] = [];
+  searchTerm = '';
 
   constructor(
     private offboardingService: OffboardingService,
     private message: NzMessageService,
-    private router: Router,
-    private cdr: ChangeDetectorRef
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -38,68 +30,54 @@ export class OffboardingListPageComponent implements OnInit {
 
   loadRecords(): void {
     this.loading = true;
-    this.cdr.detectChanges();
-
-    this.resolveListObservable()
+    this.offboardingService
+      .getAll()
       .pipe(
         finalize(() => {
           this.loading = false;
-          this.cdr.detectChanges();
         })
       )
       .subscribe({
         next: records => {
           this.records = records;
-          this.statuses = Array.from(
-            new Set(
-              records
-                .map(record => String(record.approvalStatus || '').toUpperCase())
-                .filter(Boolean)
-            )
-          );
           this.applyClientFilters();
-          this.cdr.detectChanges();
         },
         error: (error: Error) => {
           this.message.error(error.message || 'Failed to load offboarding records.');
-          this.cdr.detectChanges();
         }
       });
   }
 
+  onSearch(term: string): void {
+    this.searchTerm = term;
+    this.applyClientFilters();
+  }
+
   applyClientFilters(): void {
-    const employeeText = this.filters.employee.trim().toLowerCase();
-    const status = this.filters.status.trim().toUpperCase();
-    const date = this.filters.date ? this.toIsoDate(this.filters.date) : '';
+    const query = this.searchTerm.trim().toLowerCase();
 
     this.filteredRecords = this.records.filter(record => {
-      const haystack = `${record.employeeName || ''} ${record.employeeNumber || ''} ${
-        record.employeeId
-      }`.toLowerCase();
-      const matchesEmployee = !employeeText || haystack.includes(employeeText);
-      const matchesStatus =
-        !status || String(record.approvalStatus || '').toUpperCase() === status;
-      const matchesDate =
-        !date || (record.lastWorkingDay || '').slice(0, 10) === date;
-      return matchesEmployee && matchesStatus && matchesDate;
-    });
+      const haystack = [
+        this.employeeLabel(record),
+        this.employeeNumberLabel(record),
+        String(record.offboardingType || '-'),
+        String(record.approvalStatus || '-'),
+        this.lastWorkingDayValue(record)
+      ]
+        .join(' ')
+        .toLowerCase();
 
-    this.cdr.detectChanges();
+      return !query || haystack.includes(query);
+    });
   }
 
   resetFilters(): void {
-    this.filters = {
-      employee: '',
-      status: '',
-      date: null
-    };
-    this.cdr.detectChanges();
-    this.loadRecords();
+    this.searchTerm = '';
+    this.applyClientFilters();
   }
 
   view(record: OffboardingRecord): void {
     this.router.navigate(['/app/offboarding', record.id]);
-    this.cdr.detectChanges();
   }
 
   edit(record: OffboardingRecord): void {
@@ -107,19 +85,16 @@ export class OffboardingListPageComponent implements OnInit {
       return;
     }
     this.router.navigate(['/app/offboarding', record.id, 'edit']);
-    this.cdr.detectChanges();
   }
 
   remove(record: OffboardingRecord): void {
     this.actionLoadingId = record.id;
-    this.cdr.detectChanges();
 
     this.offboardingService
       .delete(record.id)
       .pipe(
         finalize(() => {
           this.actionLoadingId = null;
-          this.cdr.detectChanges();
         })
       )
       .subscribe({
@@ -129,7 +104,6 @@ export class OffboardingListPageComponent implements OnInit {
         },
         error: (error: Error) => {
           this.message.error(error.message || 'Failed to delete offboarding record.');
-          this.cdr.detectChanges();
         }
       });
   }
@@ -152,56 +126,94 @@ export class OffboardingListPageComponent implements OnInit {
     return 'default';
   }
 
-  private resolveListObservable() {
-    const employeeFilter = this.filters.employee.trim();
-    const employeeId = Number(employeeFilter);
-    if (employeeFilter && !Number.isNaN(employeeId) && employeeId > 0) {
-      return this.offboardingService.getByEmployeeId(employeeId);
-    }
-    return this.offboardingService.getAll();
+  employeeLabel(record: OffboardingRecord): string {
+    return record.employeeName?.trim() || `Employee #${record.employeeId}`;
   }
 
-  private toIsoDate(date: Date): string {
-    return new Date(date).toISOString().slice(0, 10);
+  employeeNumberLabel(record: OffboardingRecord): string {
+    return record.employeeNumber?.trim() || `ID: ${record.employeeId}`;
+  }
+
+  employeeFilters(): Array<{ text: string; value: string }> {
+    return [...new Set(this.records.map(record => this.employeeLabel(record)))].map(value => ({
+      text: value,
+      value
+    }));
+  }
+
+  employeeFilterFn = (values: string[], item: OffboardingRecord): boolean => {
+    if (!values?.length) return true;
+    return values.includes(this.employeeLabel(item));
+  };
+
+  employeeSortFn = (a: OffboardingRecord, b: OffboardingRecord): number =>
+    this.employeeLabel(a).localeCompare(this.employeeLabel(b));
+
+  typeFilters(): Array<{ text: string; value: string }> {
+    return [...new Set(this.records.map(record => String(record.offboardingType || '-')))].map(value => ({
+      text: this.toDisplayText(value),
+      value
+    }));
+  }
+
+  typeFilterFn = (values: string[], item: OffboardingRecord): boolean => {
+    if (!values?.length) return true;
+    return values.includes(String(item.offboardingType || '-'));
+  };
+
+  typeSortFn = (a: OffboardingRecord, b: OffboardingRecord): number =>
+    String(a.offboardingType || '-').localeCompare(String(b.offboardingType || '-'));
+
+  lastWorkingDayFilters(): Array<{ text: string; value: string }> {
+    return [...new Set(this.records.map(record => this.lastWorkingDayValue(record)))].map(value => ({
+      text: value,
+      value
+    }));
+  }
+
+  lastWorkingDayFilterFn = (values: string[], item: OffboardingRecord): boolean => {
+    if (!values?.length) return true;
+    return values.includes(this.lastWorkingDayValue(item));
+  };
+
+  lastWorkingDaySortFn = (a: OffboardingRecord, b: OffboardingRecord): number =>
+    new Date(a.lastWorkingDay || 0).getTime() - new Date(b.lastWorkingDay || 0).getTime();
+
+  statusFilters(): Array<{ text: string; value: string }> {
+    return [...new Set(this.records.map(record => String(record.approvalStatus || '-')))].map(value => ({
+      text: this.toDisplayText(value),
+      value
+    }));
+  }
+
+  statusFilterFn = (values: string[], item: OffboardingRecord): boolean => {
+    if (!values?.length) return true;
+    return values.includes(String(item.approvalStatus || '-'));
+  };
+
+  statusSortFn = (a: OffboardingRecord, b: OffboardingRecord): number =>
+    String(a.approvalStatus || '-').localeCompare(String(b.approvalStatus || '-'));
+
+  private lastWorkingDayValue(record: OffboardingRecord): string {
+    if (!record.lastWorkingDay) {
+      return '-';
+    }
+    return record.lastWorkingDay.slice(0, 10);
   }
 
   private isInApprovalFlow(status: string): boolean {
     return String(status || '').toUpperCase().startsWith('PENDING');
   }
 
-   orgData: OrgChartNode = {
-    id: 'ceo', // auto generated if not provided
-    name: 'John Smith',
-    data: {
-      // add any additional data properties here to customize the node and use it for displaying different types of nodes
-    },
-    children: [
-      {
-        id: 'cto',
-        name: 'Jane Doe',
-        children: [
-          {
-            id: 'dev1',
-            name: 'Mike Johnson',
-          },
-        ],
-      },
-      {
-        id: 'cfo',
-        name: 'Sarah Wilson',
-      },
-    ],
-  };
-}
-
-
-
-interface OrgChartNode<T = any> {
-  id?: string;
-  name?: string;
-  data?: T;
-  children?: OrgChartNode<T>[];
-  collapsed?: boolean;
-  hidden?: boolean;
-  nodeClass?: string;
+  private toDisplayText(value: string): string {
+    const normalized = String(value || '')
+      .replace(/[_-]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
+    if (!normalized) {
+      return '';
+    }
+    return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+  }
 }

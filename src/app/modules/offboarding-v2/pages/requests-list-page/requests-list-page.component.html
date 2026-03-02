@@ -1,93 +1,84 @@
-<nz-page-header nzTitle="Offboarding v2" nzSubtitle="Requests"></nz-page-header>
+<nz-page-header nzTitle="Offboarding requests" nzBackIcon>
+  <nz-page-header-extra>
+    <nz-space [nzSize]="8">
+      <button *nzSpaceItem nz-button nzType="dashed" (click)="openAnalytics()">Analytics</button>
+      <button *nzSpaceItem nz-button nzType="primary" (click)="create()">Create Request</button>
+    </nz-space>
+  </nz-page-header-extra>
+</nz-page-header>
 
-<nz-card *ngIf="isHR" nzSize="small" class="stats-card">
-  <div class="stats-grid">
-    <nz-statistic nzTitle="Total Requests" [nzValue]="rows.length" [nzValueStyle]="{ 'font-size': '20px' }"></nz-statistic>
-    <nz-statistic nzTitle="Initiated" [nzValue]="initiatedCount" [nzValueStyle]="{ 'font-size': '20px' }"></nz-statistic>
-    <nz-statistic nzTitle="In Progress" [nzValue]="inProgressCount" [nzValueStyle]="{ 'font-size': '20px' }"></nz-statistic>
-    <nz-statistic nzTitle="Completed" [nzValue]="completedCount" [nzValueStyle]="{ 'font-size': '20px', color: '#237804' }"></nz-statistic>
-    <nz-statistic nzTitle="Completion Rate" [nzValue]="completionRate" nzSuffix="%" [nzValueStyle]="{ 'font-size': '20px' }"></nz-statistic>
-  </div>
-</nz-card>
-
-<nz-card nzSize="small" class="compact-card">
-  <div class="toolbar">
-    <form nz-form nzLayout="inline" [formGroup]="form">
-      <nz-form-item>
-        <nz-form-label>Status</nz-form-label>
-        <nz-form-control>
-          <nz-select formControlName="status" nzSize="small" style="width: 180px">
-            <nz-option *ngFor="let status of statuses" [nzLabel]="status" [nzValue]="status"></nz-option>
-          </nz-select>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label>Exit Type</nz-form-label>
-        <nz-form-control>
-          <nz-select formControlName="offboardingType" nzSize="small" style="width: 200px">
-            <nz-option *ngFor="let type of exitTypes" [nzLabel]="type" [nzValue]="type"></nz-option>
-          </nz-select>
-        </nz-form-control>
-      </nz-form-item>
-    </form>
-
-    <div class="actions">
-      <button nz-button nzType="default" *ngIf="isHR" (click)="openAnalytics()">Analytics</button>
-      <button nz-button nzType="primary" (click)="create()">Create Request</button>
+<div class="employees-page">
+  <nz-card nzSize="small" class="employees-card">
+    <div class="table-toolbar">
+      <div class="search-wrap">
+        <span nz-icon nzType="search"></span>
+        <input
+          nz-input
+          [value]="searchTerm"
+          (input)="onSearch($any($event.target).value)"
+          placeholder="Search case id, employee no, employee, department, type, status"
+        />
+      </div>
+      <button nz-button nzType="default" nzSize="small" (click)="resetFilters()">Reset Filters</button>
     </div>
-  </div>
 
-  <nz-table
-    #requestsTable
-    [nzData]="rows"
-    nzSize="small"
-    [nzLoading]="loading"
-    [nzFrontPagination]="true"
-    [nzPageSize]="8"
-  >
-    <thead>
-      <tr>
-        <th>Case ID</th>
-        <th>Employee</th>
-        <th
-          nzCustomFilter
-          [nzFilters]="departmentColumnFilters"
-          [nzFilterFn]="departmentColumnFilterFn"
-        >
-          Department
-        </th>
-        <th
-          nzCustomFilter
-          [nzFilters]="exitTypeColumnFilters"
-          [nzFilterFn]="exitTypeColumnFilterFn"
-        >
-          Exit Type
-        </th>
-        <th>Last Working Date</th>
-        <th
-          nzCustomFilter
-          [nzFilters]="statusColumnFilters"
-          [nzFilterFn]="statusColumnFilterFn"
-        >
-          Status
-        </th>
-        <th>Created On</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let row of requestsTable.data">
-        <td>{{ row.caseId }}</td>
-        <td>{{ row.employeeNumber }} - {{ row.employeeName }}</td>
-        <td>{{ row.department }}</td>
-        <td>{{ row.offboardingType }}</td>
-        <td>{{ row.lastWorkingDate }}</td>
-        <td><nz-tag [nzColor]="statusColor(row.status)">{{ row.status }}</nz-tag></td>
-        <td>{{ row.createdAt | date: 'yyyy-MM-dd HH:mm' }}</td>
-        <td><button nz-button nzType="link" (click)="view(row)">View</button></td>
-      </tr>
-    </tbody>
-  </nz-table>
-
-  <nz-empty *ngIf="!loading && rows.length === 0" nzNotFoundContent="No requests found"></nz-empty>
-</nz-card>
+    <nz-table
+      #requestsTable
+      [nzData]="filteredRows"
+      nzSize="small"
+      [nzLoading]="loading"
+      [nzFrontPagination]="true"
+      [nzPageSize]="8"
+    >
+      <thead>
+        <tr>
+          <th [nzShowSort]="true" [nzSortFn]="caseIdSortFn">Case ID</th>
+          <th [nzShowSort]="true" [nzSortFn]="employeeSortFn">Employee</th>
+          <th
+            [nzShowSort]="true"
+            [nzSortFn]="departmentSortFn"
+          >
+            Department
+          </th>
+          <th
+            nzCustomFilter
+            [nzShowSort]="true"
+            [nzSortFn]="exitTypeSortFn"
+            [nzFilters]="exitTypeColumnFilters"
+            [nzFilterFn]="exitTypeColumnFilterFn"
+            [nzFilterMultiple]="true"
+          >
+            Exit Type
+          </th>
+          <th [nzShowSort]="true" [nzSortFn]="lastWorkingDateSortFn">Last Working Date</th>
+          <th
+            nzCustomFilter
+            [nzShowSort]="true"
+            [nzSortFn]="statusSortFn"
+            [nzFilters]="statusColumnFilters"
+            [nzFilterFn]="statusColumnFilterFn"
+            [nzFilterMultiple]="true"
+          >
+            Status
+          </th>
+          <th [nzShowSort]="true" [nzSortFn]="createdOnSortFn">Created On</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of requestsTable.data">
+          <td>{{ row.caseId }}</td>
+          <td>{{ row.employeeNumber }} - {{ row.employeeName }}</td>
+          <td>{{ row.department }}</td>
+          <td>{{ row.offboardingType | capitalize }}</td>
+          <td>{{ row.lastWorkingDate }}</td>
+          <td>
+            <nz-tag [nzColor]="statusColor(row.status)">{{ row.status | capitalize }}</nz-tag>
+          </td>
+          <td>{{ row.createdAt | date: 'yyyy-MM-dd HH:mm' }}</td>
+          <td><button nz-button nzType="link" (click)="view(row)">View</button></td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+</div>

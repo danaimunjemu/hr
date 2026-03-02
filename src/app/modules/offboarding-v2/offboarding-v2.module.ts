@@ -22,6 +22,7 @@ import { OffboardingV2MockStore } from './services/offboarding-v2-mock.store';
 import { OffboardingV2FacadeService } from './services/offboarding-v2-facade.service';
 import { UserContextService } from './services/user-context.service';
 import { EmployeesV2Service } from './services/employees-v2.service';
+import { CapitalizePipe } from '../../features/onboarding/capitalize-pipe';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { EmployeesV2Service } from './services/employees-v2.service';
     ReactiveFormsModule,
     AntDesignModules,
     // NzMessageModule,
-    OffboardingV2RoutingModule
+    OffboardingV2RoutingModule,
+    CapitalizePipe
   ],
   providers: [
     OffboardingV2ApiService,
