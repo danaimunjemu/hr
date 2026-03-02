@@ -1,1 +1,54 @@
-<div #chartContainer id="chartContainer"></div>
+<section class="organogram-v2-page">
+  <header class="toolbar">
+    <button nz-button nzType="primary" (click)="loadFullOrganogram()">Full Organogram</button>
+
+    <input
+      nz-input
+      type="number"
+      placeholder="Department Unit ID"
+      [(ngModel)]="unitIdInput"
+      (keyup.enter)="loadDepartmentOrganogram()"
+    />
+    <button nz-button (click)="loadDepartmentOrganogram()">Load Department</button>
+
+    <button nz-button [nzType]="viewMode === 'compact' ? 'primary' : 'default'" (click)="setViewMode('compact')">
+      Compact View
+    </button>
+    <button nz-button [nzType]="viewMode === 'horizontal' ? 'primary' : 'default'" (click)="setViewMode('horizontal')">
+      Horizontal View
+    </button>
+    <button nz-button (click)="toggleOrganisationColors()">
+      Org Colors: {{ colorByOrganisation ? 'On' : 'Off' }}
+    </button>
+    <button nz-button (click)="toggleCollapseByLevel()">
+      Level Collapse: {{ collapseByLevelEnabled ? 'On' : 'Off' }}
+    </button>
+
+    <input
+      nz-input
+      placeholder="Search on chart"
+      [(ngModel)]="searchQuery"
+      (keyup.enter)="searchOnChart()"
+    />
+    <button nz-button (click)="searchOnChart()">Search</button>
+    <button nz-button (click)="previousSearchResult()" [disabled]="!searchMatches.length">Prev</button>
+    <button nz-button (click)="nextSearchResult()" [disabled]="!searchMatches.length">Next</button>
+
+    <button nz-button [nzType]="layout === 'top' ? 'primary' : 'default'" (click)="setLayout('top')">Top</button>
+    <button nz-button [nzType]="layout === 'right' ? 'primary' : 'default'" (click)="setLayout('right')">Right</button>
+    <button nz-button [nzType]="layout === 'left' ? 'primary' : 'default'" (click)="setLayout('left')">Left</button>
+    <button nz-button [nzType]="layout === 'bottom' ? 'primary' : 'default'" (click)="setLayout('bottom')">Bottom</button>
+
+    <button nz-button (click)="zoomOut()">-</button>
+    <button nz-button (click)="zoomIn()">+</button>
+    <button nz-button (click)="fitScreen()">Fit</button>
+    <button nz-button (click)="openAll()">Open All</button>
+    <button nz-button (click)="collapseAll()">Collapse All</button>
+    <button nz-button nzType="primary" (click)="downloadHdPdf()">Download HD PDF</button>
+  </header>
+
+  <div *ngIf="loading" class="state-overlay">Loading organogram...</div>
+  <div *ngIf="!loading && errorMessage" class="state-overlay error">{{ errorMessage }}</div>
+
+  <div #chartContainer class="chart-container"></div>
+</section>

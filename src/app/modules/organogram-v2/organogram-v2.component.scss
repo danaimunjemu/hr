@@ -1,60 +1,156 @@
-// .organogram-v2-page {
-//   display: flex;
-//   flex-direction: column;
-//   height: 100%;
-//   width: 100%;
-//   padding: 6px 8px;
-//   gap: 6px;
-// }
+::ng-deep nerd-breadcrum{
+  display: none !important;
+}
+:host {
+  display: block;
+}
 
-// .toolbar {
-//   display: flex;
-//   flex-wrap: wrap;
-//   gap: 6px;
-//   align-items: center;
-//   padding: 6px;
-//   background: #ffffff;
-//   border: 1px solid #e5e7eb;
-//   border-radius: 10px;
-// }
+.organogram-v2-page {
+  position: relative;
+  border: 1px solid #dce3ec;
+  border-radius: 12px;
+  background: #f7fafc;
+  overflow: hidden;
+}
 
-// .toolbar-group {
-//   display: flex;
-//   gap: 6px;
-//   align-items: center;
-// }
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #ffffff;
+}
 
-// .toolbar-search {
-//   min-width: 240px;
-//   flex: 1 1 240px;
-// }
+.toolbar input {
+  width: 200px;
+}
 
-// .chart-shell {
-//   flex: 1;
-//   min-height: 520px;
-//   border: 1px solid #e5e7eb;
-//   border-radius: 12px;
-//   overflow: hidden;
-//   background: #ffffff;
-// }
+.chart-container {
+  width: 100%;
+  min-height: calc(100vh - 240px);
+}
 
-// .chart-container {
-//   width: 100%;
-//   height: 100%;
-// }
+.state-overlay {
+  position: absolute;
+  inset: 52px 0 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(248, 250, 252, 0.86);
+  color: #1e293b;
+  font-size: 13px;
+  font-weight: 700;
+  z-index: 5;
+}
 
-// .pager {
-//   display: flex;
-//   justify-content: flex-end;
-//   padding: 4px 6px 0 6px;
-// }
+.state-overlay.error {
+  color: #b91c1c;
+}
 
-// :host ::ng-deep .node-hovered foreignObject > div {
-//   box-shadow: 0 6px 18px rgba(15, 23, 42, 0.16) !important;
-//   border-color: #1d4ed8 !important;
-// }
+:host ::ng-deep .org-card {
+  box-sizing: border-box;
+  border: 1px solid #cfd8e3;
+  border-top: 3px solid var(--company-accent, #94a3b8);
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 4px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  box-shadow: 0 3px 8px rgba(15, 23, 42, 0.08);
+}
 
-// :host ::ng-deep .node-dragging foreignObject > div {
-//   opacity: 0.85;
-//   border-color: #0f172a !important;
-// }
+:host ::ng-deep .org-card.org-card-highlighted {
+  border-color: #f04040;
+  background: #fff4f4;
+  box-shadow: 0 0 0 2px rgba(240, 64, 64, 0.2);
+}
+
+:host ::ng-deep .org-card.org-card-search-hit {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.14);
+}
+
+:host ::ng-deep .org-card.org-card-search-current {
+  border-color: #d97706;
+  background: #fffbeb;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.22);
+}
+
+:host ::ng-deep .org-card-top {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+:host ::ng-deep .org-card-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #0f766e, #0284c7);
+  color: #fff;
+  flex: 0 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+:host ::ng-deep .org-card-avatar-initials {
+  font-size: 9px;
+  font-weight: 800;
+}
+
+:host ::ng-deep .org-card-avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+:host ::ng-deep .org-card-id {
+  min-width: 0;
+  flex: 1;
+}
+
+:host ::ng-deep .org-card-name {
+  font-size: 11px;
+  font-weight: 800;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+:host ::ng-deep .org-card-title {
+  font-size: 9px;
+  color: #334155;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+:host ::ng-deep .org-card-badge {
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--company-badge-text, #0c4a6e);
+  background: var(--company-badge-bg, #e0f2fe);
+  border: 1px solid var(--company-badge-border, #bae6fd);
+  border-radius: 999px;
+  padding: 2px 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+:host ::ng-deep .org-card-dept {
+  font-size: 9px;
+  color: #1f2937;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
