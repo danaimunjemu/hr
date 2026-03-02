@@ -12,7 +12,7 @@ import {
 } from './organogram.models';
 import { OrganogramMapper } from './organogram.mapper';
 import { OrganogramService } from './organogram.service';
-import d3 from 'd3';
+import * as d3 from 'd3';
 import { OrgChart } from 'd3-org-chart';
 
 interface DepartmentOption {
@@ -48,11 +48,11 @@ export class OrganogramComponent implements OnInit {
       //   this.data = Object.assign([], data);
       // }, 1000);
     }
-  
-  );
+
+    );
   }
 
-  constructor() {}
+  constructor() { }
 
 
   ngAfterViewInit() {
