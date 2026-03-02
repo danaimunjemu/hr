@@ -157,40 +157,192 @@
 
       <!-- ==================== TAB 4: Employee Lifecycle, History & Assets ==================== -->
       <nz-tab nzTitle="Lifecycle, History & Assets">
-        <nz-descriptions nzTitle="Performance & Career History" nzBordered [nzColumn]="2" class="mb-6">
-          <nz-descriptions-item nzTitle="Performance History"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Grading History"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Promotion History"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Position History"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Department Transfer History"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
-        </nz-descriptions>
 
-        <nz-descriptions nzTitle="Leave Management" nzBordered [nzColumn]="2" class="mb-6">
-          <nz-descriptions-item nzTitle="Leave Days Balance"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Leave History"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
-        </nz-descriptions>
+        <!-- ── Leave Balances ── -->
+        <h4 class="mb-2 mt-4" style="font-weight:600;">Leave Balances</h4>
+        <nz-table #leaveBalanceTable [nzData]="leaveBalances()" nzSize="small" [nzShowPagination]="false" class="mb-6">
+          <thead>
+            <tr>
+              <th>Leave Type</th>
+              <th>Year</th>
+              <th>Entitlement</th>
+              <th>Taken</th>
+              <th>Pending</th>
+              <th>Available</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (b of leaveBalanceTable.data; track b.leaveType?.id) {
+              <tr>
+                <td>{{ b.leaveType?.name }}</td>
+                <td>{{ b.leaveYear }}</td>
+                <td>{{ b.entitlement }}</td>
+                <td>{{ b.taken }}</td>
+                <td>{{ b.pending }}</td>
+                <td><strong>{{ b.availableBalance }}</strong></td>
+              </tr>
+            }
+          </tbody>
+        </nz-table>
 
-        <nz-descriptions nzTitle="Disciplinary & Compliance" nzBordered [nzColumn]="2" class="mb-6">
-          <nz-descriptions-item nzTitle="Disciplinary Record"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Warning Letters"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Warning Issue Date"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Warning Expiry Date"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Active Disciplinary Actions"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
-        </nz-descriptions>
+        <!-- ── Leave Requests ── -->
+        <h4 class="mb-2" style="font-weight:600;">Leave History</h4>
+        <nz-table #leaveRequestTable [nzData]="leaveRequests()" nzSize="small" [nzShowPagination]="false" class="mb-6">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Start</th>
+              <th>End</th>
+              <th>Days</th>
+              <th>Status</th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of leaveRequestTable.data; track r.id) {
+              <tr>
+                <td>{{ r.leaveType?.name }}</td>
+                <td>{{ r.startDate }}</td>
+                <td>{{ r.endDate }}</td>
+                <td>{{ r.totalDays }}</td>
+                <td>
+                  <nz-tag [nzColor]="r.status === 'APPROVED' ? 'green' : r.status === 'PENDING_APPROVAL' ? 'orange' : r.status === 'REJECTED' ? 'red' : 'blue'">
+                    {{ r.status }}
+                  </nz-tag>
+                </td>
+                <td>{{ r.reason }}</td>
+              </tr>
+            }
+          </tbody>
+        </nz-table>
 
+        <!-- ── Performance Appraisals ── -->
+        <h4 class="mb-2" style="font-weight:600;">Performance History</h4>
+        <nz-table #appraisalTable [nzData]="appraisals()" nzSize="small" [nzShowPagination]="false" class="mb-6">
+          <thead>
+            <tr>
+              <th>Cycle</th>
+              <th>Period</th>
+              <th>Status</th>
+              <th>Final Score</th>
+              <th>Goals</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (a of appraisalTable.data; track a.id) {
+              <tr>
+                <td>{{ a.cycle?.name }}</td>
+                <td>{{ a.cycle?.startDate }} – {{ a.cycle?.endDate }}</td>
+                <td>
+                  <nz-tag [nzColor]="a.status === 'CLOSED' ? 'green' : a.status === 'SUBMITTED' ? 'blue' : a.status === 'APPROVED' ? 'cyan' : 'default'">
+                    {{ a.status }}
+                  </nz-tag>
+                </td>
+                <td>
+                  @if (a.finalScore != null) {
+                    <strong>{{ a.finalScore }}/5</strong>
+                  } @else {
+                    <span class="text-gray-400">–</span>
+                  }
+                </td>
+                <td>{{ a.appraisalItems?.length || 0 }} items</td>
+              </tr>
+            }
+          </tbody>
+        </nz-table>
+
+        <!-- ── Disciplinary / ER Cases ── -->
+        <h4 class="mb-2" style="font-weight:600;">Disciplinary & Compliance</h4>
+        <nz-table #erCaseTable [nzData]="erCases()" nzSize="small" [nzShowPagination]="false" class="mb-6">
+          <thead>
+            <tr>
+              <th>Case #</th>
+              <th>Type</th>
+              <th>Title</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Outcome</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of erCaseTable.data; track c.id) {
+              <tr>
+                <td>{{ c.caseNumber }}</td>
+                <td>{{ c.caseType }}</td>
+                <td>{{ c.title }}</td>
+                <td>
+                  <nz-tag [nzColor]="c.priority === 'HIGH' ? 'red' : c.priority === 'MEDIUM' ? 'orange' : 'blue'">
+                    {{ c.priority }}
+                  </nz-tag>
+                </td>
+                <td>
+                  <nz-tag [nzColor]="c.status === 'CLOSED' ? 'default' : 'green'">
+                    {{ c.status }}
+                  </nz-tag>
+                </td>
+                <td>{{ c.outcome?.decisionSummary || '–' }}</td>
+                <td>{{ c.createdOn | date:'mediumDate' }}</td>
+              </tr>
+            }
+          </tbody>
+        </nz-table>
+
+        <!-- ── Offboarding ── -->
+        <h4 class="mb-2" style="font-weight:600;">Offboarding</h4>
+        @if (offboarding().length > 0) {
+          <nz-table #offboardingTable [nzData]="offboarding()" nzSize="small" [nzShowPagination]="false" class="mb-6">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Exit Date</th>
+                <th>Reason</th>
+                <th>HOD Approval</th>
+                <th>HR Approval</th>
+                <th>Overall Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (o of offboardingTable.data; track o.id) {
+                <tr>
+                  <td>{{ o.offboardingType }}</td>
+                  <td>{{ o.exitDate }}</td>
+                  <td>{{ o.reason }}</td>
+                  <td>
+                    <nz-tag [nzColor]="o.headOfDepartmentApprovalStatus === 'APPROVED' ? 'green' : o.headOfDepartmentApprovalStatus === 'REJECTED' ? 'red' : 'orange'">
+                      {{ o.headOfDepartmentApprovalStatus }}
+                    </nz-tag>
+                  </td>
+                  <td>
+                    <nz-tag [nzColor]="o.hrManagerApprovalStatus === 'APPROVED' ? 'green' : o.hrManagerApprovalStatus === 'REJECTED' ? 'red' : 'orange'">
+                      {{ o.hrManagerApprovalStatus }}
+                    </nz-tag>
+                  </td>
+                  <td>
+                    <nz-tag [nzColor]="o.approvalStatus === 'APPROVED' ? 'green' : o.approvalStatus === 'REJECTED' ? 'red' : 'orange'">
+                      {{ o.approvalStatus }}
+                    </nz-tag>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </nz-table>
+        } @else {
+          <p class="text-gray-400 mb-6">No offboarding records.</p>
+        }
+
+        <!-- ── Training & Development (placeholder) ── -->
         <nz-descriptions nzTitle="Training & Development" nzBordered [nzColumn]="2" class="mb-6">
           <nz-descriptions-item nzTitle="Training Scheduled"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
           <nz-descriptions-item nzTitle="Training Completed"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
           <nz-descriptions-item nzTitle="Certifications Obtained"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
         </nz-descriptions>
 
+        <!-- ── Assets & Financial Obligations (placeholder) ── -->
         <nz-descriptions nzTitle="Assets & Financial Obligations" nzBordered [nzColumn]="2">
           <nz-descriptions-item nzTitle="Assets Issued"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
           <nz-descriptions-item nzTitle="Asset Issue Date"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
           <nz-descriptions-item nzTitle="Asset Return Status"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Active Loans"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Loan Balance"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Loan Repayment Status"><span class="text-gray-400">Coming soon</span></nz-descriptions-item>
         </nz-descriptions>
       </nz-tab>
 
