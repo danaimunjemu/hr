@@ -259,9 +259,10 @@
               <th>Case #</th>
               <th>Type</th>
               <th>Title</th>
+              <th>Warning Level</th>
+              <th>Age</th>
               <th>Priority</th>
               <th>Status</th>
-              <th>Outcome</th>
               <th>Date</th>
             </tr>
           </thead>
@@ -272,6 +273,12 @@
                 <td>{{ c.caseType }}</td>
                 <td>{{ c.title }}</td>
                 <td>
+                  <nz-tag [nzColor]="getWarningLevelColor(getWarningLevel(c))">
+                    {{ getWarningLevel(c) }}
+                  </nz-tag>
+                </td>
+                <td>{{ getWarningAge(c.outcome?.decisionAt) }}</td>
+                <td>
                   <nz-tag [nzColor]="c.priority === 'HIGH' ? 'red' : c.priority === 'MEDIUM' ? 'orange' : 'blue'">
                     {{ c.priority }}
                   </nz-tag>
@@ -281,7 +288,6 @@
                     {{ c.status }}
                   </nz-tag>
                 </td>
-                <td>{{ c.outcome?.decisionSummary || '–' }}</td>
                 <td>{{ c.createdOn | date:'mediumDate' }}</td>
               </tr>
             }
