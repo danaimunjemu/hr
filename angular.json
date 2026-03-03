@@ -56,7 +56,12 @@
               "includePaths": [
                 "src/assets/styles"
               ]
-            }
+            },
+            "allowedCommonJsDependencies": [
+              "canvg",
+              "html2canvas",
+              "dompurify"
+            ]
           },
           "configurations": {
             "production": {

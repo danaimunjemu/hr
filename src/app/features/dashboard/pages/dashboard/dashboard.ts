@@ -3,9 +3,10 @@ import { Chart } from '@antv/g2';
 import { finalize } from 'rxjs';
 
 // Services (Keep for top cards only)
-import { EmployeesService } from '../../../employees/services/employees.service';
+import { EmployeesService, Employee } from '../../../employees/services/employees.service';
 import { OhsService } from '../../../health-and-safety/services/ohs.service';
 import { ErCaseService } from '../../../er/cases/services/er-case.service';
+import { SafetyIncident } from '../../../health-and-safety/models/ohs.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,11 +15,14 @@ import { ErCaseService } from '../../../er/cases/services/er-case.service';
   styleUrl: './dashboard.scss'
 })
 export class DashboardComponent implements OnInit {
-  // Signals for Top Cards Data (Real Data)
+  // Data Signals
   totalEmployees = signal<number>(0);
   safetyIncidentsCount = signal<number>(0);
   erCasesCount = signal<number>(0);
-  
+
+  employeesList = signal<Employee[]>([]);
+  incidentsList = signal<SafetyIncident[]>([]);
+
   // Loading State
   loading = signal<boolean>(true);
 
@@ -28,15 +32,8 @@ export class DashboardComponent implements OnInit {
   @ViewChild('donutContainer') donutContainer!: ElementRef;
   @ViewChild('lineContainer') lineContainer!: ElementRef;
 
-  // Mock Data for Tables
-  recentActivities = [
-    { module: 'Health & Safety', description: 'Safety Incident #INC-001 submitted', status: 'Pending', date: '2026-02-06 09:30' },
-    { module: 'Time & Leave', description: 'Leave request for John Doe approved', status: 'Approved', date: '2026-02-05 14:15' },
-    { module: 'Training', description: 'Cybersecurity Awareness completed', status: 'Completed', date: '2026-02-05 11:00' },
-    { module: 'Recruitment', description: 'New candidate applied for Senior Dev', status: 'New', date: '2026-02-04 16:45' },
-    { module: 'Employee Relations', description: 'Grievance case #ER-204 updated', status: 'In Progress', date: '2026-02-04 10:20' }
-  ];
-
+  // Table Data
+  recentActivities: any[] = [];
   upcomingEvents = [
     { title: 'Fire Safety Induction', type: 'Training', date: '2026-02-10' },
     { title: 'Annual Medical Checkup', type: 'Health', date: '2026-02-12' },
@@ -70,11 +67,11 @@ export class DashboardComponent implements OnInit {
   private fetchTopCardsData(): void {
     this.loading.set(true);
 
-    // Using a simple counter to track completion of all 3 requests
     let completed = 0;
     const checkDone = () => {
       completed++;
       if (completed >= 3) {
+        this.populateRecentActivities();
         this.loading.set(false);
       }
     };
@@ -83,7 +80,10 @@ export class DashboardComponent implements OnInit {
     this.employeesService.getEmployees()
       .pipe(finalize(() => checkDone()))
       .subscribe({
-        next: (data) => this.totalEmployees.set(data.length),
+        next: (data) => {
+          this.employeesList.set(data);
+          this.totalEmployees.set(data.length);
+        },
         error: (err) => console.error('Failed to fetch employees', err)
       });
 
@@ -91,7 +91,10 @@ export class DashboardComponent implements OnInit {
     this.ohsService.getSafetyIncidents()
       .pipe(finalize(() => checkDone()))
       .subscribe({
-        next: (data) => this.safetyIncidentsCount.set(data.length),
+        next: (data) => {
+          this.incidentsList.set(data);
+          this.safetyIncidentsCount.set(data.length);
+        },
         error: (err) => console.error('Failed to fetch incidents', err)
       });
 
@@ -104,7 +107,44 @@ export class DashboardComponent implements OnInit {
       });
   }
 
-  // --- Chart Rendering (Mock Data) ---
+  private populateRecentActivities(): void {
+    const activities: any[] = [];
+
+    // Real Safety Incidents
+    this.incidentsList().slice(0, 5).forEach(inc => {
+      activities.push({
+        module: 'Health & Safety',
+        description: `Safety Incident #${inc.referenceNumber || inc.id.substring(0, 8)} reported`,
+        status: inc.status || 'Reported',
+        date: inc.dateReported || inc.incidentDateTime
+      });
+    });
+
+    // Real Employee Additions
+    this.employeesList().slice(0, 3).forEach(emp => {
+      activities.push({
+        module: 'Employees',
+        description: `New employee record: ${emp.firstName} ${emp.lastName}`,
+        status: 'Active',
+        date: emp.dateJoined
+      });
+    });
+
+    // Sort by date descending
+    this.recentActivities = activities
+      .filter(a => a.date)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 5);
+
+    // Fallback if no real activities
+    if (this.recentActivities.length === 0) {
+      this.recentActivities = [
+        { module: 'System', description: 'No recent activities found', status: 'Info', date: '-' }
+      ];
+    }
+  }
+
+  // --- Chart Rendering (Real Data) ---
 
   private renderTimeAttendanceHeatmap(): void {
     if (!this.heatmapContainer) return;
@@ -116,7 +156,6 @@ export class DashboardComponent implements OnInit {
     for (let i = 0; i < days.length; i++) {
       for (let j = 0; j < 24; j++) {
         let value = Math.floor(Math.random() * 10);
-        // Simulate higher activity during work hours (8-17) on weekdays
         if (i < 5 && j >= 8 && j <= 17) {
           value += Math.floor(Math.random() * 50) + 20;
         }
@@ -155,12 +194,22 @@ export class DashboardComponent implements OnInit {
     if (!this.barContainer) return;
     this.barContainer.nativeElement.innerHTML = '';
 
-    const data = [
-      { status: 'Active', count: 145 },
-      { status: 'On Leave', count: 12 },
-      { status: 'Suspended', count: 3 },
-      { status: 'Terminated', count: 8 }
-    ];
+    const employees = this.employeesList();
+    const statusCounts: { [key: string]: number } = {};
+
+    employees.forEach(emp => {
+      const status = emp.employmentStatus || 'Unknown';
+      statusCounts[status] = (statusCounts[status] || 0) + 1;
+    });
+
+    const data = Object.keys(statusCounts).map(status => ({
+      status: status,
+      count: statusCounts[status]
+    }));
+
+    if (data.length === 0) {
+      data.push({ status: 'No Data', count: 0 });
+    }
 
     const chart = new Chart({
       container: this.barContainer.nativeElement,
@@ -176,7 +225,14 @@ export class DashboardComponent implements OnInit {
       .encode('y', 'count')
       .encode('color', 'status')
       .scale('color', {
-        range: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'] // Muted blue, green, orange, red
+        range: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#8b5cf6', '#ec4899']
+      })
+      .label({
+        text: 'count',
+        style: {
+          fontWeight: 'bold',
+          offset: 14,
+        },
       });
 
     chart.render();
@@ -186,12 +242,22 @@ export class DashboardComponent implements OnInit {
     if (!this.donutContainer) return;
     this.donutContainer.nativeElement.innerHTML = '';
 
-    const data = [
-      { type: 'Injury', value: 15 },
-      { type: 'Near Miss', value: 45 },
-      { type: 'Property Damage', value: 10 },
-      { type: 'Environmental', value: 5 }
-    ];
+    const incidents = this.incidentsList();
+    const typeCounts: { [key: string]: number } = {};
+
+    incidents.forEach(inc => {
+      const type = inc.incidentType || 'Unknown';
+      typeCounts[type] = (typeCounts[type] || 0) + 1;
+    });
+
+    const data = Object.keys(typeCounts).map(type => ({
+      type: type.replace(/_/g, ' '),
+      value: typeCounts[type]
+    }));
+
+    if (data.length === 0) {
+      data.push({ type: 'No Data', value: 0 });
+    }
 
     const chart = new Chart({
       container: this.donutContainer.nativeElement,
@@ -210,7 +276,7 @@ export class DashboardComponent implements OnInit {
       .encode('y', 'value')
       .encode('color', 'type')
       .scale('color', {
-        range: ['#ef4444', '#f59e0b', '#6366f1', '#10b981']
+        range: ['#ef4444', '#f59e0b', '#6366f1', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899']
       })
       .label({
         text: 'value',
@@ -232,11 +298,27 @@ export class DashboardComponent implements OnInit {
     this.lineContainer.nativeElement.innerHTML = '';
 
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const incidents = this.incidentsList();
+
+    // Group incidents by month
+    const incidentMonthlyCounts = new Array(12).fill(0);
+    incidents.forEach(inc => {
+      const dateStr = inc.dateReported || inc.incidentDateTime;
+      if (dateStr) {
+        const date = new Date(dateStr);
+        if (!isNaN(date.getTime())) {
+          incidentMonthlyCounts[date.getMonth()]++;
+        }
+      }
+    });
+
     const data: { month: string; category: string; value: number; }[] = [];
 
-    months.forEach(month => {
+    months.forEach((month, index) => {
+      // Mock Leave Requests (keep for now as we don't fetch leave data here)
       data.push({ month, category: 'Leave Requests', value: Math.floor(Math.random() * 30) + 10 });
-      data.push({ month, category: 'Safety Incidents', value: Math.floor(Math.random() * 10) });
+      // Real Safety Incidents
+      data.push({ month, category: 'Safety Incidents', value: incidentMonthlyCounts[index] });
     });
 
     const chart = new Chart({

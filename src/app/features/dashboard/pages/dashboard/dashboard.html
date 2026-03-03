@@ -15,34 +15,22 @@
     <div nz-row [nzGutter]="16" class="mb-6">
       <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
         <nz-card class="top-card">
-          <nz-statistic
-            [nzValue]="totalEmployees()"
-            [nzTitle]="'Total Employees'"
-            [nzPrefix]="prefixTplUser"
-            [nzValueStyle]="{ color: '#3F8600' }"
-          ></nz-statistic>
+          <nz-statistic [nzValue]="totalEmployees()" [nzTitle]="'Total Employees'" [nzPrefix]="prefixTplUser"
+            [nzValueStyle]="{ color: '#3F8600' }"></nz-statistic>
           <ng-template #prefixTplUser><span nz-icon nzType="team"></span></ng-template>
         </nz-card>
       </div>
       <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
         <nz-card class="top-card">
-          <nz-statistic
-            [nzValue]="safetyIncidentsCount()"
-            [nzTitle]="'Safety Incidents'"
-            [nzPrefix]="prefixTplSafety"
-            [nzValueStyle]="{ color: '#CF1322' }"
-          ></nz-statistic>
+          <nz-statistic [nzValue]="safetyIncidentsCount()" [nzTitle]="'OHS Incidents'" [nzPrefix]="prefixTplSafety"
+            [nzValueStyle]="{ color: '#CF1322' }"></nz-statistic>
           <ng-template #prefixTplSafety><span nz-icon nzType="alert"></span></ng-template>
         </nz-card>
       </div>
       <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
         <nz-card class="top-card">
-          <nz-statistic
-            [nzValue]="erCasesCount()"
-            [nzTitle]="'Active ER Cases'"
-            [nzPrefix]="prefixTplEr"
-            [nzValueStyle]="{ color: '#FAAD14' }"
-          ></nz-statistic>
+          <nz-statistic [nzValue]="erCasesCount()" [nzTitle]="'Employee Relations Cases'" [nzPrefix]="prefixTplEr"
+            [nzValueStyle]="{ color: '#FAAD14' }"></nz-statistic>
           <ng-template #prefixTplEr><span nz-icon nzType="audit"></span></ng-template>
         </nz-card>
       </div>
@@ -94,7 +82,8 @@
                 <td><nz-tag [nzColor]="'blue'">{{ item.module }}</nz-tag></td>
                 <td>{{ item.description }}</td>
                 <td>
-                  <nz-tag [nzColor]="item.status === 'Completed' || item.status === 'Approved' ? 'success' : (item.status === 'New' ? 'processing' : 'warning')">
+                  <nz-tag
+                    [nzColor]="item.status === 'Completed' || item.status === 'Approved' ? 'success' : (item.status === 'New' ? 'processing' : 'warning')">
                     {{ item.status }}
                   </nz-tag>
                 </td>

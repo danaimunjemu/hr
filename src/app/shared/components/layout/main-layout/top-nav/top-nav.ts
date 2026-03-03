@@ -127,6 +127,23 @@ export class TopNav implements OnInit {
         { label: 'Leave Requests', link: '/app/time-and-leave-user/leave-management' },
         { label: 'Reports', link: '/app/time-and-leave-user/reports' }
       ]
+    },
+    'health-and-safety': {
+      title: 'Health and Safety',
+      items: [
+        { label: 'Dashboard', link: '/app/health-and-safety/dashboard' },
+        { label: 'Incidents', link: '/app/health-and-safety/incidents' },
+        { label: 'Near Miss', link: '/app/health-and-safety/near-misses' },
+        { label: 'Medicals', link: '/app/health-and-safety/medical' }
+      ]
+    },
+    'payroll': {
+      title: 'Payroll',
+      items: [
+        { label: 'Analytics', link: '/app/payroll/analyti' },
+        { label: 'Payslip Generator', link: '/app/payroll/generate' },
+        { label: 'My Payslips', link: '/app/payroll/my-payslips' }
+      ]
     }
   };
 
