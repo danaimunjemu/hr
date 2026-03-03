@@ -121,6 +121,12 @@ const routes: Routes = [
         path: 'payroll',
         loadChildren: () => import('./features/payroll/payroll.module').then(m => m.PayrollModule)
       },
+      {
+        path: 'profile',
+        loadChildren: () =>
+          import('./features/profile/profile-module').then((m) => m.ProfileModule),
+        canActivate: [],
+      },
       // {
       //   path: 'performance',
       //   loadChildren: () =>

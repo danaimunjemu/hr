@@ -1,0 +1,133 @@
+<div class="profile-page">
+  <aside class="profile-side">
+    <div class="avatar-block">
+      <div class="avatar">{{ initials() }}</div>
+
+      <div class="avatar-info">
+        <div class="name">{{ fullName() }}</div>
+        <div class="meta">{{ valueOrDash(user?.username) }}</div>
+<div class="meta">
+  <span
+  
+  >
+    <small>{{ valueOrDash(user?.email) }}</small>
+  </span>
+</div>
+      </div>
+    </div>
+
+    <nav class="section-nav">
+      <button
+        *ngFor="let section of sections"
+        type="button"
+        class="section-btn"
+        [class.active]="activeSection === section.id"
+        (click)="selectSection(section.id)"
+      >
+        <span nz-icon [nzType]="section.icon"></span>
+        <span>{{ section.title }}</span>
+      </button>
+    </nav>
+  </aside>
+
+  <main class="profile-main">
+    <!-- Identity -->
+    <section class="pane" *ngIf="activeSection === 'identity'">
+      <h3><span nz-icon nzType="idcard"></span> Identity</h3>
+      <div class="grid">
+        <div><label>First Name</label><p>{{ valueOrDash(employee?.firstName) }}</p></div>
+        <div><label>Last Name</label><p>{{ valueOrDash(employee?.lastName) }}</p></div>
+        <div><label>Employee Number</label><p>{{ valueOrDash(employee?.employeeNumber) }}</p></div>
+        <div><label>National ID</label><p>{{ valueOrDash(employee?.nationalId) }}</p></div>
+        <div><label>Date of Birth</label><p>{{ dateOrDash(employee?.dateOfBirth) }}</p></div>
+        <div><label>Nationality</label><p>{{ valueOrDash(employee?.nationality) }}</p></div>
+      </div>
+    </section>
+
+    <!-- Contacts -->
+    <section class="pane" *ngIf="activeSection === 'contacts'">
+      <h3><span nz-icon nzType="phone"></span> Contacts</h3>
+      <div class="grid">
+        <div><label>Login Email</label><p>{{ valueOrDash(user?.email) }}</p></div>
+        <div><label>Employee Email</label><p>{{ valueOrDash(employee?.email) }}</p></div>
+        <div><label>Phone Number</label><p>{{ valueOrDash(user?.phoneNumber) }}</p></div>
+        <div><label>Mobile Phone</label><p>{{ valueOrDash(employee?.mobilePhone) }}</p></div>
+        <div><label>Work Phone</label><p>{{ valueOrDash(employee?.workPhone) }}</p></div>
+        <div><label>Home Phone</label><p>{{ valueOrDash(employee?.homePhone) }}</p></div>
+      </div>
+    </section>
+
+    <!-- Employment -->
+    <section class="pane" *ngIf="activeSection === 'employment'">
+      <h3><span nz-icon nzType="solution"></span> Employment</h3>
+      <div class="grid">
+        <div><label>Status</label><p>{{ valueOrDash(employee?.employmentStatus) }}</p></div>
+        <div><label>Employment Type</label><p>{{ valueOrDash(employee?.employmentType) }}</p></div>
+        <div><label>Date Joined</label><p>{{ dateOrDash(employee?.dateJoined) }}</p></div>
+        <div><label>Confirmation Date</label><p>{{ dateOrDash(employee?.confirmationDate) }}</p></div>
+        <div><label>Group</label><p>{{ valueOrDash(employee?.group?.name) }}</p></div>
+        <div><label>Job Description</label><p>{{ valueOrDash(employee?.jobDescription) }}</p></div>
+      </div>
+    </section>
+
+    <!-- Reporting -->
+    <section class="pane" *ngIf="activeSection === 'reporting'">
+      <h3><span nz-icon nzType="team"></span> Reporting</h3>
+      <div class="grid">
+        <div>
+          <label>Superior</label>
+          <p>
+            {{ valueOrDash(employee?.superior?.firstName) }}
+            {{ valueOrDash(employee?.superior?.lastName, '') }}
+          </p>
+        </div>
+        <div><label>Superior Number</label><p>{{ valueOrDash(employee?.superior?.employeeNumber) }}</p></div>
+        <div><label>Superior Email</label><p>{{ valueOrDash(employee?.superior?.email) }}</p></div>
+        <div>
+          <label>HR Manager</label>
+          <p>
+            {{ valueOrDash(employee?.hrManager?.firstName) }}
+            {{ valueOrDash(employee?.hrManager?.lastName, '') }}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Organization -->
+    <section class="pane" *ngIf="activeSection === 'organization'">
+      <h3><span nz-icon nzType="bank"></span> Organization</h3>
+      <div class="grid">
+        <div><label>Company</label><p>{{ valueOrDash(employee?.company?.name) }}</p></div>
+        <div><label>Company Location</label><p>{{ valueOrDash(employee?.companyLocation) }}</p></div>
+        <div><label>Department Code</label><p>{{ valueOrDash(employee?.departmentCode) }}</p></div>
+        <div><label>Cost Center</label><p>{{ valueOrDash(employee?.costCenter) }}</p></div>
+        <div><label>Organizational Unit</label><p>{{ valueOrDash(employee?.organizationalUnit?.name) }}</p></div>
+        <div><label>Sub Organizational Unit</label><p>{{ valueOrDash(employee?.subOrganizationalUnit?.name) }}</p></div>
+      </div>
+    </section>
+
+    <!-- Work -->
+    <section class="pane" *ngIf="activeSection === 'work'">
+      <h3><span nz-icon nzType="clock-circle"></span> Work Rule</h3>
+      <div class="grid">
+        <div><label>Contract</label><p>{{ valueOrDash(employee?.workContract?.name) }}</p></div>
+        <div><label>Hours / Day</label><p>{{ valueOrDash(employee?.workContract?.normalHoursPerDay) }}</p></div>
+        <div><label>Hours / Week</label><p>{{ valueOrDash(employee?.workContract?.normalHoursPerWeek) }}</p></div>
+        <div><label>Schedule Rule</label><p>{{ valueOrDash(employee?.workScheduleRule?.name) }}</p></div>
+        <div><label>Start Time</label><p>{{ valueOrDash(employee?.workScheduleRule?.startTime) }}</p></div>
+        <div><label>End Time</label><p>{{ valueOrDash(employee?.workScheduleRule?.endTime) }}</p></div>
+      </div>
+    </section>
+
+    <!-- Security -->
+    <section class="pane" *ngIf="activeSection === 'security'">
+      <h3><span nz-icon nzType="safety-certificate"></span> Security</h3>
+      <div class="grid">
+        <div><label>Username</label><p>{{ valueOrDash(user?.username) }}</p></div>
+        <div><label>Account Enabled</label><p>{{ valueOrDash(user?.enabled) }}</p></div>
+        <div><label>MFA Enabled</label><p>{{ valueOrDash(user?.mfaEnabled) }}</p></div>
+        <div><label>Change Password</label><p>{{ valueOrDash(user?.changePassword) }}</p></div>
+      </div>
+    </section>
+  </main>
+</div>
