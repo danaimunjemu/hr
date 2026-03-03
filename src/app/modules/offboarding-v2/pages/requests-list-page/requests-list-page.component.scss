@@ -462,3 +462,22 @@ nz-date-picker {
   justify-content: flex-end;
   gap: 8px;
 }
+
+.create-case-form {
+  margin-top: 4px;
+}
+
+.form-section-title {
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #344054;
+  text-transform: uppercase;
+}
+
+.form-error {
+  margin-top: 6px;
+  color: #b91c1c;
+  font-size: 12px;
+}
