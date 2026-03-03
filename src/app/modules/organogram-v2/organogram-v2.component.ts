@@ -339,18 +339,11 @@ export class OrganogramV2Component implements AfterViewInit, OnDestroy {
       .nodeHeight(() => (isCompact ? 80 : 90))
       .onNodeClick((node: any) => this.highlightToRoot(node.data as OrganogramV2Node))
       .onExpandOrCollapse((node: any) => this.onExpandOrCollapse(node))
+      // UPDATED: thinner, grey connector line
       .linkUpdate(function (this: SVGPathElement, link: any) {
-        const parentId = link?.data?.source?.data?.id || '';
-        const colors = ['#F04040', '#0ea5e9', '#6366f1', '#22c55e', '#ec4899'];
-        let hash = 0;
-        for (let i = 0; i < parentId.length; i += 1) {
-          hash = (hash << 5) - hash + parentId.charCodeAt(i);
-          hash |= 0;
-        }
-        const color = colors[Math.abs(hash) % colors.length];
-
-        this.setAttribute('stroke', color);
-        this.setAttribute('stroke-width', '2');
+        // simple flat light grey, thin stroke
+        this.setAttribute('stroke', '#D1D5DB'); // tailwind zink-300 like
+        this.setAttribute('stroke-width', '1');
         this.setAttribute('stroke-linecap', 'round');
       })
       .nodeContent((node: any) => this.nodeTemplate(node))
@@ -554,9 +547,9 @@ export class OrganogramV2Component implements AfterViewInit, OnDestroy {
     const x = (pageWidth - drawWidth) / 2;
     const y = (pageHeight - drawHeight) / 2;
 
-    const contentStream = `q\n${drawWidth.toFixed(2)} 0 0 ${drawHeight.toFixed(2)} ${x.toFixed(2)} ${y.toFixed(
+    const contentStream = `q\n${drawWidth.toFixed(2)} 0 0 ${drawHeight.toFixed(2)} ${x.toFixed(
       2,
-    )} cm\n/Im0 Do\nQ\n`;
+    )} ${y.toFixed(2)} cm\n/Im0 Do\nQ\n`;
     const contentLength = encoder.encode(contentStream).length;
 
     pushText('%PDF-1.3\n');
