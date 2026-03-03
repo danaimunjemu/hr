@@ -73,8 +73,8 @@ export interface CreateOffboardingPayload {
   employeeId: string;
   initiator: InitiatorType;
   exitDate: string;
-  noticePeriodStart?: string;
-  noticePeriodEnd?: string;
+  noticePeriodStartDate?: string;
+  noticePeriodEndDate?: string;
   offboardingType: OffboardingType;
   reason: string;
   comments?: string;
