@@ -1,60 +1,236 @@
-// .organogram-v2-page {
-//   display: flex;
-//   flex-direction: column;
-//   height: 100%;
-//   width: 100%;
-//   padding: 6px 8px;
-//   gap: 6px;
-// }
+::ng-deep .content-container {
+  background: #fff !important;
+}
 
-// .toolbar {
-//   display: flex;
-//   flex-wrap: wrap;
-//   gap: 6px;
-//   align-items: center;
-//   padding: 6px;
-//   background: #ffffff;
-//   border: 1px solid #e5e7eb;
-//   border-radius: 10px;
-// }
+::ng-deep .content-container {
+  flex: 1;
+  // overflow-y: auto;
+  // overflow-x: hidden;
+  padding: 8px 24px !important;
+  background: transparent;
+}
 
-// .toolbar-group {
-//   display: flex;
-//   gap: 6px;
-//   align-items: center;
-// }
+.content {
+  display: flex;
+}
 
-// .toolbar-search {
-//   min-width: 240px;
-//   flex: 1 1 240px;
-// }
+.extra > div {
+  display: flex;
+  width: max-content;
+  justify-content: flex-end;
+}
 
-// .chart-shell {
-//   flex: 1;
-//   min-height: 520px;
-//   border: 1px solid #e5e7eb;
-//   border-radius: 12px;
-//   overflow: hidden;
-//   background: #ffffff;
-// }
+@media (max-width: 576px) {
+  .content {
+    display: block;
+  }
 
-// .chart-container {
-//   width: 100%;
-//   height: 100%;
-// }
+  .main {
+    width: 100%;
+    margin-bottom: 12px;
+  }
 
-// .pager {
-//   display: flex;
-//   justify-content: flex-end;
-//   padding: 4px 6px 0 6px;
-// }
+  .extra {
+    width: 100%;
+    margin-left: 0;
+    text-align: left;
+  }
+}
 
-// :host ::ng-deep .node-hovered foreignObject > div {
-//   box-shadow: 0 6px 18px rgba(15, 23, 42, 0.16) !important;
-//   border-color: #1d4ed8 !important;
-// }
+::ng-deep nerd-breadcrumb {
+  display: none !important;
+}
 
-// :host ::ng-deep .node-dragging foreignObject > div {
-//   opacity: 0.85;
-//   border-color: #0f172a !important;
-// }
+:host {
+  display: block;
+}
+
+.organogram-v2-page {
+  position: relative;
+  border: 1px solid #dce3ec;
+  border-radius: 12px;
+  background: #f7fafc;
+  overflow: hidden;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+.toolbar input {
+  width: 120px;
+}
+
+.search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 4px 10px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+
+  input[nz-input] {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    padding: 0;
+    font-size: 12px;
+  }
+
+  span[nz-icon] {
+    font-size: 14px;
+    color: #9ca3af;
+  }
+}
+
+nz-select {
+  width: 150px !important;
+}
+
+.chart-container {
+  // overflow-y: auto;
+  // overflow-x: hidden;
+  width: 100%;
+  background: #f2f7fa;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  min-height: calc(100vh - 240px);
+}
+
+.chart-stage {
+  position: relative;
+}
+
+.chart-container.is-hidden {
+  display: none;
+}
+
+.chart-state {
+  min-height: calc(100vh - 240px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #f2f7fa;
+}
+
+.chart-loader {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #1f2937;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.state-overlay.error {
+  color: #b91c1c;
+}
+
+/* NODE CARD – pill style like screenshot, themed with #F04040 */
+
+:host ::ng-deep .org-card {
+  box-sizing: border-box;
+  border-radius: 10px;
+  background: #fdfdfd;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.1);
+  border: none;
+}
+
+:host ::ng-deep .org-card-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+:host ::ng-deep .org-card-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: rgba(240, 64, 64, 0.12); // light red
+  color: #f04040;
+  flex: 0 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+:host ::ng-deep .org-card-avatar-initials {
+  letter-spacing: 0.03em;
+}
+
+:host ::ng-deep .org-card-avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+:host ::ng-deep .org-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+:host ::ng-deep .org-card-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+:host ::ng-deep .org-card-title {
+  font-size: 11px;
+  color: #4b5563;
+}
+
+:host ::ng-deep .org-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+}
+
+:host ::ng-deep .org-card-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #f04040;
+}
+
+:host ::ng-deep .org-card-dept {
+  font-size: 11px;
+  font-weight: 600;
+  color: #7c2d12; // deep warm accent
+}
+
+/* existing highlight/search states still apply */
+
+:host ::ng-deep .org-card.org-card-highlighted {
+  box-shadow: 0 0 0 2px rgba(240, 64, 64, 0.25);
+}
+
+:host ::ng-deep .org-card.org-card-search-hit {
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.22);
+}
+
+:host ::ng-deep .org-card.org-card-search-current {
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.3);
+}

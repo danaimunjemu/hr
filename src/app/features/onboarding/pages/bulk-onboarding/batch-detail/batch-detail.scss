@@ -1,3 +1,14 @@
+::ng-deep nerd-breadcrumb{
+  display: none !important;
+}
+
+::ng-deep .content-container {
+
+    padding: 6px 24px !important;
+
+}
+
+
 .batch-detail-shell {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

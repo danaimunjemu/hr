@@ -1,3 +1,13 @@
+::ng-deep nerd-breadcrumb{
+  display: none !important;
+}
+
+::ng-deep .content-container {
+
+    padding: 6px 24px !important;
+
+}
+
 :host {
   display: block;
 }

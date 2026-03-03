@@ -1,1 +1,253 @@
-<div #chartContainer id="chartContainer"></div>
+<nz-page-header nzBackIcon>
+  <nz-page-header-title>Organogram</nz-page-header-title>
+  <!-- <nz-page-header-subtitle>Organization Chart Viewer</nz-page-header-subtitle> -->
+  
+  <nz-page-header-extra>
+    <nz-space  nzSize="small">
+        <!-- Search input stays as-is -->
+   <div class="search-wrap">
+        <span nz-icon nzType="search"></span>
+          <input
+  nz-input
+  placeholder="Search chart"
+  [(ngModel)]="searchQuery"
+  [nzAllowClear]="true"
+  (nzClear)="onSearchCleared()"
+  (keyup.enter)="searchOnChart()"
+  style="width: 140px;"
+/>
+      </div>
+
+ 
+
+<button
+  nz-button
+  nzShape="circle"
+  nz-tooltip
+  nzTooltipTitle="Previous"
+  [disabled]="!searchMatches.length"
+  (click)="previousSearchResult()">
+  <span nz-icon nzType="left"></span>
+</button>
+
+<button
+  nz-button
+  nzShape="circle"
+  nz-tooltip
+  nzTooltipTitle="Next"
+  [disabled]="!searchMatches.length"
+  (click)="nextSearchResult()">
+  <span nz-icon nzType="right"></span>
+</button>
+
+
+      <!-- Full Organogram -->
+      <!-- <button 
+        nz-button 
+        nzShape="circle" 
+        nz-tooltip 
+        nzTooltipTitle="Load Full Organogram"
+        (click)="loadFullOrganogram()"
+        nzType="primary">
+        <span nz-icon nzType="appstore"></span>
+      </button> -->
+
+      <!-- Department Input -->
+      <!-- <nz-space nzSize="small">
+        <input
+          nz-input
+          type="number"
+          placeholder="Dept ID"
+          [(ngModel)]="unitIdInput"
+          style="width: 120px;"
+          (keyup.enter)="loadDepartmentOrganogram()"
+        />
+        <button 
+          nz-button 
+          nzShape="circle" 
+          nz-tooltip 
+          nzTooltipTitle="Load Department"
+          (click)="loadDepartmentOrganogram()">
+          <span nz-icon nzType="search"></span>
+        </button>
+      </nz-space> -->
+
+      <!-- View Modes -->
+      <!-- <nz-space nzSize="small"> -->
+        <button 
+          nz-button 
+          nzShape="circle" 
+          nz-tooltip 
+          nzTooltipTitle="Compact View"
+          [nzType]="viewMode === 'compact' ? 'primary' : 'default'"
+          (click)="setViewMode('compact')">
+          <span nz-icon nzType="compress"></span>
+        </button>
+        <button 
+          nz-button 
+          nzShape="circle" 
+          nz-tooltip 
+          nzTooltipTitle="Horizontal View"
+          [nzType]="viewMode === 'horizontal' ? 'primary' : 'default'"
+          (click)="setViewMode('horizontal')">
+          <span nz-icon nzType="bars"></span>
+        </button>
+      <!-- </nz-space> -->
+
+      <!-- Layout Directions -->
+      <!-- <nz-space nzSize="small"> -->
+    <!-- Layout Directions, only in compact view -->
+<ng-container *ngIf="viewMode === 'compact'">
+  <button
+    nz-button
+    nzShape="circle"
+    nz-tooltip
+    nzTooltipTitle="Top Layout"
+    [nzType]="layout === 'top' ? 'primary' : 'default'"
+    (click)="setLayout('top')">
+    <span nz-icon nzType="vertical-right"></span>
+  </button>
+
+  <button
+    nz-button
+    nzShape="circle"
+    nz-tooltip
+    nzTooltipTitle="Right Layout"
+    [nzType]="layout === 'right' ? 'primary' : 'default'"
+    (click)="setLayout('right')">
+    <span nz-icon nzType="right"></span>
+  </button>
+
+  <button
+    nz-button
+    nzShape="circle"
+    nz-tooltip
+    nzTooltipTitle="Left Layout"
+    [nzType]="layout === 'left' ? 'primary' : 'default'"
+    (click)="setLayout('left')">
+    <span nz-icon nzType="left"></span>
+  </button>
+
+  <button
+    nz-button
+    nzShape="circle"
+    nz-tooltip
+    nzTooltipTitle="Bottom Layout"
+    [nzType]="layout === 'bottom' ? 'primary' : 'default'"
+    (click)="setLayout('bottom')">
+    <span nz-icon nzType="vertical-left"></span>
+  </button>
+</ng-container>
+
+       
+      <!-- </nz-space> -->
+
+      <!-- Search -->
+      <!-- <nz-space nzSize="small">
+     
+     
+      </nz-space> -->
+
+     
+      <!-- <nz-space nzSize="small">
+        <button nz-button nzShape="circle" nz-tooltip nzTooltipTitle="Zoom Out" (click)="zoomOut()">
+          <span nz-icon nzType="minus"></span>
+        </button>
+       
+      
+        
+      
+        
+      </nz-space> -->
+        <button nz-button nzShape="circle" nz-tooltip nzTooltipTitle="Zoom Out" (click)="zoomOut()">
+          <span nz-icon nzType="minus"></span>
+        </button>
+  <button nz-button nzShape="circle" nz-tooltip nzTooltipTitle="Zoom In" (click)="zoomIn()">
+          <span nz-icon nzType="plus"></span>
+        </button>
+        <button nz-button nzShape="circle" nz-tooltip nzTooltipTitle="Open All" (click)="openAll()">
+          <span nz-icon nzType="folder-open"></span>
+        </button>
+  <button nz-button nzShape="circle" nz-tooltip nzTooltipTitle="Collapse All" (click)="collapseAll()">
+          <span nz-icon nzType="folder"></span>
+        </button>
+    <button
+  nz-button
+  nzShape="circle"
+  nz-tooltip
+  nzTooltipTitle="Level Collapse"
+  [nzType]="collapseByLevelEnabled ? 'primary' : 'default'"
+  (click)="toggleCollapseByLevel()">
+  <span nz-icon [nzType]="collapseByLevelEnabled ? 'unordered-list' : 'ordered-list'"></span>
+</button>
+
+      <button 
+        nz-button 
+        nzShape="circle" 
+        nz-tooltip 
+        nzTooltipTitle="Download HD PDF"
+        nzType="primary"
+        (click)="downloadHdPdf()">
+        <span nz-icon nzType="download"></span>
+      </button>
+      <button nz-button nzShape="circle" nz-tooltip nzTooltipTitle="Fit Screen" (click)="fitScreen()">
+          <span nz-icon nzType="fullscreen"></span>
+        </button>
+      <nz-select
+  nzShowSearch
+  nzAllowClear
+  nzPlaceHolder="Company"
+  [(ngModel)]="selectedCompanyId"
+  (ngModelChange)="onCompanyChange($event)"
+  style="min-width: 180px;"
+>
+  <nz-option
+    *ngFor="let c of companies"
+    [nzLabel]="c.name"
+    [nzValue]="c.id">
+  </nz-option>
+</nz-select>
+
+    </nz-space> 
+  </nz-page-header-extra>
+
+  <!-- <nz-page-header-content>
+    <div class="organogram-stats">
+      <nz-descriptions nzSize="small" [nzColumn]="2">
+        <nz-descriptions-item nzTitle="Status" [nzSpan]="1">
+          <nz-tag nzColor="blue">Loading...</nz-tag>
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Total Nodes" [nzSpan]="1">{{ totalNodes || 0 }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="View Mode" [nzSpan]="1">{{ viewMode }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Layout" [nzSpan]="1">{{ layout }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Search Results" [nzSpan]="2">{{ searchMatches.length }} matches</nz-descriptions-item>
+      </nz-descriptions>
+    </div>
+  </nz-page-header-content> -->
+
+  <nz-page-header-footer>
+    <nz-spin
+      [nzSpinning]="loading"
+      [nzIndicator]="loadingIndicatorTpl"
+      [nzTip]="'Loading organisational chart'">
+      <div class="chart-stage">
+        <div #chartContainer class="chart-container" [class.is-hidden]="!loading && (!hasChartData || !!errorMessage)"></div>
+
+        <div *ngIf="!loading && !errorMessage && !hasChartData" class="chart-state">
+          <nz-empty nzNotFoundContent="No organisational chart data"></nz-empty>
+        </div>
+
+        <div *ngIf="!loading && errorMessage" class="chart-state">
+          <nz-empty [nzNotFoundContent]="errorMessage"></nz-empty>
+        </div>
+      </div>
+    </nz-spin>
+  </nz-page-header-footer>
+</nz-page-header>
+
+<ng-template #loadingIndicatorTpl>
+  <!-- <div class="chart-loader">
+    <span nz-icon nzType="loading" nzTheme="outline"></span>
+    <span>Loading organisational chart</span>
+  </div> -->
+</ng-template>

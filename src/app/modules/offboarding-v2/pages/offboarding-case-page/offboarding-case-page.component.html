@@ -1,5 +1,5 @@
 <nz-page-header nzBackIcon (nzBack)="goToRequests()">
-  <nz-page-header-title>Offboarding Case #{{ caseIdentifier }}</nz-page-header-title>
+  <nz-page-header-title>{{ caseIdentifier }}</nz-page-header-title>
   <nz-page-header-subtitle>Case Lifecycle</nz-page-header-subtitle>
 
   <nz-page-header-tags>
@@ -74,12 +74,12 @@
                   <nz-tabs nzSize="small" class="department-tabs">
                     <nz-tab
                       *ngFor="let dept of departments"
-                      [nzTitle]="dept | capitalize"
+                      [nzTitle]="dept | capitalize | uppercase"
                       (nzClick)="selectDepartment(dept)"
                     ></nz-tab>
                   </nz-tabs>
 
-                  <div class="table-toolbar">
+                  <!-- <div class="table-toolbar">
                     <div class="toolbar-left">
                       <div class="table-search">
                         <span nz-icon nzType="search"></span>
@@ -94,7 +94,7 @@
                     <div class="toolbar-right">
                       <button nz-button nzSize="small" (click)="resetTaskFilters()">Reset Filters</button>
                     </div>
-                  </div>
+                  </div> -->
 
                   <nz-table
                     #tasksTable
@@ -147,11 +147,11 @@
                        
                         </td>
                       </tr>
-                      <tr *ngIf="!tasksTable.data.length">
+                      <!-- <tr *ngIf="!tasksTable.data.length">
                         <td colspan="4">
                           <nz-empty nzNotFoundContent="No pending tasks"></nz-empty>
                         </td>
-                      </tr>
+                      </tr> -->
                     </tbody>
                   </nz-table>
                 </nz-card>

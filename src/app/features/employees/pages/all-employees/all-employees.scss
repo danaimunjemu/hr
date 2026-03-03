@@ -31,7 +31,15 @@
   gap: 12px;
   margin-bottom: 12px;
 }
+::ng-deep nerd-breadcrumb{
+  display: none !important;
+}
 
+::ng-deep .content-container {
+
+    padding: 6px 24px !important;
+
+}
 
 
 .search-wrap {

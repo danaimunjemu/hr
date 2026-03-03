@@ -1,18 +1,48 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
-import { Subject, combineLatest, map, startWith, takeUntil } from 'rxjs';
 import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
+import { Router } from '@angular/router';
+import { Subject, combineLatest, finalize, map, startWith, takeUntil } from 'rxjs';
+import {
+  CreateOffboardingPayload,
+  InitiatorType,
   OffboardingCaseSummary,
   OffboardingStatus,
   OffboardingType
 } from '../../models/offboarding-case.model';
+import { EmployeeSummary } from '../../models/employee-summary.model';
 import { OffboardingV2FacadeService } from '../../services/offboarding-v2-facade.service';
 import { UserContextService } from '../../services/user-context.service';
 
 interface FilterForm {
   status: FormControl<OffboardingStatus | 'ALL'>;
   offboardingType: FormControl<OffboardingType | 'ALL'>;
+}
+
+interface CreateRequestFormModel {
+  employeeId: FormControl<string>;
+  initiator: FormControl<'HR' | 'LINE_MANAGER' | 'SYSTEM_TRIGGERED' | 'EMPLOYEE_SELF_SERVICE'>;
+  exitType: FormControl<
+    | 'RESIGNATION'
+    | 'RETIREMENT'
+    | 'DISMISSAL'
+    | 'CONTRACT_EXPIRY'
+    | 'RETRENCHMENT'
+    | 'DEATH'
+    | 'MUTUAL_SEPARATION'
+  >;
+  reason: FormControl<string>;
+  comments: FormControl<string | null>;
+  exitInterviewRequested: FormControl<boolean>;
+  noticeStart: FormControl<string | null>;
+  noticeEnd: FormControl<string | null>;
+  lastWorkingDate: FormControl<string>;
 }
 
 @Component({
@@ -23,11 +53,15 @@ interface FilterForm {
 })
 export class RequestsListPageComponent implements OnInit, OnDestroy {
   readonly form: FormGroup<FilterForm>;
+  readonly createRequestForm: FormGroup<CreateRequestFormModel>;
   readonly destroy$ = new Subject<void>();
 
   loading = true;
+  createRequestVisible = false;
+  creatingRequest = false;
   isHR = false;
   searchTerm = '';
+  employees: EmployeeSummary[] = [];
 
   statuses: Array<OffboardingStatus | 'ALL'> = [
     'ALL',
@@ -47,6 +81,21 @@ export class RequestsListPageComponent implements OnInit, OnDestroy {
     'RETRENCHMENT',
     'DEATH',
     'MUTUAL_SEPARATION'
+  ];
+  readonly initiatorOptions: Array<{ label: string; value: InitiatorType }> = [
+    { label: 'HR', value: 'HR' },
+    { label: 'Line Manager', value: 'LINE_MANAGER' },
+    { label: 'System Triggered', value: 'SYSTEM_TRIGGERED' },
+    { label: 'Employee Self Service', value: 'EMPLOYEE_SELF_SERVICE' }
+  ];
+  readonly exitTypeOptions: Array<{ label: string; value: OffboardingType }> = [
+    { label: 'Resignation', value: 'RESIGNATION' },
+    { label: 'Retirement', value: 'RETIREMENT' },
+    { label: 'Dismissal', value: 'DISMISSAL' },
+    { label: 'Contract Expiry', value: 'CONTRACT_EXPIRY' },
+    { label: 'Retrenchment', value: 'RETRENCHMENT' },
+    { label: 'Death', value: 'DEATH' },
+    { label: 'Mutual Separation', value: 'MUTUAL_SEPARATION' }
   ];
 
   rows: OffboardingCaseSummary[] = [];
@@ -93,6 +142,20 @@ export class RequestsListPageComponent implements OnInit, OnDestroy {
     return Math.round((this.completedCount / this.rows.length) * 100);
   }
 
+  get createDateError(): string {
+    const formErrors = this.createRequestForm.errors || {};
+    if (formErrors['noticeOrder']) {
+      return 'Notice start date must be on/before notice end date.';
+    }
+    if (formErrors['lastWorkingBeforeNoticeEnd']) {
+      return 'Last working date must be on/after notice end date.';
+    }
+    if (formErrors['noticeAfterLastWorking']) {
+      return 'Notice dates cannot be after last working date.';
+    }
+    return '';
+  }
+
   constructor(
     fb: FormBuilder,
     private readonly facade: OffboardingV2FacadeService,
@@ -104,11 +167,29 @@ export class RequestsListPageComponent implements OnInit, OnDestroy {
       status: fb.nonNullable.control('ALL'),
       offboardingType: fb.nonNullable.control('ALL')
     });
+    this.createRequestForm = fb.group<CreateRequestFormModel>(
+      {
+        employeeId: fb.nonNullable.control('', [Validators.required]),
+        initiator: fb.nonNullable.control('HR', [Validators.required]),
+        exitType: fb.nonNullable.control('RESIGNATION', [Validators.required]),
+        reason: fb.nonNullable.control('', [Validators.required, Validators.maxLength(400)]),
+        comments: fb.control<string | null>(null),
+        exitInterviewRequested: fb.nonNullable.control(true),
+        noticeStart: fb.control<string | null>(null),
+        noticeEnd: fb.control<string | null>(null),
+        lastWorkingDate: fb.nonNullable.control('', [Validators.required])
+      },
+      { validators: this.dateRulesValidator }
+    );
   }
 
   ngOnInit(): void {
     this.userContext.isHR$.pipe(takeUntil(this.destroy$)).subscribe((isHR) => {
       this.isHR = isHR;
+      this.cdr.detectChanges();
+    });
+    this.facade.employeesForSelect$.pipe(takeUntil(this.destroy$)).subscribe((rows) => {
+      this.employees = rows || [];
       this.cdr.detectChanges();
     });
 
@@ -144,7 +225,7 @@ export class RequestsListPageComponent implements OnInit, OnDestroy {
   }
 
   create(): void {
-    this.router.navigate(['/app/offboarding-v2/initiate']);
+    this.openCreateRequestModal();
   }
 
   openAnalytics(): void {
@@ -157,6 +238,63 @@ export class RequestsListPageComponent implements OnInit, OnDestroy {
 
   resetFilters(): void {
     this.searchTerm = '';
+  }
+
+  openCreateRequestModal(): void {
+    this.createRequestForm.reset({
+      employeeId: '',
+      initiator: 'HR',
+      exitType: 'RESIGNATION',
+      reason: '',
+      comments: null,
+      exitInterviewRequested: true,
+      noticeStart: null,
+      noticeEnd: null,
+      lastWorkingDate: ''
+    });
+    this.createRequestVisible = true;
+  }
+
+  closeCreateRequestModal(): void {
+    this.createRequestVisible = false;
+  }
+
+  submitCreateRequest(): void {
+    if (this.createRequestForm.invalid) {
+      this.createRequestForm.markAllAsTouched();
+      return;
+    }
+
+    this.creatingRequest = true;
+    const value = this.createRequestForm.getRawValue();
+    const payload: CreateOffboardingPayload = {
+      employeeId: value.employeeId,
+      initiator: value.initiator,
+      exitDate: value.lastWorkingDate,
+      noticePeriodStart: value.noticeStart || undefined,
+      noticePeriodEnd: value.noticeEnd || undefined,
+      offboardingType: value.exitType,
+      reason: value.reason,
+      comments: value.comments || undefined,
+      exitInterviewRequested: value.exitInterviewRequested
+    };
+
+    this.facade
+      .createOffboarding(payload)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          this.creatingRequest = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe((created) => {
+        this.createRequestVisible = false;
+        const targetId = String(created.id || created.offboardingId || created.caseId || '').trim();
+        if (targetId) {
+          this.router.navigate(['/app/offboarding-v2/case', targetId]);
+        }
+      });
   }
 
   get statusColumnFilters(): Array<{ text: string; value: string }> {
@@ -249,4 +387,29 @@ export class RequestsListPageComponent implements OnInit, OnDestroy {
     }
     return normalized.charAt(0).toUpperCase() + normalized.slice(1);
   }
+
+  private dateRulesValidator = (control: AbstractControl): ValidationErrors | null => {
+    const form = control as FormGroup<CreateRequestFormModel>;
+    const start = form?.controls?.noticeStart?.value;
+    const end = form?.controls?.noticeEnd?.value;
+    const lastWorkingDate = form?.controls?.lastWorkingDate?.value;
+
+    const startTime = start ? new Date(start).getTime() : null;
+    const endTime = end ? new Date(end).getTime() : null;
+    const lastTime = lastWorkingDate ? new Date(lastWorkingDate).getTime() : null;
+
+    if (startTime !== null && endTime !== null && startTime > endTime) {
+      return { noticeOrder: true };
+    }
+    if (endTime !== null && lastTime !== null && lastTime < endTime) {
+      return { lastWorkingBeforeNoticeEnd: true };
+    }
+    if (
+      lastTime !== null &&
+      ((startTime !== null && startTime > lastTime) || (endTime !== null && endTime > lastTime))
+    ) {
+      return { noticeAfterLastWorking: true };
+    }
+    return null;
+  };
 }
