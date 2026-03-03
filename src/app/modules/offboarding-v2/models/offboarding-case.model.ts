@@ -22,6 +22,8 @@ export type OffboardingStatus =
 
 export interface EmployeeSnapshot {
   employeeId: string;
+  firstName?: string;
+  lastName?: string;
   fullName: string;
   department: string;
   jobTitle: string;

@@ -41,6 +41,8 @@ interface CompanyAOrganogramResponse {
   companyId?: number | null;
   companyName?: string | null;
   rolesGroupedByLevel?: CompanyARoleGroup[] | null;
+  employeesTree?: CompanyAEmployee[] | null;
+  subsidiaries?: Array<string | { companyId?: number | null; companyName?: string | null }> | null;
 }
 
 interface OrganogramApiPosition {
@@ -93,7 +95,7 @@ export class OrganogramV2Service {
 
   getCompanyOrganogram(companyId: number): Observable<OrganogramV2Node[]> {
     return this.http
-      .get<OrganogramApiPosition[] | CompanyAOrganogramResponse>(`${this.baseUrl}/companyA/${companyId}`)
+      .get<OrganogramApiPosition[] | CompanyAOrganogramResponse>(`${this.baseUrl}/companyB/${companyId}`)
       .pipe(map((payload) => this.buildCompanyNodes(payload)));
   }
 
@@ -110,7 +112,10 @@ export class OrganogramV2Service {
       return this.buildNodes(payload);
     }
 
-    if (payload && Array.isArray(payload.rolesGroupedByLevel)) {
+    if (
+      payload &&
+      (Array.isArray(payload.rolesGroupedByLevel) || Array.isArray(payload.employeesTree))
+    ) {
       return this.buildNodesFromCompanyA(payload);
     }
 
@@ -166,10 +171,16 @@ export class OrganogramV2Service {
       }
     };
 
-    for (const group of payload.rolesGroupedByLevel || []) {
-      for (const role of group.roles || []) {
-        for (const employee of role.employees || []) {
-          walkWithManager(employee, undefined, new Set<number>());
+    if (Array.isArray(payload.employeesTree) && payload.employeesTree.length) {
+      for (const employee of payload.employeesTree) {
+        walkWithManager(employee, undefined, new Set<number>());
+      }
+    } else {
+      for (const group of payload.rolesGroupedByLevel || []) {
+        for (const role of group.roles || []) {
+          for (const employee of role.employees || []) {
+            walkWithManager(employee, undefined, new Set<number>());
+          }
         }
       }
     }

@@ -35,10 +35,17 @@
               <div nz-col [nzXs]="24" [nzMd]="18" [nzLg]="18">
                 <nz-card nzSize="small" nzTitle="Case Details" class="compact-card">
                   <nz-descriptions nzSize="small" [nzColumn]="2" [nzBordered]="false">
-                    <nz-descriptions-item nzTitle="Employee">{{ data.caseData.employee.fullName }}</nz-descriptions-item>
+                    <nz-descriptions-item nzTitle="Employee">
+                      {{
+                        (data.caseData.employee.firstName || data.caseData.employee.lastName)
+                          ? ((data.caseData.employee.firstName || '') + ' ' + (data.caseData.employee.lastName || '')).trim()
+                          : data.caseData.employee.fullName
+                      }}
+                    </nz-descriptions-item>
                     <nz-descriptions-item nzTitle="Department">{{ data.caseData.employee.department }}</nz-descriptions-item>
                     <nz-descriptions-item nzTitle="Job Title">{{ data.caseData.employee.jobTitle }}</nz-descriptions-item>
                     <nz-descriptions-item nzTitle="Initiator">{{ data.caseData.initiator }}</nz-descriptions-item>
+                    <nz-descriptions-item nzTitle="HR">{{ data.caseData.employee.manager || '-' }}</nz-descriptions-item>
                     <nz-descriptions-item nzTitle="Last Working Date">{{ data.caseData.lastWorkingDate | date: 'mediumDate' }}</nz-descriptions-item>
                     <nz-descriptions-item nzTitle="Notice Start">{{ data.caseData.noticePeriodStart ? (data.caseData.noticePeriodStart | date: 'mediumDate') : '-' }}</nz-descriptions-item>
                     <nz-descriptions-item nzTitle="Notice End">{{ data.caseData.noticePeriodEnd ? (data.caseData.noticePeriodEnd | date: 'mediumDate') : '-' }}</nz-descriptions-item>

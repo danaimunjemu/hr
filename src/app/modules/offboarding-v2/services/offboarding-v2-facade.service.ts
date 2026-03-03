@@ -271,14 +271,50 @@ export class OffboardingV2FacadeService {
   private normalizeCase(item: OffboardingCase): OffboardingCase {
     const raw = item as OffboardingCase & {
       id?: string | number;
-      employee?: { id?: string | number; employeeId?: string | number };
+      employee?: {
+        id?: string | number;
+        employeeId?: string | number;
+        firstName?: string;
+        lastName?: string;
+        fullName?: string;
+        department?: string;
+        departmentName?: string;
+        jobTitle?: string;
+        position?: string;
+        jobDescription?: string;
+        organizationalUnit?: { name?: string } | string;
+      };
       offboardingStatus?: string;
+      noticePeriodStartDate?: string;
+      noticePeriodEndDate?: string;
     };
     const resolvedCaseId = String(raw.id || item.id || item.caseId || item.offboardingId || '');
     const resolvedOffboardingId = String(item.offboardingId || item.caseId || resolvedCaseId || '');
     const resolvedEmployeeId = String(
       item.employeeId || raw.employee?.employeeId || raw.employee?.id || ''
     );
+    const rawEmployee = raw.employee || {};
+    const resolvedFirstName = rawEmployee.firstName || item.employee?.firstName || '';
+    const resolvedLastName = rawEmployee.lastName || item.employee?.lastName || '';
+    const resolvedFullName =
+      item.employee?.fullName ||
+      rawEmployee.fullName ||
+      `${resolvedFirstName} ${resolvedLastName}`.trim() ||
+      '-';
+    const resolvedDepartment =
+      item.employee?.department ||
+      rawEmployee.department ||
+      rawEmployee.departmentName ||
+      (typeof rawEmployee.organizationalUnit === 'string'
+        ? rawEmployee.organizationalUnit
+        : rawEmployee.organizationalUnit?.name) ||
+      '-';
+    const resolvedJobTitle =
+      item.employee?.jobTitle ||
+      rawEmployee.jobTitle ||
+      rawEmployee.position ||
+      rawEmployee.jobDescription ||
+      '-';
     const numericOffboardingId = Number(raw.id ?? item.id);
     return {
       ...item,
@@ -291,9 +327,19 @@ export class OffboardingV2FacadeService {
       offboardingType: (item.offboardingType || 'RESIGNATION') as OffboardingType,
       status: (raw.offboardingStatus || item.status || 'INITIATED') as OffboardingStatus,
       lastWorkingDate: item.lastWorkingDate || (item as { exitDate?: string }).exitDate || '',
+      noticePeriodStart:
+        item.noticePeriodStart || raw.noticePeriodStartDate || '',
+      noticePeriodEnd:
+        item.noticePeriodEnd || raw.noticePeriodEndDate || '',
       employee: {
         ...item.employee,
-        employeeId: String(item.employee?.employeeId || raw.employee?.id || resolvedEmployeeId)
+        ...rawEmployee,
+        employeeId: String(item.employee?.employeeId || raw.employee?.id || resolvedEmployeeId),
+        firstName: resolvedFirstName || undefined,
+        lastName: resolvedLastName || undefined,
+        fullName: resolvedFullName,
+        department: resolvedDepartment,
+        jobTitle: resolvedJobTitle
       }
     };
   }

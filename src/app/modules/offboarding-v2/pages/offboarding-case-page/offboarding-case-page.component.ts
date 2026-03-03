@@ -406,6 +406,7 @@ export class OffboardingCasePageComponent implements OnInit, OnDestroy {
       )
       .subscribe((vm) => {
         this.vm = vm;
+        console.log('The case data',vm)
         if (!this.selectedDepartment || !this.departments.includes(this.selectedDepartment)) {
           this.selectedDepartment = this.departments[0] || '';
         }
