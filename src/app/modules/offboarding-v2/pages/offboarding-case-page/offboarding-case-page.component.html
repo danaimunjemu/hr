@@ -55,6 +55,7 @@
                     <nz-timeline-item *ngFor="let item of overviewTimelineItems" [nzColor]="timelineItemColor(item)">
                       <div class="timeline-title">{{ item.title || 'Action' }}</div>
                       <div class="timeline-meta">{{ item.actor }} • {{ item.timestamp | date: 'short' }}</div>
+                      <nz-tag *ngIf="item.status" [nzColor]="timelineTagColor(item)">{{ item.status | capitalize }}</nz-tag>
                       <nz-comment *ngIf="item.comment">
                         <nz-comment-content>
                           <span class="timeline-comment">{{ item.comment }}</span>
@@ -169,7 +170,16 @@
                     <nz-timeline-item *ngFor="let item of selectedDepartmentTimelineItems" [nzColor]="timelineItemColor(item)">
                       <div class="timeline-title">{{ item.title }}</div>
                       <div class="timeline-meta">{{ item.actor }} • {{ item.timestamp ? (item.timestamp | date: 'short') : '-' }}</div>
-                      <nz-tag *ngIf="item.status" nzColor="processing">{{ item.status | capitalize }}</nz-tag>
+                      <nz-tag *ngIf="item.status" [nzColor]="timelineTagColor(item)">{{ item.status | capitalize }}</nz-tag>
+                      <a
+                        *ngIf="item.evidenceFilePath"
+                        class="timeline-evidence"
+                        [href]="item.evidenceFilePath"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        View Evidence
+                      </a>
                       <nz-comment *ngIf="item.comment">
                         <nz-comment-content>
                           <span class="timeline-comment">{{ item.comment }}</span>
@@ -249,25 +259,37 @@
 
 <nz-drawer
   [nzVisible]="taskDrawerVisible"
-  nzTitle="Complete Task"
+  [nzTitle]="taskDrawerTitle"
   [nzWidth]="460"
   [nzMaskClosable]="true"
   (nzOnClose)="closeTaskDrawer()"
 >
   <ng-container *nzDrawerContent>
     <form nz-form nzLayout="vertical" [formGroup]="taskCompleteForm">
-      <nz-form-item>
-        <nz-form-label nzRequired>System Name</nz-form-label>
-        <nz-form-control nzErrorTip="System Name is required">
-          <nz-select formControlName="systemName" nzShowSearch nzPlaceHolder="Select system">
-            <nz-option *ngFor="let option of systemNameOptions" [nzLabel]="option" [nzValue]="option"></nz-option>
-          </nz-select>
-        </nz-form-control>
-      </nz-form-item>
+      <ng-container *ngIf="isITTaskSelected">
+        <nz-form-item>
+          <nz-form-label nzRequired>System Name</nz-form-label>
+          <nz-form-control nzErrorTip="System name is required">
+            <nz-select formControlName="systemName" nzShowSearch nzPlaceHolder="Select system">
+              <nz-option *ngFor="let option of systemNameOptions" [nzLabel]="option" [nzValue]="option"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label nzRequired>Access Revoked</nz-form-label>
+          <nz-form-control nzErrorTip="Select yes or no">
+            <nz-radio-group formControlName="accessRevoked">
+              <label nz-radio nzValue="YES">Yes</label>
+              <label nz-radio nzValue="NO">No</label>
+            </nz-radio-group>
+          </nz-form-control>
+        </nz-form-item>
+      </ng-container>
 
       <nz-form-item>
-        <nz-form-label nzRequired>Upload Evidence</nz-form-label>
-        <nz-form-control nzErrorTip="Evidence is required">
+        <nz-form-label>Upload Evidence</nz-form-label>
+        <nz-form-control>
           <nz-upload
             class="evidence-upload"
             nzType="drag"
@@ -284,9 +306,9 @@
       </nz-form-item>
 
       <nz-form-item>
-        <nz-form-label>Comment</nz-form-label>
+        <nz-form-label>Remarks</nz-form-label>
         <nz-form-control>
-          <textarea nz-input rows="3" formControlName="comment"></textarea>
+          <textarea nz-input rows="3" formControlName="remarks"></textarea>
         </nz-form-control>
       </nz-form-item>
 

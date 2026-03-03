@@ -54,12 +54,14 @@ interface TimelineItemVm {
   timestamp: string;
   status?: string;
   comment?: string;
+  evidenceFilePath?: string;
 }
 
 interface TaskCompleteFormModel {
-  systemName: FormControl<string>;
-  evidenceFilePath: FormControl<string>;
-  comment: FormControl<string | null>;
+  systemName: FormControl<string | null>;
+  accessRevoked: FormControl<'YES' | 'NO' | null>;
+  evidenceFilePath: FormControl<string | null>;
+  remarks: FormControl<string | null>;
 }
 
 interface AssetActionFormModel {
@@ -167,9 +169,10 @@ export class OffboardingCasePageComponent implements OnInit, OnDestroy {
     private readonly cdr: ChangeDetectorRef
   ) {
     this.taskCompleteForm = this.fb.group<TaskCompleteFormModel>({
-      systemName: this.fb.nonNullable.control('', [Validators.required]),
-      evidenceFilePath: this.fb.nonNullable.control('', [Validators.required]),
-      comment: this.fb.control<string | null>(null)
+      systemName: this.fb.control<string | null>(null),
+      accessRevoked: this.fb.control<'YES' | 'NO' | null>(null),
+      evidenceFilePath: this.fb.control<string | null>(null),
+      remarks: this.fb.control<string | null>(null)
     });
 
     this.assetActionForm = this.fb.group<AssetActionFormModel>({
@@ -297,7 +300,7 @@ export class OffboardingCasePageComponent implements OnInit, OnDestroy {
     });
 
     if (taskEvents.length) {
-      return this.mapEventsToTimeline(taskEvents);
+      return this.mapEventsToTimeline(taskEvents, departmentTasks);
     }
 
     return [...departmentTasks]
@@ -311,8 +314,17 @@ export class OffboardingCasePageComponent implements OnInit, OnDestroy {
       actor: task.taskOwner,
       timestamp: task.completionDate || task.taskDeadline || '',
       status: task.completionStatus,
-      comment: task.comment || undefined
+      comment: task.comment || undefined,
+      evidenceFilePath: task.evidenceFilePath || undefined
       }));
+  }
+
+  get taskDrawerTitle(): string {
+    return this.selectedTask?.taskName || 'Complete Task';
+  }
+
+  get isITTaskSelected(): boolean {
+    return String(this.selectedTask?.department || '').toUpperCase() === 'IT';
   }
 
   get availableConditionOptions(): string[] {
@@ -461,7 +473,8 @@ export class OffboardingCasePageComponent implements OnInit, OnDestroy {
       )
       .subscribe((created) => {
         this.createCaseVisible = false;
-        const targetId = String(created.id || created.offboardingId || created.caseId || '').trim();
+   
+        const targetId = String(created.id || '').trim();
         if (targetId) {
           this.router.navigate(['/app/offboarding-v2/case', targetId]);
           return;
@@ -553,10 +566,12 @@ export class OffboardingCasePageComponent implements OnInit, OnDestroy {
     this.selectedTask = task;
     this.taskEvidenceFiles = [];
     this.taskCompleteForm.reset({
-      systemName: '',
-      evidenceFilePath: '',
-      comment: null
+      systemName: null,
+      accessRevoked: this.isITTaskSelected ? 'YES' : null,
+      evidenceFilePath: null,
+      remarks: null
     });
+    this.configureTaskFormByDepartment();
     this.taskDrawerVisible = true;
   }
 
@@ -569,7 +584,7 @@ export class OffboardingCasePageComponent implements OnInit, OnDestroy {
   handleTaskEvidenceChange(event: { fileList: NzUploadFile[] }): void {
     this.taskEvidenceFiles = event.fileList || [];
     const latest = this.taskEvidenceFiles[this.taskEvidenceFiles.length - 1];
-    this.taskCompleteForm.controls.evidenceFilePath.setValue(latest?.name || '');
+    this.taskCompleteForm.controls.evidenceFilePath.setValue(latest?.name || null);
   }
 
   submitTaskCompletion(): void {
@@ -583,11 +598,11 @@ export class OffboardingCasePageComponent implements OnInit, OnDestroy {
     const payload: TaskCompletionPayload = {
       completed: true,
       completionDate: new Date().toISOString(),
-      evidenceFilePath: formValue.evidenceFilePath,
-      systemName: formValue.systemName,
-      comment: formValue.comment || undefined,
+      evidenceFilePath: formValue.evidenceFilePath || undefined,
+      systemName: this.isITTaskSelected ? formValue.systemName || undefined : undefined,
+      comment: formValue.remarks || undefined,
       taskOwnerId: this.currentUserEmployeeId || this.selectedTask.taskOwnerId,
-      accessRevoked: true
+      accessRevoked: this.isITTaskSelected ? formValue.accessRevoked === 'YES' : undefined
     };
 
     this.facade
@@ -849,7 +864,10 @@ export class OffboardingCasePageComponent implements OnInit, OnDestroy {
     );
   }
 
-  private mapEventsToTimeline(events: OffboardingEvent[]): TimelineItemVm[] {
+  private mapEventsToTimeline(
+    events: OffboardingEvent[],
+    contextTasks: OffboardingTask[] = this.vm?.tasks || [],
+  ): TimelineItemVm[] {
     return [...events]
       .sort((a, b) => {
         const left = new Date(a.timestamp || a.occurredAt || 0).getTime();
@@ -864,7 +882,8 @@ export class OffboardingCasePageComponent implements OnInit, OnDestroy {
           'System',
         timestamp: event.timestamp || event.occurredAt || '',
         status: event.eventType || event.action,
-        comment: event.notes || event.description || undefined
+        comment: event.notes || event.description || undefined,
+        evidenceFilePath: this.resolveEventEvidencePath(event, contextTasks)
       }));
   }
 
@@ -878,6 +897,35 @@ export class OffboardingCasePageComponent implements OnInit, OnDestroy {
       return '';
     }
     return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+  }
+
+  private configureTaskFormByDepartment(): void {
+    const systemNameControl = this.taskCompleteForm.controls.systemName;
+    const accessRevokedControl = this.taskCompleteForm.controls.accessRevoked;
+    const requiresITFields = this.isITTaskSelected;
+
+    if (requiresITFields) {
+      systemNameControl.setValidators([Validators.required]);
+      accessRevokedControl.setValidators([Validators.required]);
+    } else {
+      systemNameControl.clearValidators();
+      accessRevokedControl.clearValidators();
+      systemNameControl.setValue(null);
+      accessRevokedControl.setValue(null);
+    }
+
+    systemNameControl.updateValueAndValidity();
+    accessRevokedControl.updateValueAndValidity();
+  }
+
+  private resolveEventEvidencePath(event: OffboardingEvent, tasks: OffboardingTask[]): string | undefined {
+    const signal = `${event.action || ''} ${event.notes || ''} ${event.description || ''}`.toUpperCase();
+    const matched = tasks.find((task) => {
+      const taskName = String(task.taskName || '').toUpperCase();
+      const owner = String(task.taskOwner || '').toUpperCase();
+      return (taskName && signal.includes(taskName)) || (owner && signal.includes(owner));
+    });
+    return matched?.evidenceFilePath || undefined;
   }
 
   private isConditionValidForState(
@@ -931,6 +979,23 @@ export class OffboardingCasePageComponent implements OnInit, OnDestroy {
     }
 
     return 'gray';
+  }
+
+  timelineTagColor(item: TimelineItemVm): string {
+    const signal = `${item.status || ''} ${item.title || ''}`.toUpperCase();
+    if (signal.includes('COMPLETED') || signal.includes('DONE') || signal.includes('SUCCESS')) {
+      return 'success';
+    }
+    if (signal.includes('BLOCKED') || signal.includes('FAILED') || signal.includes('ERROR')) {
+      return 'error';
+    }
+    if (signal.includes('IN_PROGRESS') || signal.includes('PROCESSING')) {
+      return 'processing';
+    }
+    if (signal.includes('PENDING') || signal.includes('OPEN') || signal.includes('INITIATED')) {
+      return 'warning';
+    }
+    return 'default';
   }
 
   private dateRulesValidator = (control: AbstractControl): ValidationErrors | null => {

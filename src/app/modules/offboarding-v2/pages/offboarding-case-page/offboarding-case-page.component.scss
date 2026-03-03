@@ -73,6 +73,12 @@
   color: #334155;
 }
 
+.timeline-evidence {
+  display: inline-block;
+  margin-top: 3px;
+  font-size: 11px;
+}
+
 :host ::ng-deep .timeline-card .ant-timeline-item {
   padding-bottom: 9px;
 }

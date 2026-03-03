@@ -290,7 +290,7 @@ export class RequestsListPageComponent implements OnInit, OnDestroy {
       )
       .subscribe((created) => {
         this.createRequestVisible = false;
-        const targetId = String(created.id || created.offboardingId || created.caseId || '').trim();
+        const targetId = String(created.id || '').trim();
         if (targetId) {
           this.router.navigate(['/app/offboarding-v2/case', targetId]);
         }

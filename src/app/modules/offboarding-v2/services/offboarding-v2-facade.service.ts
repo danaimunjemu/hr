@@ -274,18 +274,19 @@ export class OffboardingV2FacadeService {
       employee?: { id?: string | number; employeeId?: string | number };
       offboardingStatus?: string;
     };
-    const resolvedId = String(item.offboardingId || item.caseId || raw.id || '');
+    const resolvedCaseId = String(raw.id || item.id || item.caseId || item.offboardingId || '');
+    const resolvedOffboardingId = String(item.offboardingId || item.caseId || resolvedCaseId || '');
     const resolvedEmployeeId = String(
       item.employeeId || raw.employee?.employeeId || raw.employee?.id || ''
     );
     const numericOffboardingId = Number(raw.id ?? item.id);
     return {
       ...item,
-      id: resolvedId,
-      offboardingId: resolvedId,
+      id: resolvedCaseId,
+      offboardingId: resolvedOffboardingId,
       offboardingRecordId: Number.isNaN(numericOffboardingId) ? undefined : numericOffboardingId,
       offboardingStatus: String(raw.offboardingStatus || item.status || 'INITIATED'),
-      caseId: String(item.caseId || resolvedId),
+      caseId: String(item.caseId || resolvedCaseId),
       employeeId: resolvedEmployeeId,
       offboardingType: (item.offboardingType || 'RESIGNATION') as OffboardingType,
       status: (raw.offboardingStatus || item.status || 'INITIATED') as OffboardingStatus,
