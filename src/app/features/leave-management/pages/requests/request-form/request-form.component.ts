@@ -1,5 +1,15 @@
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LeaveManagementRequestService } from '../../../services/leave-request.service';
 import { LeaveManagementTypeService } from '../../../services/leave-type.service';
@@ -12,7 +22,20 @@ import { AuthService } from '../../../../authentication/services/auth';
     selector: 'app-request-form',
     templateUrl: './request-form.component.html',
     styleUrls: ['./request-form.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        RouterModule,
+        ReactiveFormsModule,
+        NzBreadCrumbModule,
+        NzCardModule,
+        NzFormModule,
+        NzSelectModule,
+        NzDatePickerModule,
+        NzRadioModule,
+        NzInputModule,
+        NzButtonModule
+    ]
 })
 export class RequestFormComponent implements OnInit {
     validateForm!: FormGroup;

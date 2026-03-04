@@ -1,13 +1,40 @@
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzGridModule } from 'ng-zorro-antd/grid';
 import { LeaveManagementTypeService } from '../../../services/leave-type.service';
 import { LeaveType } from '../../../models/leave-type.model';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-leave-type-config',
   templateUrl: './leave-type-config.component.html',
-  standalone: false
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    NzTableModule,
+    NzTagModule,
+    NzButtonModule,
+    NzIconModule,
+    NzModalModule,
+    NzFormModule,
+    NzInputModule,
+    NzSelectModule,
+    NzInputNumberModule,
+    NzCheckboxModule,
+    NzGridModule
+  ]
 })
 export class LeaveTypeConfigComponent implements OnInit {
   leaveTypes = signal<LeaveType[]>([]);

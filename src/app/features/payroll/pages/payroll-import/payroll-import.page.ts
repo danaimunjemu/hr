@@ -1,145 +1,155 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PayrollService } from '../../services/payroll.service';
+import { Router, RouterModule } from '@angular/router';
+import { PayrollDataService } from '../../services/payroll-data.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { PayrollRecord } from '../../models/payroll-record.model';
-import { v4 as uuidv4 } from 'uuid';
 import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CompaniesService, Company } from '../../../settings/services/companies.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-payroll-import',
   standalone: true,
-  imports: [CommonModule, NzPageHeaderModule, NzCardModule, NzIconModule, NzButtonModule, NzTableModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NzPageHeaderModule,
+    NzCardModule,
+    NzIconModule,
+    NzButtonModule,
+    NzFormModule,
+    NzSelectModule,
+    NzInputNumberModule,
+    NzGridModule
+  ],
   template: `
     <div class="p-6">
-      <nz-page-header nzTitle="Payroll File Import">
-        <nz-page-header-subtitle>Upload CSV file from payroll system</nz-page-header-subtitle>
+      <nz-page-header nzTitle="Payroll Data Upload" (nzBack)="goBack()" nzBackIcon>
+        <nz-page-header-subtitle>Upload Excel/CSV file to staged area</nz-page-header-subtitle>
       </nz-page-header>
 
       <nz-card>
-        <div class="flex flex-col items-center p-12 border-2 border-dashed border-gray-300 rounded">
-          <nz-icon nzType="cloud-upload" style="font-size: 48px" class="text-blue-500 mb-4"></nz-icon>
-          <p class="text-gray-500 mb-6">Required Columns: employeeId, employeeName, company, department, role, grossBasic, overtimeHours, grossOvertime, paye, leaveDaysTaken, leavePayableAmount, period</p>
-          
-          <input type="file" #fileInput (change)="onFileSelected($event)" accept=".csv" class="hidden">
-          <button nz-button nzType="primary" (click)="fileInput.click()" [nzLoading]="importing">
-            Select CSV File to Import
-          </button>
-        </div>
-      </nz-card>
+        <form nz-form [formGroup]="uploadForm" (ngSubmit)="submitUpload()" nzLayout="vertical">
+          <div nz-row [nzGutter]="16">
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label nzRequired>Company</nz-form-label>
+                <nz-form-control nzErrorTip="Please select a company">
+                  <nz-select formControlName="companyId" nzPlaceHolder="Select company">
+                    <nz-option *ngFor="let c of companies()" [nzValue]="c.id" [nzLabel]="c.name"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label nzRequired>Year</nz-form-label>
+                <nz-form-control nzErrorTip="Please enter year">
+                  <nz-input-number formControlName="year" [nzMin]="2020" [nzMax]="2100" class="w-full"></nz-input-number>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label nzRequired>Month</nz-form-label>
+                <nz-form-control nzErrorTip="Please select month">
+                  <nz-select formControlName="month">
+                    <nz-option *ngFor="let m of months" [nzValue]="m.value" [nzLabel]="m.label"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
 
-      <div *ngIf="importedRecords.length > 0" class="mt-6">
-        <nz-table #importTable [nzData]="importedRecords" nzTitle="Preview Imported Records">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Company</th>
-              <th>Gross Basic</th>
-              <th>Period</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let data of importTable.data">
-              <td>{{ data.employeeId }}</td>
-              <td>{{ data.employeeName }}</td>
-              <td>{{ data.company }}</td>
-              <td>{{ data.grossBasic | number:'1.2-2' }}</td>
-              <td>{{ data.period }}</td>
-            </tr>
-          </tbody>
-        </nz-table>
-        <div class="flex justify-end mt-4">
-          <button nz-button nzType="primary" (click)="confirmImport()">Confirm & Store in DB</button>
-        </div>
-      </div>
+          <div class="mt-4 flex flex-col items-center p-12 border-2 border-dashed border-gray-300 rounded bg-gray-50">
+            <nz-icon nzType="file-excel" style="font-size: 48px" class="text-green-600 mb-4"></nz-icon>
+            <p class="text-gray-500 mb-6" *ngIf="!selectedFile">Select Excel or CSV file to stage rows</p>
+            <p class="text-blue-600 font-bold mb-6" *ngIf="selectedFile">{{ selectedFile.name }}</p>
+            
+            <input type="file" #fileInput (change)="onFileSelected($event)" accept=".csv,.xlsx,.xls" class="hidden">
+            <button nz-button type="button" (click)="fileInput.click()">
+              {{ selectedFile ? 'Change File' : 'Select File' }}
+            </button>
+          </div>
+
+          <div class="flex justify-end mt-8">
+            <button nz-button nzType="primary" [nzLoading]="uploading()" [disabled]="!uploadForm.valid || !selectedFile">
+              Upload and Stage Data
+            </button>
+          </div>
+        </form>
+      </nz-card>
     </div>
   `
 })
 export class PayrollImportPage {
-  importing = false;
-  importedRecords: PayrollRecord[] = [];
+  uploadForm: FormGroup;
+  companies = signal<Company[]>([]);
+  uploading = signal<boolean>(false);
+  selectedFile: File | null = null;
+
+  months = [
+    { label: 'January', value: 1 }, { label: 'February', value: 2 }, { label: 'March', value: 3 },
+    { label: 'April', value: 4 }, { label: 'May', value: 5 }, { label: 'June', value: 6 },
+    { label: 'July', value: 7 }, { label: 'August', value: 8 }, { label: 'September', value: 9 },
+    { label: 'October', value: 10 }, { label: 'November', value: 11 }, { label: 'December', value: 12 }
+  ];
 
   constructor(
-    private payrollService: PayrollService,
-    private message: NzMessageService
-  ) { }
+    private fb: FormBuilder,
+    private payrollDataService: PayrollDataService,
+    private companiesService: CompaniesService,
+    private message: NzMessageService,
+    private router: Router
+  ) {
+    const now = new Date();
+    this.uploadForm = this.fb.group({
+      companyId: [null, [Validators.required]],
+      year: [now.getFullYear(), [Validators.required]],
+      month: [now.getMonth() + 1, [Validators.required]]
+    });
+    this.loadCompanies();
+  }
+
+  loadCompanies() {
+    this.companiesService.getCompanies().subscribe(res => this.companies.set(res));
+  }
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
-      this.importing = true;
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        const text = e.target.result;
-        this.parseCsv(text);
-      };
-      reader.readAsText(file);
+      this.selectedFile = file;
     }
   }
 
-  private parseCsv(text: string) {
-    const lines = text.split('\n');
-    const header = lines[0].split(',').map(h => h.trim().toLowerCase());
+  submitUpload() {
+    if (this.uploadForm.valid && this.selectedFile) {
+      this.uploading.set(true);
+      const { companyId, year, month } = this.uploadForm.value;
 
-    // Simple validation
-    const required = ['employeeid', 'employeename', 'company', 'department', 'role', 'grossbasic', 'overtimehours', 'grossovertime', 'paye', 'leavedaystaken', 'leavepayableamount', 'period'];
-    const missing = required.filter(r => !header.includes(r));
-
-    if (missing.length > 0) {
-      this.message.error(`Missing columns: ${missing.join(', ')}`);
-      this.importing = false;
-      return;
+      this.payrollDataService.upload(this.selectedFile, companyId, year, month)
+        .pipe(finalize(() => this.uploading.set(false)))
+        .subscribe({
+          next: (res) => {
+            this.message.success('Payroll data uploaded and staged successfully.');
+            this.router.navigate(['/app/payroll/batch', res.id]);
+          },
+          error: () => this.message.error('Failed to upload payroll data.')
+        });
     }
-
-    const records: PayrollRecord[] = [];
-    for (let i = 1; i < lines.length; i++) {
-      if (!lines[i].trim()) continue;
-      const values = lines[i].split(',').map(v => v.trim());
-      const record: any = { id: uuidv4() };
-
-      header.forEach((h, index) => {
-        const val = values[index];
-        if (['employeeid', 'grossbasic', 'overtimehours', 'grossovertime', 'paye', 'leavedaystaken', 'leavepayableamount'].includes(h)) {
-          record[this.mapHeaderToKey(h)] = Number(val);
-        } else {
-          record[this.mapHeaderToKey(h)] = val;
-        }
-      });
-      records.push(record as PayrollRecord);
-    }
-
-    this.importedRecords = records;
-    this.importing = false;
-    this.message.info(`Parsed ${records.length} records.`);
   }
 
-  private mapHeaderToKey(header: string): string {
-    const mapping: any = {
-      'employeeid': 'employeeId',
-      'employeename': 'employeeName',
-      'company': 'company',
-      'department': 'department',
-      'role': 'role',
-      'grossbasic': 'grossBasic',
-      'overtimehours': 'overtimeHours',
-      'grossovertime': 'grossOvertime',
-      'paye': 'paye',
-      'leavedaystaken': 'leaveDaysTaken',
-      'leavepayableamount': 'leavePayableAmount',
-      'period': 'period'
-    };
-    return mapping[header];
-  }
-
-  confirmImport() {
-    this.payrollService.importRecords(this.importedRecords).subscribe(() => {
-      this.message.success('Successfully imported and saved to browser database.');
-      this.importedRecords = [];
-    });
+  goBack() {
+    window.history.back();
   }
 }

@@ -6,20 +6,8 @@
     </nz-page-header-tags>
     <nz-page-header-extra>
         <nz-space>
-            <button *nzSpaceItem nz-button nz-dropdown [nzDropdownMenu]="statusMenu">
-                Update Status <span nz-icon nzType="down"></span>
-            </button>
-            <nz-dropdown-menu #statusMenu="nzDropdownMenu">
-                <ul nz-menu>
-                    <li nz-menu-item (click)="updateStatus('Review')">Review</li>
-                    <li nz-menu-item (click)="updateStatus('Interview')">Interview</li>
-                    <li nz-menu-item (click)="updateStatus('Offer')">Offer</li>
-                    <li nz-menu-item (click)="updateStatus('Rejected')" nzDanger>Reject</li>
-                    <li nz-menu-item (click)="updateStatus('Hired')">Hired</li>
-                </ul>
-            </nz-dropdown-menu>
-            <button *nzSpaceItem nz-button nzType="primary" [routerLink]="['../edit', candidate()?.id]">
-                <span nz-icon nzType="edit"></span> Edit Profile
+            <button *ngIf="candidate()?.status !== 'Hired'" nz-button nzType="primary" (click)="openOfferModal()">
+                <span nz-icon nzType="safety-certificate"></span> Offer Job
             </button>
         </nz-space>
     </nz-page-header-extra>
@@ -112,23 +100,32 @@
             <!-- Right Column: Context & Metadata -->
             <div nz-col [nzSpan]="8">
                 <nz-card nzTitle="Applied Vacancy" class="mb-6">
-                    <div class="mb-4">
-                        <div class="text-xs uppercase text-gray-400 font-semibold mb-1">Position</div>
-                        <div class="font-bold text-blue-600">{{ candidate()!.jobVacancy.position.name }}</div>
-                    </div>
-                    <div class="mb-4">
-                        <div class="text-xs uppercase text-gray-400 font-semibold mb-1">Unit</div>
-                        <div>{{ candidate()!.jobVacancy.organisationalUnit.name }}</div>
-                    </div>
-                    <div class="mb-4">
-                        <div class="text-xs uppercase text-gray-400 font-semibold mb-1">Hiring Manager</div>
-                        <div>{{ candidate()!.jobVacancy.hiringManager.firstName }} {{
-                            candidate()!.jobVacancy.hiringManager.lastName }}</div>
-                    </div>
-                    <button nz-button nzBlock
-                        [routerLink]="['/app/recruitment/job-vacancies', candidate()!.jobVacancy.id]">
-                        View Vacancy Details
-                    </button>
+                    <ng-container *ngIf="candidate()?.jobVacancy as vacancy; else noVacancy">
+                        <div class="mb-4">
+                            <div class="text-xs uppercase text-gray-400 font-semibold mb-1">Position</div>
+                            <div class="font-bold text-blue-600">{{ vacancy.position.name || '-' }}</div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="text-xs uppercase text-gray-400 font-semibold mb-1">Unit</div>
+                            <div>{{ vacancy.organisationalUnit.name || '-' }}</div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="text-xs uppercase text-gray-400 font-semibold mb-1">Hiring Manager</div>
+                            <div>
+                                <ng-container *ngIf="vacancy.hiringManager as manager; else noManager">
+                                    {{ manager.firstName }} {{ manager.lastName }}
+                                </ng-container>
+                                <ng-template #noManager>-</ng-template>
+                            </div>
+                        </div>
+                        <button nz-button nzBlock *ngIf="vacancy.id"
+                            [routerLink]="['/app/recruitment/job-vacancies', vacancy.id]">
+                            View Vacancy Details
+                        </button>
+                    </ng-container>
+                    <ng-template #noVacancy>
+                        <nz-empty nzNotFoundImage="simple" nzNotFoundContent="No Vacancy Linked"></nz-empty>
+                    </ng-template>
                 </nz-card>
 
                 <nz-card nzTitle="Compensation & Availability" class="mb-6">
@@ -158,4 +155,34 @@
             </div>
         </div>
     </nz-spin>
+
+    <!-- Job Offer Modal -->
+    <nz-modal [(nzVisible)]="isOfferModalVisible" nzTitle="Assign Job Offer" (nzOnCancel)="closeOfferModal()"
+        (nzOnOk)="submitOffer()" [nzOkLoading]="isSubmittingOffer()" [nzOkDisabled]="offerForm.invalid">
+        <ng-container *nzModalContent>
+            <form nz-form [formGroup]="offerForm" nzLayout="vertical">
+                <nz-form-item>
+                    <nz-form-label nzRequired>Offered Salary</nz-form-label>
+                    <nz-form-control nzErrorTip="Please input a valid salary amount">
+                        <nz-input-number formControlName="offeredSalary" [nzMin]="0" [nzStep]="100" class="w-full"
+                            nzPlaceHolder="e.g. 5000"></nz-input-number>
+                    </nz-form-control>
+                </nz-form-item>
+
+                <nz-form-item>
+                    <nz-form-label nzRequired>Offer Date</nz-form-label>
+                    <nz-form-control nzErrorTip="Please select an offer date">
+                        <nz-date-picker formControlName="offerDate" class="w-full"></nz-date-picker>
+                    </nz-form-control>
+                </nz-form-item>
+
+                <nz-form-item>
+                    <nz-form-label nzRequired>Expiry Date</nz-form-label>
+                    <nz-form-control nzErrorTip="Please select an expiry date">
+                        <nz-date-picker formControlName="expiryDate" class="w-full"></nz-date-picker>
+                    </nz-form-control>
+                </nz-form-item>
+            </form>
+        </ng-container>
+    </nz-modal>
 </div>

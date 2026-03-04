@@ -6,13 +6,17 @@ import { PayrollImportPage } from './pages/payroll-import/payroll-import.page';
 import { PayslipGeneratorPage } from './pages/payslip-generator/payslip-generator.page';
 import { EmployeePayslipsPage } from './pages/employee-payslips/employee-payslips.page';
 import { PayrollAnalyticsPage } from './pages/payroll-analytics/payroll-analytics.page';
+import { PayrollBatchListPage } from './pages/payroll-batch-list/payroll-batch-list.page';
+import { PayrollBatchDetailsPage } from './pages/payroll-batch-details/payroll-batch-details.page';
 
 const routes: Routes = [
+    { path: 'batches', component: PayrollBatchListPage },
+    { path: 'batch/:id', component: PayrollBatchDetailsPage },
     { path: 'import', component: PayrollImportPage },
     { path: 'generate', component: PayslipGeneratorPage },
     { path: 'my-payslips', component: EmployeePayslipsPage },
     { path: 'analytics', component: PayrollAnalyticsPage },
-    { path: '', redirectTo: 'analytics', pathMatch: 'full' }
+    { path: '', redirectTo: 'batches', pathMatch: 'full' }
 ];
 
 @NgModule({
@@ -22,7 +26,9 @@ const routes: Routes = [
         PayrollImportPage,
         PayslipGeneratorPage,
         EmployeePayslipsPage,
-        PayrollAnalyticsPage
+        PayrollAnalyticsPage,
+        PayrollBatchListPage,
+        PayrollBatchDetailsPage
     ]
 })
 export class PayrollModule { }

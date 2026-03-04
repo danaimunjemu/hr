@@ -103,10 +103,6 @@ export class TopNav implements OnInit {
       title: 'Onboarding',
       items: [{ label: 'Onboarding', link: '/app/onboarding' }]
     },
-    'recruitment': {
-      title: 'Recruitment',
-      items: [{ label: 'Recruitment', link: '/app/recruitment' }]
-    },
     'reports': {
       title: 'Reports',
       items: [{ label: 'Reports', link: '/app/reports' }]
@@ -143,6 +139,14 @@ export class TopNav implements OnInit {
         { label: 'Analytics', link: '/app/payroll/analyti' },
         { label: 'Payslip Generator', link: '/app/payroll/generate' },
         { label: 'My Payslips', link: '/app/payroll/my-payslips' }
+      ]
+    },
+    'recruitment': {
+      title: 'Recruitment',
+      items: [
+        { label: 'Dashboard', link: '/app/recruitment' },
+        { label: 'Vacancies', link: '/app/recruitment/job-vacancies' },
+        { label: 'Candidates', link: '/app/recruitment/candidates' },
       ]
     }
   };
