@@ -111,7 +111,7 @@
       </thead>
       <tbody>
         @for (data of basicTable.data; track data.id) {
-          <tr>
+          <tr [routerLink]="['/app/employees/view', data.id]" style="cursor: pointer;">
             <td>{{ data.employeeNumber }}</td>
             <td>{{ employeeName(data) }}</td>
             <td>{{ data.email }}</td>

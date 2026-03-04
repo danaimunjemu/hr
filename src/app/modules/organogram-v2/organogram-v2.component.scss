@@ -9,7 +9,12 @@
   padding: 8px 24px !important;
   background: transparent;
 }
-
+::ng-deep .ant-page-header-footer {
+    margin-top: 0 !important;
+}
+// ::ng-deep .ant-btn:hover, .ant-btn:focus {
+//     border: none !important; 
+// }
 .content {
   display: flex;
 }

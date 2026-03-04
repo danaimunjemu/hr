@@ -21,6 +21,7 @@
  
 
 <button
+[nzSize]="'small'"
   nz-button
   nzShape="circle"
   nz-tooltip
@@ -31,7 +32,7 @@
 </button>
 
 <button
-  nz-button
+  nz-button [nzSize]="'small'"
   nzShape="circle"
   nz-tooltip
   nzTooltipTitle="Next"
@@ -75,7 +76,7 @@
       <!-- View Modes -->
       <!-- <nz-space nzSize="small"> -->
         <button 
-          nz-button 
+          nz-button  [nzSize]="'small'"
           nzShape="circle" 
           nz-tooltip 
           nzTooltipTitle="Compact View"
@@ -84,13 +85,13 @@
           <span nz-icon nzType="compress"></span>
         </button>
         <button 
-          nz-button 
+          nz-button  [nzSize]="'small'"
           nzShape="circle" 
           nz-tooltip 
           nzTooltipTitle="Horizontal View"
           [nzType]="viewMode === 'horizontal' ? 'primary' : 'default'"
           (click)="setViewMode('horizontal')">
-          <span nz-icon nzType="bars"></span>
+          <span nz-icon nzType="column-height"></span>
         </button>
       <!-- </nz-space> -->
 
@@ -98,7 +99,7 @@
       <!-- <nz-space nzSize="small"> -->
     <!-- Layout Directions, only in compact view -->
 <ng-container *ngIf="viewMode === 'compact'">
-  <button
+  <button [nzSize]="'small'"
     nz-button
     nzShape="circle"
     nz-tooltip
@@ -109,7 +110,7 @@
   </button>
 
   <button
-    nz-button
+    nz-button [nzSize]="'small'"
     nzShape="circle"
     nz-tooltip
     nzTooltipTitle="Right Layout"
@@ -119,7 +120,7 @@
   </button>
 
   <button
-    nz-button
+    nz-button [nzSize]="'small'"
     nzShape="circle"
     nz-tooltip
     nzTooltipTitle="Left Layout"
@@ -128,7 +129,7 @@
     <span nz-icon nzType="left"></span>
   </button>
 
-  <button
+  <button [nzSize]="'small'"
     nz-button
     nzShape="circle"
     nz-tooltip
@@ -159,41 +160,45 @@
       
         
       </nz-space> -->
-        <button nz-button nzShape="circle" nz-tooltip nzTooltipTitle="Zoom Out" (click)="zoomOut()">
-          <span nz-icon nzType="minus"></span>
+        <button [nzSize]="'small'" nz-button nzShape="circle" nz-tooltip nzTooltipTitle="Zoom Out" (click)="zoomOut()">
+          <span nz-icon nzType="zoom-in"></span>
         </button>
-  <button nz-button nzShape="circle" nz-tooltip nzTooltipTitle="Zoom In" (click)="zoomIn()">
-          <span nz-icon nzType="plus"></span>
+  <button [nzSize]="'small'" nz-button nzShape="circle" nz-tooltip nzTooltipTitle="Zoom In" (click)="zoomIn()">
+          <span nz-icon nzType="zoom-out"></span>
         </button>
-        <button nz-button nzShape="circle" nz-tooltip nzTooltipTitle="Open All" (click)="openAll()">
-          <span nz-icon nzType="folder-open"></span>
+        <button [nzSize]="'small'" nz-button nzShape="circle" nz-tooltip nzTooltipTitle="Open All" (click)="openAll()">
+          <span nz-icon nzType="plus-square"></span>
         </button>
-  <button nz-button nzShape="circle" nz-tooltip nzTooltipTitle="Collapse All" (click)="collapseAll()">
-          <span nz-icon nzType="folder"></span>
+  <button [nzSize]="'small'" nz-button nzShape="circle" nz-tooltip nzTooltipTitle="Collapse All" (click)="collapseAll()">
+          <span nz-icon nzType="minus-square"></span>
         </button>
-    <button
+    <button [nzSize]="'small'"
   nz-button
   nzShape="circle"
   nz-tooltip
   nzTooltipTitle="Level Collapse"
-  [nzType]="collapseByLevelEnabled ? 'primary' : 'default'"
+  [nzType]="'default'"
   (click)="toggleCollapseByLevel()">
-  <span nz-icon [nzType]="collapseByLevelEnabled ? 'unordered-list' : 'ordered-list'"></span>
+  <span nz-icon [nzType]="collapseByLevelEnabled ? 'cluster' : 'deployment-unit'"></span>
 </button>
 
-      <button 
+      <button [nzSize]="'small'"
         nz-button 
         nzShape="circle" 
         nz-tooltip 
-        nzTooltipTitle="Download HD PDF"
-        nzType="primary"
+        nzTooltipTitle="Download PDF"
         (click)="downloadHdPdf()">
-        <span nz-icon nzType="download"></span>
+<span
+  nz-icon
+  nzType="file-pdf"
+  nzTheme="twotone"
+  nzTwotoneColor="#f5222d"> 
+</span>
       </button>
-      <button nz-button nzShape="circle" nz-tooltip nzTooltipTitle="Fit Screen" (click)="fitScreen()">
+      <button [nzSize]="'small'" nz-button nzShape="circle" nz-tooltip nzTooltipTitle="Fit Screen" (click)="fitScreen()">
           <span nz-icon nzType="fullscreen"></span>
         </button>
-      <nz-select
+      <nz-select [nzSize]="'small'"
   nzShowSearch
   nzAllowClear
   nzPlaceHolder="Company"
@@ -201,7 +206,7 @@
   (ngModelChange)="onCompanyChange($event)"
   style="min-width: 180px;"
 >
-  <nz-option
+  <nz-option 
     *ngFor="let c of companies"
     [nzLabel]="c.name"
     [nzValue]="c.id">
