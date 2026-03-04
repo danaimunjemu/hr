@@ -136,9 +136,9 @@ export class TopNav implements OnInit {
     'payroll': {
       title: 'Payroll',
       items: [
-        { label: 'Analytics', link: '/app/payroll/analyti' },
+        { label: 'Analytics', link: '/app/payroll/analytics' },
         { label: 'Payslip Generator', link: '/app/payroll/generate' },
-        { label: 'My Payslips', link: '/app/payroll/my-payslips' }
+        { label: 'My Current Payslip', link: '/app/payroll/my-current-payslip' }
       ]
     },
     'recruitment': {

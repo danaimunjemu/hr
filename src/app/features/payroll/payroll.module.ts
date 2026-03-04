@@ -8,6 +8,7 @@ import { EmployeePayslipsPage } from './pages/employee-payslips/employee-payslip
 import { PayrollAnalyticsPage } from './pages/payroll-analytics/payroll-analytics.page';
 import { PayrollBatchListPage } from './pages/payroll-batch-list/payroll-batch-list.page';
 import { PayrollBatchDetailsPage } from './pages/payroll-batch-details/payroll-batch-details.page';
+import { MyPayslipPage } from './pages/my-payslip/my-payslip.page';
 
 const routes: Routes = [
     { path: 'batches', component: PayrollBatchListPage },
@@ -15,6 +16,8 @@ const routes: Routes = [
     { path: 'import', component: PayrollImportPage },
     { path: 'generate', component: PayslipGeneratorPage },
     { path: 'my-payslips', component: EmployeePayslipsPage },
+    { path: 'my-current-payslip', component: MyPayslipPage },
+    { path: 'view-payslip/:runId/:employeeId', component: MyPayslipPage },
     { path: 'analytics', component: PayrollAnalyticsPage },
     { path: '', redirectTo: 'batches', pathMatch: 'full' }
 ];
@@ -28,7 +31,8 @@ const routes: Routes = [
         EmployeePayslipsPage,
         PayrollAnalyticsPage,
         PayrollBatchListPage,
-        PayrollBatchDetailsPage
+        PayrollBatchDetailsPage,
+        MyPayslipPage
     ]
 })
 export class PayrollModule { }

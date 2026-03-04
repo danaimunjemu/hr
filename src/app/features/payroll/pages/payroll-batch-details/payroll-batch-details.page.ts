@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PayrollDataService } from '../../services/payroll-data.service';
 import { PayrollBatch, PayrollBatchItem, Page, PayrollDecisionRequest } from '../../models/payroll-batch.model';
 import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
@@ -48,7 +48,7 @@ import { finalize } from 'rxjs/operators';
             <nz-tag [nzColor]="getStatusColor(b.status)">{{ b.status }}</nz-tag>
           </nz-page-header-subtitle>
           <nz-page-header-extra>
-            <nz-space *ngIf="b.status === 'PENDING' || b.status === 'DRAFT'">
+            <nz-space *ngIf="b.status === 'PENDING' || b.status === 'DRAFT' || b.status === 'SUCCESS'">
               <button nz-button nzType="primary" (click)="openDecisionModal('APPROVE')" [nzLoading]="actionLoading()">Approve</button>
               <button nz-button nzType="primary" nzDanger (click)="openDecisionModal('REJECT')" [nzLoading]="actionLoading()">Reject</button>
             </nz-space>
@@ -84,6 +84,7 @@ import { finalize } from 'rxjs/operators';
                 <th>Allowances</th>
                 <th>Overtime</th>
                 <th>Status/Errors</th>
+                <th *ngIf="batch()?.payrollRunId">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -103,6 +104,11 @@ import { finalize } from 'rxjs/operators';
                   <div *ngFor="let err of data.rowErrors">
                     <nz-tag nzColor="error" [style.margin-bottom]="'4px'">{{ err }}</nz-tag>
                   </div>
+                </td>
+                <td *ngIf="batch()?.payrollRunId">
+                  <button nz-button nzType="link" (click)="viewPayslip(data)">
+                    <span nz-icon nzType="file-text"></span> View Payslip
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -145,6 +151,7 @@ export class PayrollBatchDetailsPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private payrollDataService: PayrollDataService,
     private message: NzMessageService
   ) { }
@@ -154,6 +161,13 @@ export class PayrollBatchDetailsPage implements OnInit {
     if (id) {
       this.loadBatch(id);
       this.loadItems(id);
+    }
+  }
+
+  viewPayslip(item: PayrollBatchItem): void {
+    const runId = this.batch()?.payrollRunId;
+    if (runId) {
+      this.router.navigate(['/app/payroll/view-payslip', runId, item.employeeId]);
     }
   }
 

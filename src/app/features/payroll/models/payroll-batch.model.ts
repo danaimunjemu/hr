@@ -21,6 +21,7 @@ export interface PayrollBatch {
     warningsCount: number;
     errorsCount: number;
     fileErrorMessage: string | null;
+    payrollRunId?: number;
 }
 
 export interface PayrollBatchItem {
