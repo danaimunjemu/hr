@@ -1,12 +1,12 @@
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, signal, effect } from '@angular/core';
 import { Chart } from '@antv/g2';
-import { finalize } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 
 // Services (Keep for top cards only)
 import { EmployeesService, Employee } from '../../../employees/services/employees.service';
 import { OhsService } from '../../../health-and-safety/services/ohs.service';
 import { ErCaseService } from '../../../er/cases/services/er-case.service';
-import { SafetyIncident } from '../../../health-and-safety/models/ohs.model';
+import { SafetyIncident, NearMissReport, MedicalSurveillance } from '../../../health-and-safety/models/ohs.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,11 +17,13 @@ import { SafetyIncident } from '../../../health-and-safety/models/ohs.model';
 export class DashboardComponent implements OnInit {
   // Data Signals
   totalEmployees = signal<number>(0);
-  safetyIncidentsCount = signal<number>(0);
+  totalOhsReportsCount = signal<number>(0);
   erCasesCount = signal<number>(0);
 
   employeesList = signal<Employee[]>([]);
   incidentsList = signal<SafetyIncident[]>([]);
+  nearMissesList = signal<NearMissReport[]>([]);
+  medicalSurveillancesList = signal<MedicalSurveillance[]>([]);
 
   // Loading State
   loading = signal<boolean>(true);
@@ -87,15 +89,23 @@ export class DashboardComponent implements OnInit {
         error: (err) => console.error('Failed to fetch employees', err)
       });
 
-    // 2. Safety Incidents
-    this.ohsService.getSafetyIncidents()
+    // 2. Health & Safety Data (Incidents, Near Misses, Medical)
+    forkJoin({
+      incidents: this.ohsService.getSafetyIncidents(),
+      nearMisses: this.ohsService.getNearMissReports(),
+      medicalSurveillances: this.ohsService.getMedicalSurveillances()
+    })
       .pipe(finalize(() => checkDone()))
       .subscribe({
-        next: (data) => {
-          this.incidentsList.set(data);
-          this.safetyIncidentsCount.set(data.length);
+        next: ({ incidents, nearMisses, medicalSurveillances }) => {
+          this.incidentsList.set(incidents);
+          this.nearMissesList.set(nearMisses);
+          this.medicalSurveillancesList.set(medicalSurveillances);
+
+          const total = incidents.length + nearMisses.length + medicalSurveillances.length;
+          this.totalOhsReportsCount.set(total);
         },
-        error: (err) => console.error('Failed to fetch incidents', err)
+        error: (err) => console.error('Failed to fetch OHS data', err)
       });
 
     // 3. ER Cases
@@ -195,21 +205,25 @@ export class DashboardComponent implements OnInit {
     this.barContainer.nativeElement.innerHTML = '';
 
     const employees = this.employeesList();
-    const statusCounts: { [key: string]: number } = {};
+    const departmentCounts: { [key: string]: number } = {};
 
     employees.forEach(emp => {
-      const status = emp.employmentStatus || 'Unknown';
-      statusCounts[status] = (statusCounts[status] || 0) + 1;
+      // Since all dataset items are "ACTIVE", distributing by Organizational Unit or Group is more insightful
+      const department = emp.organizationalUnit?.name || emp.group?.name || 'Unassigned';
+      departmentCounts[department] = (departmentCounts[department] || 0) + 1;
     });
 
-    const data = Object.keys(statusCounts).map(status => ({
-      status: status,
-      count: statusCounts[status]
+    const data = Object.keys(departmentCounts).map(dept => ({
+      category: dept,
+      count: departmentCounts[dept]
     }));
 
     if (data.length === 0) {
-      data.push({ status: 'No Data', count: 0 });
+      data.push({ category: 'No Data', count: 0 });
     }
+
+    // Sort by count descending so the largest bars are first
+    data.sort((a, b) => b.count - a.count);
 
     const chart = new Chart({
       container: this.barContainer.nativeElement,
@@ -221,11 +235,11 @@ export class DashboardComponent implements OnInit {
 
     chart
       .interval()
-      .encode('x', 'status')
+      .encode('x', 'category')
       .encode('y', 'count')
-      .encode('color', 'status')
+      .encode('color', 'category')
       .scale('color', {
-        range: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#8b5cf6', '#ec4899']
+        range: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#8b5cf6', '#ec4899', '#14b8a6']
       })
       .label({
         text: 'count',
@@ -233,7 +247,11 @@ export class DashboardComponent implements OnInit {
           fontWeight: 'bold',
           offset: 14,
         },
-      });
+      })
+      .tooltip((d) => ({
+        name: 'Employees',
+        value: d.count
+      }));
 
     chart.render();
   }
@@ -242,22 +260,14 @@ export class DashboardComponent implements OnInit {
     if (!this.donutContainer) return;
     this.donutContainer.nativeElement.innerHTML = '';
 
-    const incidents = this.incidentsList();
-    const typeCounts: { [key: string]: number } = {};
+    const distributionData = [
+      { category: 'Safety Incidents', value: this.incidentsList().length },
+      { category: 'Near Misses', value: this.nearMissesList().length },
+      { category: 'Medical Surveillance', value: this.medicalSurveillancesList().length }
+    ];
 
-    incidents.forEach(inc => {
-      const type = inc.incidentType || 'Unknown';
-      typeCounts[type] = (typeCounts[type] || 0) + 1;
-    });
-
-    const data = Object.keys(typeCounts).map(type => ({
-      type: type.replace(/_/g, ' '),
-      value: typeCounts[type]
-    }));
-
-    if (data.length === 0) {
-      data.push({ type: 'No Data', value: 0 });
-    }
+    const total = distributionData.reduce((sum, item) => sum + item.value, 0);
+    const data = total === 0 ? [{ category: 'No Data', value: 1 }] : distributionData;
 
     const chart = new Chart({
       container: this.donutContainer.nativeElement,
@@ -268,27 +278,27 @@ export class DashboardComponent implements OnInit {
     chart.data(data);
 
     chart
-      .coordinate({ type: 'theta', innerRadius: 0.6 });
+      .coordinate({ type: 'theta', innerRadius: 0.5 });
 
     chart
       .interval()
       .transform({ type: 'stackY' })
       .encode('y', 'value')
-      .encode('color', 'type')
-      .scale('color', {
-        range: ['#ef4444', '#f59e0b', '#6366f1', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899']
-      })
-      .label({
+      .encode('color', 'category')
+      .label(total === 0 ? false : {
         text: 'value',
         style: {
           fontWeight: 'bold',
           offset: 14,
         },
       })
-      .tooltip((d) => ({
-        name: d.type,
+      .scale('color', {
+        range: total === 0 ? ['#e5e7eb'] : ['#1677ff', '#fa8c16', '#13c2c2']
+      })
+      .tooltip((d) => total === 0 ? { name: 'No Data', value: 0 } : {
+        name: d.category,
         value: d.value
-      }));
+      });
 
     chart.render();
   }

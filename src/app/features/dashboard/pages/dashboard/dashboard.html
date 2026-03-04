@@ -22,8 +22,8 @@
       </div>
       <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
         <nz-card class="top-card">
-          <nz-statistic [nzValue]="safetyIncidentsCount()" [nzTitle]="'OHS Incidents'" [nzPrefix]="prefixTplSafety"
-            [nzValueStyle]="{ color: '#CF1322' }"></nz-statistic>
+          <nz-statistic [nzValue]="totalOhsReportsCount()" [nzTitle]="'OHS Incidents Statistic'"
+            [nzPrefix]="prefixTplSafety" [nzValueStyle]="{ color: '#CF1322' }"></nz-statistic>
           <ng-template #prefixTplSafety><span nz-icon nzType="alert"></span></ng-template>
         </nz-card>
       </div>
@@ -39,7 +39,7 @@
     <!-- Row 1: Employment Status & OHS Incidents -->
     <div nz-row [nzGutter]="24" class="mb-6">
       <div nz-col [nzXs]="24" [nzLg]="12">
-        <nz-card nzTitle="Employment Status Distribution" class="custom-card">
+        <nz-card nzTitle="Department Distribution" class="custom-card">
           <div #barContainer class="chart-container"></div>
         </nz-card>
       </div>

@@ -1,19 +1,50 @@
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, signal, effect } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzStatisticModule } from 'ng-zorro-antd/statistic';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 import { Chart } from '@antv/g2';
 import { finalize } from 'rxjs';
 import { LeaveManagementRequestService } from '../../services/leave-request.service';
 import { LeaveManagementBalanceService } from '../../services/leave-balance.service';
+import { LeaveManagementTypeService } from '../../services/leave-type.service';
 import { LeaveRequest } from '../../models/leave-request.model';
 import { LeaveBalance } from '../../models/leave-balance.model';
+import { LeaveType } from '../../models/leave-type.model';
 
 @Component({
     selector: 'app-leave-dashboard',
     templateUrl: './leave-dashboard.component.html',
     styleUrls: ['./leave-dashboard.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        RouterModule,
+        FormsModule,
+        NzSelectModule,
+        NzGridModule,
+        NzCardModule,
+        NzStatisticModule,
+        NzSpinModule,
+        NzButtonModule,
+        NzIconModule,
+        NzTableModule,
+        NzTagModule
+    ]
 })
 export class LeaveDashboardComponent implements OnInit {
     loading = signal<boolean>(true);
+
+    leaveTypes = signal<LeaveType[]>([]);
+    selectedLeaveTypeId = signal<number | null>(null);
 
     // Stats Signals
     totalEntitlement = signal<number>(0);
@@ -28,7 +59,8 @@ export class LeaveDashboardComponent implements OnInit {
 
     constructor(
         private requestService: LeaveManagementRequestService,
-        private balanceService: LeaveManagementBalanceService
+        private balanceService: LeaveManagementBalanceService,
+        private typeService: LeaveManagementTypeService
     ) {
         effect(() => {
             if (!this.loading()) {
@@ -46,36 +78,65 @@ export class LeaveDashboardComponent implements OnInit {
 
     private loadDashboardData(): void {
         this.loading.set(true);
-        let completedSub = 0;
-        const checkDone = () => {
-            completedSub++;
-            if (completedSub >= 2) this.loading.set(false);
-        };
 
-        // Load Balances for Stats
-        this.balanceService.getAll().subscribe({
-            next: (balances: LeaveBalance[]) => {
-                const stats = balances.reduce((acc, b) => {
-                    acc.entitlement += (b.entitlement || 0) + (b.carryOver || 0);
-                    acc.taken += (b.taken || 0);
-                    acc.pending += (b.pending || 0);
-                    acc.available += (b.availableBalance || 0);
-                    return acc;
-                }, { entitlement: 0, taken: 0, pending: 0, available: 0 });
-
-                this.totalEntitlement.set(stats.entitlement);
-                this.takenDays.set(stats.taken);
-                this.pendingDays.set(stats.pending);
-                this.availableDays.set(stats.available);
-                checkDone();
+        this.typeService.getAll().subscribe({
+            next: (types: LeaveType[]) => {
+                this.leaveTypes.set(types);
+                if (types.length > 0) {
+                    const firstId = types[0].id;
+                    if (firstId !== undefined) {
+                        this.selectedLeaveTypeId.set(firstId);
+                        this.loadBalancesForType(firstId);
+                    } else {
+                        this.loading.set(false);
+                    }
+                } else {
+                    this.loading.set(false);
+                }
             },
-            error: () => checkDone()
+            error: () => this.loading.set(false)
         });
 
         // Load Recent Requests
-        this.requestService.getAll().pipe(finalize(() => checkDone())).subscribe({
+        this.requestService.getAll().subscribe({
             next: (requests: LeaveRequest[]) => {
                 this.recentRequests.set(requests.slice(0, 5));
+            }
+        });
+    }
+
+    onLeaveTypeChange(id: number | null): void {
+        this.selectedLeaveTypeId.set(id);
+        if (id !== null) {
+            this.loadBalancesForType(id);
+        }
+    }
+
+    private loadBalancesForType(leaveTypeId: number | null): void {
+        if (leaveTypeId === null) return;
+        this.loading.set(true);
+        this.balanceService.getReportBalances(leaveTypeId).pipe(
+            finalize(() => this.loading.set(false))
+        ).subscribe({
+            next: (balances: any[]) => {
+                if (balances && balances.length > 0) {
+                    const stats = balances[0];
+                    this.totalEntitlement.set(stats.entitlement || 0);
+                    this.takenDays.set(stats.taken || 0);
+                    this.pendingDays.set(stats.pending || 0);
+                    this.availableDays.set(stats.availableBalance || 0);
+                } else {
+                    this.totalEntitlement.set(0);
+                    this.takenDays.set(0);
+                    this.pendingDays.set(0);
+                    this.availableDays.set(0);
+                }
+            },
+            error: () => {
+                this.totalEntitlement.set(0);
+                this.takenDays.set(0);
+                this.pendingDays.set(0);
+                this.availableDays.set(0);
             }
         });
     }

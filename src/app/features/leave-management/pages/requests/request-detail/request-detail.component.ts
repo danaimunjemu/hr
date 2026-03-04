@@ -1,5 +1,17 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
+import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
+import { NzSpaceModule } from 'ng-zorro-antd/space';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzTimelineModule } from 'ng-zorro-antd/timeline';
 import { LeaveManagementRequestService } from '../../../services/leave-request.service';
 import { LeaveRequest } from '../../../models/leave-request.model';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -7,7 +19,22 @@ import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'app-leave-request-detail',
-    standalone: false,
+    standalone: true,
+    imports: [
+        CommonModule,
+        RouterModule,
+        NzBreadCrumbModule,
+        NzSpaceModule,
+        NzButtonModule,
+        NzIconModule,
+        NzSpinModule,
+        NzGridModule,
+        NzCardModule,
+        NzDescriptionsModule,
+        NzTagModule,
+        NzDividerModule,
+        NzTimelineModule
+    ],
     templateUrl: './request-detail.component.html',
     styleUrls: ['./request-detail.component.scss']
 })

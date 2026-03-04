@@ -1,4 +1,10 @@
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { LeaveManagementAllocationService } from '../../../services/allocation.service';
 import { LeaveAllocationPolicy } from '../../../models/allocation-policy.model';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -7,7 +13,15 @@ import { finalize } from 'rxjs/operators';
 @Component({
   selector: 'app-allocation-config',
   templateUrl: './allocation-config.component.html',
-  standalone: false
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    NzTableModule,
+    NzButtonModule,
+    NzIconModule,
+    NzSwitchModule
+  ]
 })
 export class AllocationPolicyConfigComponent implements OnInit {
   // policies: LeaveAllocationPolicy[] = [];

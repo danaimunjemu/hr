@@ -34,4 +34,8 @@ export class CandidateService {
     internalEmployeeApply(payload: any): Observable<Candidate> {
         return this.http.post<Candidate>(`${this.apiUrl}/internal-employee-apply`, payload);
     }
+
+    assignJobOffer(payload: { candidateIds: number[], vacancyId: number, offeredSalary: number, offerDate: string, expiryDate: string }): Observable<any> {
+        return this.http.post<any>('http://localhost:8090/api/job-offer/assign', payload);
+    }
 }

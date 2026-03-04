@@ -23,20 +23,26 @@
     <div nz-row [nzGutter]="16" class="stats-row">
       <div nz-col [nzSpan]="6">
         <nz-card>
-          <nz-statistic [nzValue]="incidents().length" [nzTitle]="'Safety Incidents'" [nzPrefix]="prefixSafe"></nz-statistic>
-          <ng-template #prefixSafe><span nz-icon nzType="check-circle" nzTheme="twotone" [nzTwotoneColor]="'#52c41a'"></span></ng-template>
+          <nz-statistic [nzValue]="incidents().length" [nzTitle]="'Safety Incidents'"
+            [nzPrefix]="prefixSafe"></nz-statistic>
+          <ng-template #prefixSafe><span nz-icon nzType="check-circle" nzTheme="twotone"
+              [nzTwotoneColor]="'#52c41a'"></span></ng-template>
         </nz-card>
       </div>
       <div nz-col [nzSpan]="6">
         <nz-card>
-          <nz-statistic [nzValue]="nearMisses().length" [nzTitle]="'Near Misses'" [nzPrefix]="prefixWarn"></nz-statistic>
-          <ng-template #prefixWarn><span nz-icon nzType="warning" nzTheme="twotone" [nzTwotoneColor]="'#faad14'"></span></ng-template>
+          <nz-statistic [nzValue]="nearMisses().length" [nzTitle]="'Near Misses'"
+            [nzPrefix]="prefixWarn"></nz-statistic>
+          <ng-template #prefixWarn><span nz-icon nzType="warning" nzTheme="twotone"
+              [nzTwotoneColor]="'#faad14'"></span></ng-template>
         </nz-card>
       </div>
       <div nz-col [nzSpan]="6">
         <nz-card>
-          <nz-statistic [nzValue]="medicalSurveillances().length" [nzTitle]="'Medical Surveillance'" [nzPrefix]="prefixMedical"></nz-statistic>
-          <ng-template #prefixMedical><span nz-icon nzType="medicine-box" nzTheme="twotone" [nzTwotoneColor]="'#13c2c2'"></span></ng-template>
+          <nz-statistic [nzValue]="medicalSurveillances().length" [nzTitle]="'Medical Surveillance'"
+            [nzPrefix]="prefixMedical"></nz-statistic>
+          <ng-template #prefixMedical><span nz-icon nzType="medicine-box" nzTheme="twotone"
+              [nzTwotoneColor]="'#13c2c2'"></span></ng-template>
         </nz-card>
       </div>
       <div nz-col [nzSpan]="6">
@@ -65,10 +71,7 @@
 
     <nz-card nzTitle="Operational Records" class="content-card">
       <div class="mb-4">
-        <nz-segmented
-          [ngModel]="activeTab()"
-          (ngModelChange)="activeTab.set($event)"
-          [nzOptions]="tabOptions">
+        <nz-segmented [ngModel]="activeTab()" (ngModelChange)="activeTab.set($event)" [nzOptions]="tabOptions">
         </nz-segmented>
       </div>
 

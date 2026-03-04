@@ -1,4 +1,6 @@
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { NzTableModule } from 'ng-zorro-antd/table';
 import { LeaveManagementBalanceService } from '../../../services/leave-balance.service';
 import { LeaveBalance } from '../../../models/leave-balance.model';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -8,7 +10,8 @@ import { finalize } from 'rxjs/operators';
     selector: 'app-balance-list',
     templateUrl: './balance-list.component.html',
     styleUrls: ['./balance-list.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [CommonModule, NzTableModule]
 })
 export class BalanceListComponent implements OnInit {
     balances = signal<LeaveBalance[]>([]);
